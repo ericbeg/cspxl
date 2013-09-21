@@ -21,9 +21,14 @@ namespace pxl
 		}
 	
 		public void AddComponent<T>()
+			where T:  new()
 		{
-			//Component component = new T();
-			//m_components.Add( component );
+			T newT  = new T();
+			Component component = newT as Component;
+			if( component != null )
+			{
+				m_components.Add( component );
+			}
 		}
 		
 	}

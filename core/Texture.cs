@@ -3,14 +3,15 @@ using System.Collections.Generic;
 
 namespace pxl
 {
-	public enum FilteringMode
-	{
-		Nearest,
-		Bilinear,
-		Trilinear
-	}
 	public class Texture
 	{
+		public enum FilteringMode
+		{
+			Nearest,
+			Bilinear,
+			Trilinear
+		}
+
 		private FilteringMode m_filteringMode;
 		
 		public FilteringMode filteringMode
