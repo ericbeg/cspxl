@@ -30,6 +30,7 @@ namespace pxl
             Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)aspect_ratio, 1, 64);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadMatrix(ref perspective);
+			
         }
 		
 		

@@ -30,7 +30,8 @@ namespace pxl
 		private bool m_updateLocalMatrixInv;
 		private bool m_updateMatrixInv;
 		
-		Transform()
+		Transform( GameObject gameObject )
+			: base( gameObject )
 		{
 			m_children = new List<Transform>();
 			m_parent  = null;
@@ -44,20 +45,21 @@ namespace pxl
 			
 			m_localMatrix = Matrix4.Identity;
 			
-			m_updateMatrix = true;
-			m_updateMatrixInv = true;
-			m_updateLocalMatrix = true;
+			m_updateMatrix         = true;
+			m_updateMatrixInv      = true;
+			m_updateLocalMatrix    = true;
 			m_updateLocalMatrixInv = true;
 
 		}
 		
 		private void Touch()
 		{
-			m_updateMatrix = true;
-			m_updateLocalMatrix = true;
-			m_updateMatrixInv = true;
+			m_updateMatrix         = true;
+			m_updateLocalMatrix    = true;
+			m_updateMatrixInv      = true;
 			m_updateLocalMatrixInv = true;
-			foreach( var child in m_children )
+			
+			foreach( Transform child in m_children )
 			{
 				child.Touch();
 			}
@@ -161,12 +163,12 @@ namespace pxl
 			{
 				Transform newParent = value;
 				
-				if( ! newParent.HasChild( this ) )
+				if ( ! newParent.HasChild( this ) )
 				{
 					newParent.m_children.Add( this );
 				}
 				
-				if( parent != null && parent != newParent )
+				if ( parent != null && parent != newParent )
 				{
 					parent.m_children.Remove( this );
 				}
@@ -222,7 +224,7 @@ namespace pxl
 		{
 			get
 			{
-				if( m_updateMatrixInv )
+				if ( m_updateMatrixInv )
 				{
 					m_matrixInv = matrix;
 					m_matrixInv.Invert();
@@ -236,7 +238,7 @@ namespace pxl
 		{
 			get
 			{
-				if( m_updateLocalMatrixInv )
+				if ( m_updateLocalMatrixInv )
 				{
 					m_localMatrixInv = localMatrix;
 					m_localMatrixInv.Invert();
@@ -252,7 +254,8 @@ namespace pxl
 				if ( parent != null )
 				{
 					return parent.matrix;
-				}else
+				}
+				else
 				{
 					return Matrix4.Identity;	
 				}
@@ -266,7 +269,8 @@ namespace pxl
 				if ( parent != null )
 				{
 					return parent.matrixInverse;
-				}else
+				}
+				else
 				{
 					return Matrix4.Identity;	
 				}
