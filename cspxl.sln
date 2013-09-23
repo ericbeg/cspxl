@@ -21,6 +21,6 @@ Global
 		{E236050D-1054-4544-A58D-3D9782395D44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = cspxl.csproj
+		StartupItem = test\helloworld\helloworld.csproj
 	EndGlobalSection
 EndGlobal

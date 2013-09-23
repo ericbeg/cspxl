@@ -17,7 +17,7 @@ namespace pxl
 		public int[] triangles;
 		
 		
-		public bool hasPositions 	{ get{return normals 	!= null; } }
+		public bool hasPositions 	{ get{return positions 	!= null; } }
 		public bool hasNormals 		{ get{return normals 	!= null; } }
 		public bool hasUvs 			{ get{return uvs 		!= null; } }
 		public bool hasColors 		{ get{return colors 	!= null; } }
