@@ -8,33 +8,37 @@ using System.Collections.Generic;
 
 namespace pxl
 {
-	public class GLMesh
+	public class GLMesh : Mesh
 	{
 		
-		uint[] vbo = new uint[1];
-		uint[] tbo = new uint[1];
+		uint[] vbo = null;
+		uint[] tbo = null;
 		
-		bool m_isInitialized = false;
+		bool m_isReady = false;
 		int m_triscount;
 		int m_vertcount;
 		
 		GLMeshVertexAttributeFormat[] vertexAttributeFormat;
 		
-		bool isInitialized
+        public GLMesh()
+            : base()
+        {
+            vbo = new uint[1];
+            tbo = new uint[1];
+            m_isReady = false;
+
+        }
+		public bool isReady
 		{
 			get
 			{
-				return m_isInitialized;
+				return m_isReady;
 			}
 		}
 		
-		public GLMesh ()
+		public override void Apply()
 		{
-			m_isInitialized = false;
-		}
-		
-		public void Create( Mesh mesh )
-		{
+            Mesh mesh = this;
 			GL.GenBuffers(1, vbo);
 			GL.GenBuffers(1, tbo);
 
@@ -151,7 +155,7 @@ namespace pxl
 		}
 		
 		
-		public void Draw()
+		public override void Draw()
 		{
 			GL.BindBuffer( BufferTarget.ArrayBuffer, vbo[0] );
 			

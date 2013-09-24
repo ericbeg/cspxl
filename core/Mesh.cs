@@ -4,7 +4,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace pxl
 {
-	public class Mesh
+	public abstract class Mesh
 	{
 		public int vertcount;
 		public int triscount;
@@ -46,6 +46,10 @@ namespace pxl
 				throw  new MeshInvalidTriangleIndexesException();
 			}
 		}
+
+
+        public abstract void Apply();
+        public abstract void Draw();
 		
 		
 		class MeshNoPositionsException : Exception{}

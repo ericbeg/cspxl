@@ -7,7 +7,7 @@ class MainClass
 	public static int Main (string[] args)
 	{
 		Application app = new Application( 400, 300);
-		Mesh me = new Mesh ( );
+		Mesh me = new GLMesh ( );
 		me.vertcount = 3;
 
 		me.positions = new OpenTK.Vector3[3]
@@ -24,8 +24,8 @@ class MainClass
 		};
 
 
-		GLMesh glme = new GLMesh ();
-		glme.Create (me);
+		GLMesh glme = me as GLMesh;
+		glme.Apply();
 
 		app.Loop();
 		app.Quit();

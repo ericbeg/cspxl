@@ -277,6 +277,35 @@ namespace pxl
 			}
 		}
 
-		
+		public Vector3 X
+		{
+			get 
+			{
+				Vector3 x = matrix.Column0.Xyz;
+				x.Normalize ();
+				return x;
+			}
+		}
+
+		public Vector3 Y
+		{
+			get 
+			{
+				Vector3 y = matrix.Column1.Xyz;
+				y.Normalize ();
+				return y;
+			}
+		}
+
+		public Vector3 Z
+		{
+			get 
+			{
+				Vector3 z = matrix.Column2.Xyz;
+				z.Normalize ();
+				return z;
+			}
+		}
+
 	}
 }
