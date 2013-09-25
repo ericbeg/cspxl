@@ -27,6 +27,9 @@ class MainClass
 		GLMesh glme = me as GLMesh;
 		glme.Apply();
 
+        GameObject go = new GameObject();
+
+
 		app.Loop();
 		app.Quit();
 		return 0;

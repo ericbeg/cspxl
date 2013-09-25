@@ -30,7 +30,8 @@ namespace pxl
 		private bool m_updateLocalMatrixInv;
 		private bool m_updateMatrixInv;
 		
-		Transform( GameObject gameObject )
+
+		internal Transform( GameObject gameObject )
 			: base( gameObject )
 		{
 			m_children = new List<Transform>();
@@ -64,7 +65,14 @@ namespace pxl
 				child.Touch();
 			}
 		}
-		
+		public Transform[] children
+        {
+            get
+            {
+                return m_children.ToArray();
+            }
+        }
+
 		public Vector3 position
 		{
 			get

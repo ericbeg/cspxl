@@ -57,7 +57,23 @@ namespace pxl
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+
+            GameObject[] objects = GameObject.instances;
+            foreach (var go in objects)
+            {
+                var rdr = go.GetComponent<Renderer>();
+                if (rdr != null)
+                {
+                    var me = rdr.mesh;
+                    if (me != null)
+                    {
+                        me.Draw();
+                    }
+                }
+            }
+
             this.SwapBuffers();
+            GLHelper.CheckError();
             Thread.Sleep(1);
         }
 

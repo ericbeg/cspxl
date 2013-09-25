@@ -2,17 +2,40 @@ using System;
 using System.Collections.Generic;
 namespace pxl
 {
-	public class GameObject
+	public class GameObject : IDisposable
 	{
+        private static List<GameObject> m_instances = new List<GameObject>();
+
+        public static GameObject[] instances
+        {
+            get
+            {
+                return m_instances.ToArray();
+            }
+        }
+
 		private List<Component> m_components;
 		
 		
 		public GameObject()
 		{
 			m_components = new List<Component>();
-			
+            Transform t = new Transform(this);
+            this.m_components.Add(t);
+            m_instances.Add(this);
 		}
-		
+
+        public void Dispose()
+        {
+            Transform tr = GetComponent<Transform>();
+            foreach (var t in tr.children)
+            {
+                t.gameObject.Dispose();
+            }
+            tr.parent = null;
+            m_instances.Remove( this );
+        }
+
 		public Component[] components
 		{
 			get
@@ -21,7 +44,7 @@ namespace pxl
 			}
 		}
 	
-		public void AddComponent<T>()
+		public T AddComponent<T>()
 			where T:  new( )
 		{
 			T newT  = new T();
@@ -32,6 +55,8 @@ namespace pxl
 				component.m_gameObject = this;
 				m_components.Add( component );
 			}
+
+            return newT;
 		}
 		
 		public T GetComponent<T>()

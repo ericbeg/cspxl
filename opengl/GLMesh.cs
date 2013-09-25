@@ -39,11 +39,14 @@ namespace pxl
 		public override void Apply()
 		{
             Mesh mesh = this;
-			GL.GenBuffers(1, vbo);
-			GL.GenBuffers(1, tbo);
 
 			mesh.SanityCheck ();
-			m_triscount = mesh.triscount;
+
+            GL.GenBuffers(1, vbo);
+            GL.GenBuffers(1, tbo);
+            GLHelper.CheckError();
+
+            m_triscount = mesh.triscount;
 			m_vertcount = mesh.vertcount;
 
 			// process mesh format
@@ -79,7 +82,8 @@ namespace pxl
 			// POSITION
 			{
 				int attributeSize = vertexAttributeFormat [attrIdx].count * SizeOf (vertexAttributeFormat [attrIdx].type);
-				for (int v=0; v < mesh.vertcount; ++v) {
+				for (int v=0; v < mesh.vertcount; ++v) 
+                {
 					Vector3 pos = mesh.positions [v];
 					Buffer.BlockCopy (pos.GetBytes (), 0, attrBuffer, offset + v * attributeSize, attributeSize);
 				}
@@ -133,8 +137,11 @@ namespace pxl
 				fixed( int* pbuffer = mesh.triangles ) 
 				{
 					GL.BindBuffer(BufferTarget.ArrayBuffer, tbo[0]);
+                    GLHelper.CheckError();
+
 					GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)( mesh.triscount*3*sizeof(int)), (IntPtr) pbuffer, BufferUsageHint.StaticCopy);
-				}
+                    GLHelper.CheckError();
+                }
 			}
 
 			// Vertex buffer data transfert
@@ -143,7 +150,9 @@ namespace pxl
 				fixed( Byte* pbuffer = attrBuffer ) 
 				{
 					GL.BindBuffer(BufferTarget.ArrayBuffer, vbo[0]);
+                    GLHelper.CheckError();
 					GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr) attrBuffer.Length, (IntPtr) pbuffer, BufferUsageHint.StaticCopy);
+                    GLHelper.CheckError();
 				}
 			}
 		}
@@ -152,18 +161,21 @@ namespace pxl
 		{
 			GL.DeleteBuffers(1,  vbo  );
 			GL.DeleteBuffers(1,  tbo  );
+            GLHelper.CheckError();
 		}
 		
 		
 		public override void Draw()
 		{
 			GL.BindBuffer( BufferTarget.ArrayBuffer, vbo[0] );
+            GLHelper.CheckError();
 			
 			int stride = 0;
 			// Vertex attribute
 			for(int i = 0; i  < vertexAttributeFormat.Length; ++i)
 			{
 				GLMeshVertexAttributeFormat format = vertexAttributeFormat [i];
+                GLHelper.CheckError();
 				int index = i;
 				int size = format.count;
 				VertexAttribPointerType type = format.type;
@@ -171,12 +183,15 @@ namespace pxl
 				IntPtr ptr = (IntPtr) 0;
 				
 				GL.VertexAttribPointer( index, size, type,  normalized, stride, ptr );
+                GLHelper.CheckError();
 				stride += format.count*SizeOf(format.type);
 			}
 				
 			// Triangle indexes
 			GL.BindBuffer( BufferTarget.ArrayBuffer, tbo[0] );
+            GLHelper.CheckError();
 			GL.DrawElements(BeginMode.Triangles, m_vertcount, DrawElementsType.UnsignedInt, 0 );
+            GLHelper.CheckError();
 		}
 		
 		

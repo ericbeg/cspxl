@@ -6,6 +6,8 @@ namespace pxl
 {
 	public abstract class Mesh
 	{
+        public static Mesh active = null;
+
 		public int vertcount;
 		public int triscount;
 		

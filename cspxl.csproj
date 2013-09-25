@@ -65,6 +65,9 @@
     <Compile Include="core\Texture.cs" />
     <Compile Include="math\mathutils.cs" />
     <Compile Include="opengl\GLMesh.cs" />
+    <Compile Include="opengl\GLHelpers.cs" />
+    <Compile Include="core\Graphics.cs" />
+    <Compile Include="opengl\GLShader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
