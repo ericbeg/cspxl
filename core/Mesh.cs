@@ -16,7 +16,7 @@ namespace pxl
 		public Vector2[] uvs;
 		public Vector4[] colors;
 		
-		public int[] triangles;
+		public uint[] triangles;
 		
 		
 		public bool hasPositions 	{ get{return positions 	!= null; } }
@@ -35,7 +35,7 @@ namespace pxl
 			
 			if ( triangles != null )
 			{
-				foreach( int idx in triangles )
+				foreach( uint idx in triangles )
 				{
 					if ( ! ( 0 <= idx && idx < vertcount) )
 					{
@@ -51,6 +51,7 @@ namespace pxl
 
 
         public abstract void Apply();
+        public abstract void Bind();
         public abstract void Draw();
 		
 		

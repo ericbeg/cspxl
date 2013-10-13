@@ -1,3 +1,5 @@
+
+// no utf-8
 #ifdef VERTEX_SHADER
 attribute vec4 position;
 

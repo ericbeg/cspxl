@@ -7,7 +7,23 @@ namespace pxl
 {
 	public abstract class Shader
 	{
-        public string source;
+        protected bool m_isCompiled = false;
+        protected bool m_hasAttemptedCompilation = false;
+        private string m_source;
+        public string source
+        {
+            get
+            {
+                return m_source;
+            }
+            set
+            {
+                m_source = value;
+                m_isCompiled = false;
+                m_hasAttemptedCompilation = false;
+            }
+        }
+
         private Dictionary<string, object > m_uniforms = new Dictionary<string, object>();
 
         public static Shader active = null;
@@ -20,6 +36,7 @@ namespace pxl
         public abstract void Apply();
         public abstract void Free();
         public abstract void ApplyUniforms();
+        public abstract void Link();
         public abstract void Use();
 	}
 }

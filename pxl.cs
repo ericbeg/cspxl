@@ -15,9 +15,8 @@ namespace pxl
 	public class Application :  GameWindow
 	{
 		// Constructor 
-		public Application() : this( 800, 600 ){}
-			
-		public Application(int width, int height) : base(width, height, new GraphicsMode(16, 16) ){}
+		public Application() : this( 800, 600 ){ }			
+		public Application(int width, int height) : base(width, height, new GraphicsMode(32, 24) ){}
 		
 	    protected override void OnResize(EventArgs e)
         {
@@ -57,6 +56,9 @@ namespace pxl
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+            GL.ClearColor(Color.DarkGray);
+            GL.Disable(EnableCap.DepthTest);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
 
             GameObject[] objects = GameObject.instances;
             foreach (var go in objects)
@@ -65,16 +67,20 @@ namespace pxl
                 if (rdr != null)
                 {
                     var me = rdr.mesh;
+                    var shader = rdr.material.shader;
                     if (me != null)
                     {
-                        me.Draw();
+                        shader.Link();
+                        //me.Bind();
+                        shader.Use();
+                        //me.Draw();
                     }
                 }
             }
 
             this.SwapBuffers();
             GLHelper.CheckError();
-            Thread.Sleep(1);
+            Thread.Sleep(100);
         }
 
 		
