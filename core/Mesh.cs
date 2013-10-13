@@ -51,7 +51,6 @@ namespace pxl
 
 
         public abstract void Apply();
-        public abstract void Bind();
         public abstract void Draw();
 		
 		

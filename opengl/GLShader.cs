@@ -111,8 +111,8 @@ namespace pxl
                 
                 m_isCompiled = true;
                 m_isValidProgram = m_isCompiled;
-                GL.GetProgram(m_program, ProgramParameter.ValidateStatus, out param);
-                m_isValidProgram &= (param == (int)All.True);
+                //GL.GetProgram(m_program, ProgramParameter.ValidateStatus, out param);
+                //m_isValidProgram &= (param == (int)All.True);
                 
                 string infoLog = GL.GetProgramInfoLog(m_program);
                 GLHelper.CheckError();

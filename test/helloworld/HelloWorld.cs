@@ -23,11 +23,28 @@ class MainClass
 
 		me.positions = new OpenTK.Vector3[3]
 		{
-			new Vector3(-1, 0, 0),
-			new Vector3(1, 0, 0),
+			new Vector3(-1, -1, 0),
+			new Vector3(1, -1, 0),
 			new Vector3(0, 1, 0)
 		};
+		
+		me.normals = new OpenTK.Vector3[3]
+		{
+			new Vector3(-1.0f,0.0f, 0.5f),
+			new Vector3(1.0f, 0.0f, 0.5f),
+			new Vector3(0.0f, 0.0f, 1.0f)
+		};
 
+
+		me.colors = new OpenTK.Vector4[3]
+		{
+			new Vector4(1, 0, 0, 1),
+			new Vector4(0, 1, 0, 1),
+			new Vector4(0, 0, 1, 1)
+		};
+
+		//me.colors = null;
+		
 		me.triscount = 1;
 		me.triangles = new uint[3]
 		{
@@ -36,7 +53,7 @@ class MainClass
 
 
 		GLMesh glme = me as GLMesh;
-		//glme.Apply();
+		glme.Apply();
 
         Material material = new Material();
         material.shader = shader;

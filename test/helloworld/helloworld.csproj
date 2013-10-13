@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -36,9 +36,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="cspxl">
-      <HintPath>..\..\bin\Debug\cspxl.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\..\..\env\lib\opentk\1.0\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
     </Reference>
@@ -47,6 +44,17 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="cspxl, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\bin\Debug\cspxl.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\usr\share\opentk\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\usr\share\opentk\Binaries\OpenTK\Release\OpenTK.GLControl.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HelloWorld.cs" />

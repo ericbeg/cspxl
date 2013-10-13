@@ -56,7 +56,7 @@ namespace pxl
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            GL.ClearColor(Color.DarkGray);
+            GL.ClearColor(Color.CornflowerBlue);
             GL.Disable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
@@ -71,9 +71,8 @@ namespace pxl
                     if (me != null)
                     {
                         shader.Link();
-                        //me.Bind();
                         shader.Use();
-                        //me.Draw();
+	                    me.Draw();
                     }
                 }
             }
