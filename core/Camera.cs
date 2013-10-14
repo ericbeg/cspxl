@@ -1,5 +1,6 @@
 using System;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace pxl
 {
@@ -16,6 +17,21 @@ namespace pxl
 		private bool m_updateView;
 		private bool m_updateProjection;
 		private bool m_updateViewProjection;
+
+        private Color4 m_backgroundColor;
+
+        public Color4 backgroundColor
+        {
+            get
+            {
+                return m_backgroundColor;
+            }
+
+            set
+            {
+                m_backgroundColor = value;
+            }
+        }
 
 		private void UpdateView()
 		{

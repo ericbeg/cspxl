@@ -107,8 +107,6 @@ namespace pxl
                 GL.ValidateProgram(m_program);
                 GLHelper.CheckError();
                 
-
-                
                 m_isCompiled = true;
                 m_isValidProgram = m_isCompiled;
                 //GL.GetProgram(m_program, ProgramParameter.ValidateStatus, out param);
@@ -198,10 +196,40 @@ namespace pxl
 
         public override void Use()
         {
+            if ( !m_hasAttemptedCompilation )
+                Compile();
+
             if ( m_isValidProgram )
             {
                 GL.UseProgram( m_program );
                 GLHelper.CheckError();
+            }
+        }
+
+        public override void SetUniform(string name, float uniform)
+        {
+            int location = GL.GetUniformLocation(glname, name);
+            if (location >= 0)
+            {
+                GL.Uniform1( location, uniform);
+            }
+        }
+
+        public override void SetUniform(string name, OpenTK.Matrix4 uniform)
+        {
+            int location = GL.GetUniformLocation(glname, name);
+            if (location >= 0)
+            {
+                GL.UniformMatrix4(location, false, ref uniform);
+            }
+        }
+
+        public override void SetUniform(string name, OpenTK.Vector3 uniform)
+        {
+            int location = GL.GetUniformLocation(glname, name);
+            if (location >= 0)
+            {
+                GL.Uniform3(location, ref uniform);
             }
         }
     }

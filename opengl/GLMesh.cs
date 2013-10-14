@@ -11,10 +11,9 @@ namespace pxl
 	public class GLMesh : Mesh
 	{
 		
-		uint[] vbo = null;
-		uint[] tbo = null;
+		uint[] vbo = null; // Buffer storing vertex attributes
+		uint[] tbo = null; // Buffer storing triangle indices
 		
-		bool m_isReady = false;
 		int m_triscount;
 		int m_vertcount;
 		
@@ -25,16 +24,7 @@ namespace pxl
         {
             vbo = new uint[1];
             tbo = new uint[1];
-            m_isReady = false;
-
         }
-		public bool isReady
-		{
-			get
-			{
-				return m_isReady;
-			}
-		}
 		
 		public override void Apply()
 		{
@@ -194,7 +184,7 @@ namespace pxl
 				int attribLocation = GL.GetAttribLocation(shader.glname, format.name);
 				if( attribLocation >= 0 )
 				{
-					GL.EnableVertexAttribArray(i);
+                    GL.EnableVertexAttribArray(attribLocation);
 					GL.VertexAttribPointer(attribLocation, size, type, normalized, strideSize, offset);
 				}
 				GLHelper.CheckError();

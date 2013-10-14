@@ -75,8 +75,5 @@
     <Compile Include="opengl\GLShader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="math\" />
-    <Folder Include="opengl\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

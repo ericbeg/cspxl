@@ -1,4 +1,9 @@
 #ifdef VERTEX_SHADER
+
+uniform mat4 modelViewProjectionMatrix;
+uniform float _Time;
+
+
 attribute vec4 position;
 attribute vec3 normal;
 attribute vec4 color;
@@ -9,8 +14,10 @@ varying vec3 nor;
 
 void main()
 {
-	//gl_Position = vec4(position.xyz, 1.0);
-	gl_Position = position;
+	
+	vec3 offset = vec3(cos(_Time), sin(_Time), 0.0)*0.1;
+	gl_Position = vec4(position.xyz + offset, 1.0);
+	//gl_Position = modelViewProjectionMatrix*position;
 	albedo = color;
 	//albedo = vec4(1,1,1,1);
 	nor = normal;

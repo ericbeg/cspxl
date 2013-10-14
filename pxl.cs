@@ -7,6 +7,7 @@ using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 
 using Matrix4 = OpenTK.Matrix4;
 
@@ -15,7 +16,8 @@ namespace pxl
 	public class Application :  GameWindow
 	{
 		// Constructor 
-		public Application() : this( 800, 600 ){ }			
+		public Application() : this( 800, 600 ){ }
+			
 		public Application(int width, int height) : base(width, height, new GraphicsMode(32, 24) ){}
 		
 	    protected override void OnResize(EventArgs e)
@@ -56,15 +58,23 @@ namespace pxl
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            GL.ClearColor(Color.CornflowerBlue);
+
+            Camera cam = Camera.active;
+
+            if (cam != null)
+            {
+                GL.ClearColor(cam.backgroundColor);
+                GL.Clear(ClearBufferMask.ColorBufferBit);
+            }
+
             GL.Disable(EnableCap.DepthTest);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+
 
             GameObject[] objects = GameObject.instances;
             foreach (var go in objects)
             {
                 var rdr = go.GetComponent<Renderer>();
-                if (rdr != null)
+                if ( rdr != null )
                 {
                     var me = rdr.mesh;
                     var shader = rdr.material.shader;
@@ -72,6 +82,9 @@ namespace pxl
                     {
                         shader.Link();
                         shader.Use();
+                        float t = Convert.ToSingle( DateTime.Now.Second) + Convert.ToSingle( DateTime.Now.Millisecond)*0.001f;
+                        Console.WriteLine(t);
+                        shader.SetUniform("_Time", t);
 	                    me.Draw();
                     }
                 }
@@ -87,7 +100,7 @@ namespace pxl
 		{
 			using( this )
 			{
-				this.Run(30.0, 60.0);
+				this.Run(200);
 			}
 		}
 		
