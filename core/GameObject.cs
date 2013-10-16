@@ -5,7 +5,10 @@ namespace pxl
 	public class GameObject : IDisposable
 	{
         private static List<GameObject> m_instances = new List<GameObject>();
+        private List<Component> m_components;
+        private Transform m_transform;
 
+        
         public static GameObject[] instances
         {
             get
@@ -14,15 +17,13 @@ namespace pxl
             }
         }
 
-		private List<Component> m_components;
-		
-		
 		public GameObject()
 		{
 			m_components = new List<Component>();
             Transform t = new Transform(this);
             this.m_components.Add(t);
             m_instances.Add(this);
+            m_transform = t;
 		}
 
         public void Dispose()
@@ -93,6 +94,14 @@ namespace pxl
 			
 			return comps.ToArray();
 		}
+
+        public Transform transform
+        {
+            get
+            {
+                return m_transform;
+            }
+        }
 	
 	}
 }

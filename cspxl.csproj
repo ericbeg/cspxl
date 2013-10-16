@@ -57,6 +57,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="graphics\Extensions.cs" />
+    <Compile Include="opengl\GLTexture.cs" />
     <Compile Include="pxl.cs" />
     <Compile Include="core\Camera.cs" />
     <Compile Include="core\Component.cs" />

@@ -15,7 +15,7 @@ varying vec3 nor;
 void main()
 {
 	
-	vec3 offset = vec3(cos(_Time), sin(_Time), 0.0)*0.1;
+	vec3 offset = vec3(cos(_Time), sin(_Time), 0.0)*0.8;
 	gl_Position = vec4(position.xyz + offset, 1.0);
 	//gl_Position = modelViewProjectionMatrix*position;
 	albedo = color;

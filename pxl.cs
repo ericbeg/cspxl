@@ -83,7 +83,7 @@ namespace pxl
                         shader.Link();
                         shader.Use();
                         float t = Convert.ToSingle( DateTime.Now.Second) + Convert.ToSingle( DateTime.Now.Millisecond)*0.001f;
-                        Console.WriteLine(t);
+                        //Console.WriteLine(t);
                         shader.SetUniform("_Time", t);
 	                    me.Draw();
                     }
@@ -92,7 +92,7 @@ namespace pxl
 
             this.SwapBuffers();
             GLHelper.CheckError();
-            Thread.Sleep(100);
+            //Thread.Sleep(100);
         }
 
 		

@@ -155,6 +155,7 @@ namespace pxl
 			{
 				return m_perspective;
 			}
+
 			set
 			{
 				m_perspective = value;
