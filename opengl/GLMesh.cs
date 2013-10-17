@@ -200,7 +200,7 @@ namespace pxl
            
             GL.BindBuffer( BufferTarget.ElementArrayBuffer, tbo[0] );
             GLHelper.CheckError();
-			GL.DrawElements(BeginMode.Triangles, m_vertcount, DrawElementsType.UnsignedInt, 0 );
+			GL.DrawElements(BeginMode.Triangles, triscount*3, DrawElementsType.UnsignedInt, 0 );
             GLHelper.CheckError();
 			
 		}

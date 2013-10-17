@@ -53,5 +53,10 @@
   <ItemGroup>
     <Compile Include="HelloWorld.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="simple.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
