@@ -11,14 +11,12 @@ using OpenTK.Graphics.OpenGL;
 
 namespace pxl
 {
-    class GLTexture : Texture
+    public class GLTexture : Texture
     {
         public int glname;
-
-        private Color4[] m_pixels;
         private bool m_isValid;
 
-        GLTexture()
+        public GLTexture()
             : base()
         {
             m_isValid = false;

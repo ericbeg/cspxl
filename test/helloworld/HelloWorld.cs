@@ -1,7 +1,11 @@
 using System;
 using System.IO;
+
+using System.Drawing;
+
 using OpenTK;
 using OpenTK.Graphics;
+
 using pxl;
 
 class MainClass
@@ -66,7 +70,16 @@ class MainClass
         Console.WriteLine(shaderSource);
         Shader shader = new GLShader();
         shader.source = shaderSource;
+
+        GLTexture texture = new GLTexture();
+
+        Bitmap img = new Bitmap("shiphull.jpg");
+        texture.Copy(img);
+
+        shader.texture = texture;
+        
         shader.Apply();
+
         return shader;
     }
 

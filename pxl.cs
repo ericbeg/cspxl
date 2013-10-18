@@ -59,13 +59,7 @@ namespace pxl
         {
             base.OnRenderFrame(e);
 
-            Camera cam = Camera.active;
-
-            if (cam != null)
-            {
-                GL.ClearColor(cam.backgroundColor);
-                GL.Clear(ClearBufferMask.ColorBufferBit);
-            }
+            ClearFrameBuffer();
 
             GL.Disable(EnableCap.DepthTest);
 
@@ -80,9 +74,23 @@ namespace pxl
                     var shader = rdr.material.shader;
                     if (me != null)
                     {
+
                         shader.Link();
                         shader.Use();
-                        float t = Convert.ToSingle( DateTime.Now.Second) + Convert.ToSingle( DateTime.Now.Millisecond)*0.001f;
+
+                        GLTexture texture = shader.texture as GLTexture;
+                        if ( texture != null)
+                        {
+                            GL.Enable(EnableCap.Texture2D);
+                            GLHelper.CheckError();
+                            GL.BindTexture(TextureTarget.Texture2D, texture.glname);
+                            GLHelper.CheckError();
+
+                            shader.SetUniform("mainTex", 0);
+                        }
+
+                        DateTime now = DateTime.Now;
+                        float t = Convert.ToSingle(now.Minute * 60 + now.Second) + Convert.ToSingle(now.Millisecond) * 0.001f;
                         //Console.WriteLine(t);
                         shader.SetUniform("_Time", t);
 	                    me.Draw();
@@ -100,7 +108,7 @@ namespace pxl
 		{
 			using( this )
 			{
-				this.Run(200);
+				this.Run(70);
 			}
 		}
 		
@@ -108,6 +116,24 @@ namespace pxl
 		{
 			
 		}
+
+        private void ClearFrameBuffer()
+        {
+            Camera cam = Camera.active;
+            if (cam != null)
+            {
+                switch (cam.clearFlag)
+                {
+                    case Camera.ClearFlag.BackgroundColor:
+                        GL.ClearColor(cam.backgroundColor);
+                        GL.Clear(ClearBufferMask.ColorBufferBit);
+                        break;
+                    case Camera.ClearFlag.DepthOnly:
+                        GL.Clear(ClearBufferMask.ColorBufferBit);
+                        break;
+                }
+            }
+        }
 			
 	}
 }

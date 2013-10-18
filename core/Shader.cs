@@ -27,6 +27,8 @@ namespace pxl
 
         public static Shader active = null;
 
+        public Texture texture;
+
 
         public abstract void Apply();
         public abstract void Free();
@@ -34,6 +36,7 @@ namespace pxl
         public abstract void Link();
         public abstract void Use();
 
+        public abstract void SetUniform(string name, int uniform);
         public abstract void SetUniform(string name, float uniform);
         public abstract void SetUniform(string name, Vector3 uniform);
         public abstract void SetUniform(string name, Matrix4 uniform);

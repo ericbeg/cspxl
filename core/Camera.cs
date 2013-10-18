@@ -20,6 +20,13 @@ namespace pxl
 
         private Color4 m_backgroundColor;
 
+        public enum ClearFlag
+        {
+
+            BackgroundColor,
+            DepthOnly
+        }
+        public ClearFlag clearFlag = ClearFlag.BackgroundColor;
         public Color4 backgroundColor
         {
             get

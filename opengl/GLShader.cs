@@ -206,21 +206,42 @@ namespace pxl
             }
         }
 
+        public override void SetUniform(string name, int uniform)
+        {
+            int location = GL.GetUniformLocation(glname, name);
+            GLHelper.CheckError();
+
+            if (location >= 0)
+            {
+                GL.Uniform1(location, uniform);
+                GLHelper.CheckError();
+
+            }
+        }
+
         public override void SetUniform(string name, float uniform)
         {
             int location = GL.GetUniformLocation(glname, name);
+            GLHelper.CheckError();
+
             if (location >= 0)
             {
                 GL.Uniform1( location, uniform);
+                GLHelper.CheckError();
+
             }
         }
 
         public override void SetUniform(string name, OpenTK.Matrix4 uniform)
         {
             int location = GL.GetUniformLocation(glname, name);
+            GLHelper.CheckError();
+
             if (location >= 0)
             {
                 GL.UniformMatrix4(location, false, ref uniform);
+                GLHelper.CheckError();
+
             }
         }
 
