@@ -71,12 +71,8 @@ class MainClass
         Shader shader = new GLShader();
         shader.source = shaderSource;
 
-        GLTexture texture = new GLTexture();
 
-        Bitmap img = new Bitmap("shiphull.jpg");
-        texture.Copy(img);
-
-        shader.texture = texture;
+        shader.samplerNames = new string[]{"mainTex", "secondTex"};
         
         shader.Apply();
 
@@ -89,6 +85,16 @@ class MainClass
         Console.WriteLine( pxl.GLHelper.infoString );
         
         Material material = new Material();
+        GLTexture texture0 = new GLTexture();
+        GLTexture texture1 = new GLTexture();
+
+        Bitmap img0 = new Bitmap("shiphull.jpg");
+        Bitmap img1 = new Bitmap("floor.jpg");
+
+        texture0.Copy(img0);
+        texture1.Copy(img1);
+
+        material.textures = new Texture[] { texture0, texture1 };        
         material.shader = GetShader();
 
         GameObject go = new GameObject();

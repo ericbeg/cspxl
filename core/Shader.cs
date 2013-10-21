@@ -11,12 +11,14 @@ namespace pxl
         protected bool m_isCompiled = false;
         protected bool m_hasAttemptedCompilation = false;
         private string m_source;
+        public string[] samplerNames;
         public string source
         {
             get
             {
                 return m_source;
             }
+
             set
             {
                 m_source = value;

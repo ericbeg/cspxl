@@ -59,6 +59,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="floor.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="shiphull.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

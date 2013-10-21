@@ -52,6 +52,8 @@ namespace pxl
             }
         }
 
+
+
 		/// <summary>
         /// Place your rendering code here.
         /// </summary>
@@ -78,15 +80,19 @@ namespace pxl
                         shader.Link();
                         shader.Use();
 
-                        GLTexture texture = shader.texture as GLTexture;
-                        if ( texture != null)
+                        // Bind textures
+                        Texture[] textures    = rdr.material.textures;
+                        string[] samplerNames = rdr.material.shader.samplerNames;
+                        for (int i = 0; i < textures.Length; ++i)
                         {
-                            GL.Enable(EnableCap.Texture2D);
-                            GLHelper.CheckError();
-                            GL.BindTexture(TextureTarget.Texture2D, texture.glname);
-                            GLHelper.CheckError();
 
-                            shader.SetUniform("mainTex", 0);
+                            GLTexture texture = textures[i] as GLTexture;
+                            string name = samplerNames[i];
+                            if (texture != null)
+                            {
+                                texture.Bind(i);
+                                shader.SetUniform(name, i);
+                            }
                         }
 
                         DateTime now = DateTime.Now;

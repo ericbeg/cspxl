@@ -84,5 +84,16 @@ namespace pxl
             m_isValid = true;
         }
 
+        public void Bind(int textureUnit)
+        {
+            GL.Enable(EnableCap.Texture2D);
+            GLHelper.CheckError();
+            GL.ActiveTexture((TextureUnit)((int)TextureUnit.Texture0) + textureUnit);
+            GLHelper.CheckError();
+            GL.BindTexture(TextureTarget.Texture2D, this.glname);
+            GLHelper.CheckError();
+
+        }
+
     }
 }
