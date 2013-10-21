@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cspxl", "cspxl.csproj", "{E236050D-1054-4544-A58D-3D9782395D44}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "helloworld", "test\helloworld\helloworld.csproj", "{0F6E0046-94EE-40CD-A8D8-667019C13687}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E236050D-1054-4544-A58D-3D9782395D44} = {E236050D-1054-4544-A58D-3D9782395D44}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

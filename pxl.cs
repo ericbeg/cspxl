@@ -97,8 +97,13 @@ namespace pxl
 
                         DateTime now = DateTime.Now;
                         float t = Convert.ToSingle(now.Minute * 60 + now.Second) + Convert.ToSingle(now.Millisecond) * 0.001f;
-                        //Console.WriteLine(t);
+                        
                         shader.SetUniform("_Time", t);
+                        //go.transform.localScale = new Vector3(1.0f, (float)Math.Cos(t), 0.0f  );
+                        go.transform.localRotation = Quaternion.FromAxisAngle(Vector3.UnitY, t );
+                        shader.SetUniform("modelMatrix", go.transform.matrix);
+                        //Console.WriteLine("Mat");
+                        //Console.WriteLine(go.transform.matrix.ToString());
 	                    me.Draw();
                     }
                 }

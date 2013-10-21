@@ -44,7 +44,7 @@ namespace pxl
 		{
 			if (m_updateView) 
 			{
-				Transform t = gameObject.GetComponent<Transform>();
+				Transform t = gameObject.transform;
 				Vector3 eye    = t.position;
 				Vector3 target = eye + (-t.Z);
 				Vector3 up     = t.Y;
@@ -110,6 +110,7 @@ namespace pxl
 			{
 				return m_aspect;
 			}
+
 			set
 			{
 				m_aspect = value;

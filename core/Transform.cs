@@ -205,7 +205,7 @@ namespace pxl
 			{
 				if ( m_updateMatrix )
 				{
-					m_matrix = ancestorsMatrix*m_localMatrix;
+					m_matrix = ancestorsMatrix*localMatrix;
 				}
 				return m_matrix;
 			}
@@ -218,10 +218,10 @@ namespace pxl
 				if ( m_updateLocalMatrix )
 				{
 					
-					m_matrix = 
-							Matrix4.CreateTranslation( m_localPosition )
-						*	Matrix4.Rotate( m_localRotation )
-						*   Matrix4.Scale( m_localScale );	
+					m_localMatrix = 
+							Matrix4.CreateTranslation( localPosition )
+						*	Matrix4.Rotate( localRotation )
+						*   Matrix4.Scale( localScale );	
 						;
 				}
 				return m_localMatrix;
