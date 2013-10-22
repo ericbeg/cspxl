@@ -8,6 +8,18 @@ using OpenTK.Graphics;
 
 using pxl;
 
+public class Rotator : Behaviour
+{
+    public override void Update()
+    {
+        gameObject.transform.localRotation = 
+            Quaternion.FromAxisAngle(Vector3.UnitY,  Time.t)*
+            Quaternion.FromAxisAngle(Vector3.UnitX,  0.3458f*Time.t);
+            Quaternion.FromAxisAngle(Vector3.UnitZ,  0.2356f*Time.t);
+
+    }
+}
+
 class MainClass
 {
 
@@ -102,13 +114,15 @@ class MainClass
         rdr.mesh     = GetTriangle();
         rdr.material = material;
 
+        go.AddComponent<Rotator>();
+
         GameObject obCam  = new GameObject();
         Camera cam = obCam.AddComponent<Camera>();
         Camera.active = cam;
         cam.backgroundColor = Color4.Chocolate;
         
 
-		app.Loop();
+		app.Loop( 20.0f );
 		app.Quit();
 		return 0;
 	}

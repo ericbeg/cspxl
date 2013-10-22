@@ -45,6 +45,18 @@ namespace pxl
         {
             base.OnUpdateFrame(e);
 
+            // Update time data
+            Time._currentFrameDate = DateTime.Now;
+            Time._Update();
+            Time._previousFrameDate = Time._currentFrameDate;
+
+            // Update behaviours
+            var behaviours = Behaviour.instances;
+            foreach (var behaviour in behaviours)
+            {
+                behaviour.Update();
+            }
+
             if (Keyboard[OpenTK.Input.Key.Escape])
             {
                 this.Exit();
@@ -94,16 +106,8 @@ namespace pxl
                                 shader.SetUniform(name, i);
                             }
                         }
-
-                        DateTime now = DateTime.Now;
-                        float t = Convert.ToSingle(now.Minute * 60 + now.Second) + Convert.ToSingle(now.Millisecond) * 0.001f;
-                        
-                        shader.SetUniform("_Time", t);
-                        //go.transform.localScale = new Vector3(1.0f, (float)Math.Cos(t), 0.0f  );
-                        go.transform.localRotation = Quaternion.FromAxisAngle(Vector3.UnitY, t );
+                        shader.SetUniform("_Time", Time.t);
                         shader.SetUniform("modelMatrix", go.transform.matrix);
-                        //Console.WriteLine("Mat");
-                        //Console.WriteLine(go.transform.matrix.ToString());
 	                    me.Draw();
                     }
                 }
@@ -114,12 +118,17 @@ namespace pxl
             //Thread.Sleep(100);
         }
 
-		
-		public void Loop()
+        public void Loop()
+        {
+            Loop(70.0f);
+        }
+		public void Loop(float updateRate)
 		{
-			using( this )
+            Time._startingDate = DateTime.Now;
+            Time._previousFrameDate = Time._startingDate;
+            using (this)
 			{
-				this.Run(70);
+                this.Run(updateRate);
 			}
 		}
 		
