@@ -13,9 +13,9 @@ public class Rotator : Behaviour
     public override void Update()
     {
         gameObject.transform.localRotation = 
-            Quaternion.FromAxisAngle(Vector3.UnitY,  Time.t)*
-            Quaternion.FromAxisAngle(Vector3.UnitX,  0.3458f*Time.t);
-            Quaternion.FromAxisAngle(Vector3.UnitZ,  0.2356f*Time.t);
+        Quaternion.FromAxisAngle(Vector3.UnitY,  Time.t)*
+        Quaternion.FromAxisAngle(Vector3.UnitX,  0.3458f*Time.t);
+        Quaternion.FromAxisAngle(Vector3.UnitZ,  0.2356f*Time.t);
 
     }
 }
@@ -117,12 +117,18 @@ class MainClass
         go.AddComponent<Rotator>();
 
         GameObject obCam  = new GameObject();
+        obCam.transform.position = new Vector3(0.0f, 0.0f, 4.0f);
         Camera cam = obCam.AddComponent<Camera>();
+        //cam.perspective = false;
+        cam.scale = 4.0f;
         Camera.active = cam;
         cam.backgroundColor = Color4.Chocolate;
+        cam.near = 0.1f;
+        cam.far = 10.0f;
+        
         
 
-		app.Loop( 20.0f );
+		app.Loop(  );
 		app.Quit();
 		return 0;
 	}

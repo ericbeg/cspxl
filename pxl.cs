@@ -79,6 +79,21 @@ namespace pxl
 
 
             GameObject[] objects = GameObject.instances;
+            Matrix4 viewMatrix = Matrix4.Identity;
+            Matrix4 projectionMatrix = Matrix4.Identity;
+            Matrix4 viewProjectionMatrix = Matrix4.Identity;
+            Matrix4 modelMatrix = Matrix4.Identity;
+            Matrix4 modelViewMatrix = Matrix4.Identity;
+            Matrix4 modelViewProjectionMatrix = Matrix4.Identity;
+
+            Camera cam = Camera.active;
+            if (cam != null)
+            {
+                viewMatrix = cam.viewMatrix;
+                projectionMatrix = cam.projectionMatrix;
+                viewProjectionMatrix = viewMatrix*projectionMatrix;
+                
+            }
             foreach (var go in objects)
             {
                 var rdr = go.GetComponent<Renderer>();
@@ -106,8 +121,23 @@ namespace pxl
                                 shader.SetUniform(name, i);
                             }
                         }
+
+                        modelMatrix = go.transform.matrix;
+
+                        modelViewMatrix = modelMatrix*viewMatrix;
+                        modelViewProjectionMatrix =  modelMatrix*modelViewMatrix;
+
                         shader.SetUniform("_Time", Time.t);
-                        shader.SetUniform("modelMatrix", go.transform.matrix);
+                        shader.SetUniform("modelMatrix", modelMatrix);
+
+                        
+
+                        shader.SetUniform("viewMatrix", viewMatrix);
+                        shader.SetUniform("projectionMatrix", projectionMatrix);
+                        shader.SetUniform("viewProjectionMatrix", viewProjectionMatrix);
+                        shader.SetUniform("modelViewMatrix", modelViewMatrix);
+                        shader.SetUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+
 	                    me.Draw();
                     }
                 }

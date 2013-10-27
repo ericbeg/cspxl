@@ -6,6 +6,7 @@ namespace pxl
 {
 	public class Transform : Component
 	{
+        
 		private Vector3    m_localPosition;
 		private Vector3    m_localScale;
 		private Quaternion m_localRotation;
@@ -77,10 +78,9 @@ namespace pxl
 		{
 			get
 			{
-				Vector4 pos = matrix.Column3;
-				m_position.X  = pos.X;
-				m_position.Y  = pos.Y;
-				m_position.Z  = pos.Z;
+				m_position.X  = matrix.M41;
+                m_position.Y  = matrix.M42;
+                m_position.Z  = matrix.M43;
 				return m_position;
 			}
 			
@@ -88,6 +88,7 @@ namespace pxl
 			{
 				Vector3 newPosition = value;
 				localPosition = ancestorsMatrixInverse.Multiply( newPosition );
+                Touch();
 			}
 		}
 		
@@ -113,9 +114,10 @@ namespace pxl
 			set
 			{
 				Quaternion newRotation = value;
-				Matrix4 rot =  ancestorsMatrixInverse*Matrix4.Rotate( newRotation );
+				Matrix4 rot =  ancestorsMatrixInverse * Matrix4.Rotate( newRotation );
 				localRotation  = rot.ToQuaternion();
-			}
+                Touch();
+            }
 		}
 		
 		public Vector3 localPosition
@@ -182,7 +184,8 @@ namespace pxl
 				}
 				
 				parent = newParent;
-			}
+                Touch();
+            }
 		}
 		
 		private bool HasChild( Transform transform )
@@ -217,12 +220,11 @@ namespace pxl
 			{
 				if ( m_updateLocalMatrix )
 				{
-					
-					m_localMatrix = 
-							Matrix4.CreateTranslation( localPosition )
-						*	Matrix4.Rotate( localRotation )
-						*   Matrix4.Scale( localScale );	
-						;
+
+                    Matrix4 trans = Matrix4.CreateTranslation(localPosition);
+                    Matrix4 rot = Matrix4.Rotate(localRotation);
+                    Matrix4 scale = Matrix4.Scale( localScale );
+                    m_localMatrix = trans * rot * scale;
 				}
 				return m_localMatrix;
 			}

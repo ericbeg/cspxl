@@ -26,6 +26,22 @@ namespace pxl
             BackgroundColor,
             DepthOnly
         }
+
+        public Camera()
+        {
+            fovy = (float)Math.PI / 2.0f;
+            aspect = 1.0f;
+            perspective = true;
+            scale = 1.0f;
+            near = 0.1f;
+            far = 100.0f;
+            backgroundColor = Color4.CornflowerBlue;
+            
+            m_updateView = true;
+            m_updateProjection = true;
+            m_updateViewProjection = true;
+        }
+
         public ClearFlag clearFlag = ClearFlag.BackgroundColor;
         public Color4 backgroundColor
         {
@@ -42,7 +58,7 @@ namespace pxl
 
 		private void UpdateView()
 		{
-			if (m_updateView) 
+			if (m_updateView || true) 
 			{
 				Transform t = gameObject.transform;
 				Vector3 eye    = t.position;
@@ -57,7 +73,7 @@ namespace pxl
 
 		private void UpdateProjection()
 		{
-			if (m_updateProjection) 
+            if (m_updateProjection || true) 
 			{
 				if( m_perspective )
 				{
@@ -77,7 +93,7 @@ namespace pxl
 
 		private void UpdateViewProjection()
 		{
-			if (m_updateViewProjection)
+            if (m_updateViewProjection || true )
 			{
 				m_viewProjectionMatrix = projectionMatrix * viewMatrix;
 				m_updateViewProjection = false;
