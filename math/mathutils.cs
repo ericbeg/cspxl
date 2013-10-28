@@ -7,24 +7,7 @@ namespace pxl
 
 	public static class Matrix4Extensions
 	{
-		public static Vector4 Multiply (this Matrix4 mat, Vector4 r)
-		{
-			Vector4 o = new Vector4 ();
-			
-			o.X = mat.M11 * r.X + mat.M12 * r.Y + mat.M13 * r.Z + mat.M14 * r.W;
-			o.Y = mat.M21 * r.X + mat.M22 * r.Y + mat.M23 * r.Z + mat.M24 * r.W;
-			o.Z = mat.M31 * r.X + mat.M32 * r.Y + mat.M33 * r.Z + mat.M34 * r.W;
-			o.W = mat.M41 * r.X + mat.M42 * r.Y + mat.M43 * r.Z + mat.M44 * r.W;
-			
-			return o;
-		}
-
-		public static Vector3 Multiply (this Matrix4 mat, Vector3 r)
-		{
-			Vector4 o = mat.Multiply (new Vector4 (r.X, r.Y, r.Z, 1.0f));
-			return (new Vector3 (o.X, o.Y, o.Z)) / o.W;
-		}
-
+        /*
 		public static Quaternion ToQuaternion (this Matrix4 m)
 		{
 			Quaternion q;
@@ -76,31 +59,32 @@ namespace pxl
 			q = new Quaternion (X, Y, Z, W);
 			return q;
 		}
+        */
 
 		public static Byte[] GetBytes( this Matrix4 mat)
 		{
 
 			Byte[] buffer = new byte[ 4*4*sizeof(float) ];
 
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M11), 0, buffer,  0*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M21), 0, buffer,  1*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M31), 0, buffer,  2*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M41), 0, buffer,  3*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m11), 0, buffer,  0*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m21), 0, buffer,  1*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m31), 0, buffer,  2*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m41), 0, buffer,  3*sizeof(float), sizeof(float));
 
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M12), 0, buffer,  4*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M22), 0, buffer,  5*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M32), 0, buffer,  6*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M42), 0, buffer,  7*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m12), 0, buffer,  4*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m22), 0, buffer,  5*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m32), 0, buffer,  6*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m42), 0, buffer,  7*sizeof(float), sizeof(float));
 
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M13), 0, buffer,  8*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M23), 0, buffer,  9*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M33), 0, buffer,  10*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M43), 0, buffer,  11*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m13), 0, buffer,  8*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m23), 0, buffer,  9*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m33), 0, buffer,  10*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m43), 0, buffer,  11*sizeof(float), sizeof(float));
 		
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M14), 0, buffer,  12*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M24), 0, buffer,  13*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M34), 0, buffer,  14*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (mat.M44), 0, buffer,  15*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m14), 0, buffer,  12*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m24), 0, buffer,  13*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m34), 0, buffer,  14*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (mat.m44), 0, buffer,  15*sizeof(float), sizeof(float));
 
 			return buffer;
 		}
@@ -111,8 +95,8 @@ namespace pxl
 		public static Byte[] GetBytes(this Vector2 vec2)
 		{
 			Byte[] buffer = new byte[3*sizeof(float)];
-			Buffer.BlockCopy (BitConverter.GetBytes (vec2.X), 0, buffer,  0*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (vec2.Y), 0, buffer,  1*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec2.x), 0, buffer,  0*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec2.y), 0, buffer,  1*sizeof(float), sizeof(float));
 			return buffer;
 		}
 	}
@@ -122,9 +106,9 @@ namespace pxl
 		public static Byte[] GetBytes(this Vector3 vec3)
 		{
 			Byte[] buffer = new byte[3*sizeof(float)];
-			Buffer.BlockCopy (BitConverter.GetBytes (vec3.X), 0, buffer,  0*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (vec3.Y), 0, buffer,  1*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (vec3.Z), 0, buffer,  2*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec3.x), 0, buffer,  0*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec3.y), 0, buffer,  1*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec3.z), 0, buffer,  2*sizeof(float), sizeof(float));
 			return buffer;
 		}
 	}
@@ -134,10 +118,10 @@ namespace pxl
 		public static Byte[] GetBytes(this Vector4 vec4)
 		{
 			Byte[] buffer = new byte[4*sizeof(float)];
-			Buffer.BlockCopy (BitConverter.GetBytes (vec4.X), 0, buffer,  0*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (vec4.Y), 0, buffer,  1*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (vec4.Z), 0, buffer,  2*sizeof(float), sizeof(float));
-			Buffer.BlockCopy (BitConverter.GetBytes (vec4.W), 0, buffer,  3*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec4.x), 0, buffer,  0*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec4.y), 0, buffer,  1*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec4.z), 0, buffer,  2*sizeof(float), sizeof(float));
+			Buffer.BlockCopy (BitConverter.GetBytes (vec4.w), 0, buffer,  3*sizeof(float), sizeof(float));
 			return buffer;
 		}
 	}

@@ -3,7 +3,7 @@ using System.IO;
 
 using System.Drawing;
 
-using OpenTK;
+//using OpenTK;
 using OpenTK.Graphics;
 
 using pxl;
@@ -12,11 +12,12 @@ public class Rotator : Behaviour
 {
     public override void Update()
     {
-        gameObject.transform.localRotation = 
-        Quaternion.FromAxisAngle(Vector3.UnitY,  Time.t)*
-        Quaternion.FromAxisAngle(Vector3.UnitX,  0.3458f*Time.t);
-        Quaternion.FromAxisAngle(Vector3.UnitZ,  0.2356f*Time.t);
-
+        
+        gameObject.transform.localRotation =
+        Quaternion.FromAngleAxis(Time.t * 0.123f, Vector3.zAxis) *
+        Quaternion.FromAngleAxis(Time.t * 0.423f, Vector3.yAxis) *
+        Quaternion.FromAngleAxis(Time.t * 0.923f, Vector3.xAxis)
+        ;
     }
 }
 
@@ -28,7 +29,7 @@ class MainClass
         Mesh me = new GLMesh();
         me.vertcount = 4;
 
-        me.positions = new OpenTK.Vector3[]
+        me.positions = new Vector3[]
 		{
 			new Vector3(-1, -1, 0),
 			new Vector3(1, -1, 0),
@@ -36,7 +37,7 @@ class MainClass
 			new Vector3(-1, 1, 0)
 		};
 
-        me.normals = new OpenTK.Vector3[]
+        me.normals = new Vector3[]
 		{
 			new Vector3(-1.0f,0.0f, 0.5f),
 			new Vector3(1.0f, 0.0f, 0.5f),
@@ -44,7 +45,7 @@ class MainClass
 			new Vector3(0.0f, 0.0f, 1.0f)
 		};
 
-        me.uvs = new OpenTK.Vector2[]
+        me.uvs = new Vector2[]
 		{
 			new Vector2(0.0f,0.0f),
 			new Vector2(1.0f, 0.0f),
@@ -52,7 +53,7 @@ class MainClass
 			new Vector2(0.0f, 1.0f)
 		};
 
-        me.colors = new OpenTK.Vector4[]
+        me.colors = new Vector4[]
 		{
 			new Vector4(1, 0, 0, 1),
 			new Vector4(0, 1, 0, 1),
@@ -121,14 +122,13 @@ class MainClass
         Camera cam = obCam.AddComponent<Camera>();
         //cam.perspective = false;
         cam.scale = 4.0f;
+        cam.fovy = 0.2f*(2.0f*(float)Math.PI);
         Camera.active = cam;
         cam.backgroundColor = Color4.Chocolate;
         cam.near = 0.1f;
-        cam.far = 10.0f;
-        
-        
+        cam.far = 60.0f;
 
-		app.Loop(  );
+		app.Loop( 200.0f );
 		app.Quit();
 		return 0;
 	}

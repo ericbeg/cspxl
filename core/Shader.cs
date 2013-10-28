@@ -1,8 +1,4 @@
 using System;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
-using System.Collections.Generic;
 
 namespace pxl
 {

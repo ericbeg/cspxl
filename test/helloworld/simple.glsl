@@ -4,7 +4,7 @@ uniform mat4 modelViewProjectionMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-uniform float _Time;
+//uniform float _Time;
 
 attribute vec4 position;
 attribute vec3 normal;
@@ -18,9 +18,11 @@ varying vec2 frag_uv;
 void main()
 {
 	
-	vec3 offset = vec3(cos(_Time), sin(_Time), 0.0)*0.1;
+	//vec3 offset = vec3(cos(_Time), sin(_Time), 0.0)*0.1;
 	//gl_Position = projectionMatrix*viewMatrix*modelMatrix*position;
 	gl_Position = modelViewProjectionMatrix*position;
+	//gl_Position = modelMatrix*position;
+	//gl_Position = position;
 	albedo = color;
 	//albedo = vec4(1,1,1,1);
 	nor = (modelMatrix*vec4(normal, 1.0)).xyz;

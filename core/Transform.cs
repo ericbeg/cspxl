@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using OpenTK;
+//using OpenTK;
 
 namespace pxl
 {
@@ -78,16 +78,16 @@ namespace pxl
 		{
 			get
 			{
-				m_position.X  = matrix.M41;
-                m_position.Y  = matrix.M42;
-                m_position.Z  = matrix.M43;
+				m_position.x  = matrix.m14;
+                m_position.y  = matrix.m24;
+                m_position.z  = matrix.m34;
 				return m_position;
 			}
 			
 			set
 			{
 				Vector3 newPosition = value;
-				localPosition = ancestorsMatrixInverse.Multiply( newPosition );
+				localPosition = ancestorsMatrixInverse * newPosition;
                 Touch();
 			}
 		}
@@ -96,9 +96,9 @@ namespace pxl
 		{
 			get
 			{
-				m_lossyScale.X = matrix.M11;
-				m_lossyScale.Y = matrix.M22;
-				m_lossyScale.Z = matrix.M33;
+				m_lossyScale.x = matrix.m11;
+				m_lossyScale.y = matrix.m22;
+				m_lossyScale.z = matrix.m33;
 				
 				return m_lossyScale;
 			}
@@ -114,8 +114,8 @@ namespace pxl
 			set
 			{
 				Quaternion newRotation = value;
-				Matrix4 rot =  ancestorsMatrixInverse * Matrix4.Rotate( newRotation );
-				localRotation  = rot.ToQuaternion();
+				Matrix4 rot =  ancestorsMatrixInverse * Matrix4.Rotate( newRotation ) ;
+				localRotation  = Quaternion.FromMatrix( rot );
                 Touch();
             }
 		}
@@ -221,7 +221,7 @@ namespace pxl
 				if ( m_updateLocalMatrix )
 				{
 
-                    Matrix4 trans = Matrix4.CreateTranslation(localPosition);
+                    Matrix4 trans = Matrix4.Translate(localPosition);
                     Matrix4 rot = Matrix4.Rotate(localRotation);
                     Matrix4 scale = Matrix4.Scale( localScale );
                     m_localMatrix = trans * rot * scale;
@@ -236,8 +236,7 @@ namespace pxl
 			{
 				if ( m_updateMatrixInv )
 				{
-					m_matrixInv = matrix;
-					m_matrixInv.Invert();
+					m_matrixInv = Matrix4.Inverse( matrix );
 				}
 				return m_matrixInv;
 			}
@@ -250,8 +249,7 @@ namespace pxl
 			{
 				if ( m_updateLocalMatrixInv )
 				{
-					m_localMatrixInv = localMatrix;
-					m_localMatrixInv.Invert();
+					m_localMatrixInv = Matrix4.Inverse( localMatrix );
 				}
 				return m_localMatrixInv;
 			}
@@ -287,31 +285,31 @@ namespace pxl
 			}
 		}
 
-		public Vector3 X
+		public Vector3 x
 		{
 			get 
 			{
-				Vector3 x = matrix.Column0.Xyz;
+				Vector3 x = matrix.column1.xyz;
 				x.Normalize ();
 				return x;
 			}
 		}
 
-		public Vector3 Y
+		public Vector3 y
 		{
 			get 
 			{
-				Vector3 y = matrix.Column1.Xyz;
+				Vector3 y = matrix.column2.xyz;
 				y.Normalize ();
 				return y;
 			}
 		}
 
-		public Vector3 Z
+		public Vector3 z
 		{
 			get 
 			{
-				Vector3 z = matrix.Column2.Xyz;
+				Vector3 z = matrix.column3.xyz;
 				z.Normalize ();
 				return z;
 			}

@@ -60,10 +60,10 @@ namespace pxl
 		{
 			if (m_updateView || true) 
 			{
-				Transform t = gameObject.transform;
+				Transform t    = gameObject.transform;
 				Vector3 eye    = t.position;
-				Vector3 target = eye + (-t.Z);
-				Vector3 up     = t.Y;
+				Vector3 target = eye - t.z;
+				Vector3 up     = t.y;
 
 				m_viewMatrix = Matrix4.LookAt (eye, target, up);
 				m_updateView = false;
@@ -77,13 +77,18 @@ namespace pxl
 			{
 				if( m_perspective )
 				{
-					m_projectionMatrix = Matrix4.CreatePerspectiveFieldOfView (fovy, aspect, near, far); 
+					m_projectionMatrix = Matrix4.Perspective(fovy, aspect, near, far); 
 				}
 				else
 				{
 					float w = scale;
 					float h = scale;
-					m_projectionMatrix = Matrix4.CreateOrthographic(w, h, near, far);
+                    float r = w / 2.0f;
+                    float l = -r;
+                    float t = h / 2.0f;
+                    float b = -t;
+
+					m_projectionMatrix = Matrix4.OrthographicProjection(l, r, b, t, near, far);
 				}
 				m_updateProjection = false;
 				m_updateViewProjection = true;

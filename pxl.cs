@@ -19,20 +19,15 @@ namespace pxl
 		public Application() : this( 800, 600 ){ }
 			
 		public Application(int width, int height) : base(width, height, new GraphicsMode(32, 24) ){}
-		
-	    protected override void OnResize(EventArgs e)
+
+        protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
 
             GL.Viewport(0, 0, Width, Height);
 
             double aspect_ratio = Width / (double)Height;
-
-            Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)aspect_ratio, 1, 64);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref perspective);
-        }
-		
+        }		
 		
         /// <summary>
         /// Prepares the next frame for rendering.
@@ -91,7 +86,7 @@ namespace pxl
             {
                 viewMatrix = cam.viewMatrix;
                 projectionMatrix = cam.projectionMatrix;
-                viewProjectionMatrix = viewMatrix*projectionMatrix;
+                viewProjectionMatrix = cam.viewProjectionMatrix;
                 
             }
             foreach (var go in objects)
@@ -124,13 +119,11 @@ namespace pxl
 
                         modelMatrix = go.transform.matrix;
 
-                        modelViewMatrix = modelMatrix*viewMatrix;
-                        modelViewProjectionMatrix =  modelMatrix*modelViewMatrix;
+                        modelViewMatrix = viewMatrix*modelMatrix;
+                        modelViewProjectionMatrix =  projectionMatrix*modelViewMatrix;
 
                         shader.SetUniform("_Time", Time.t);
                         shader.SetUniform("modelMatrix", modelMatrix);
-
-                        
 
                         shader.SetUniform("viewMatrix", viewMatrix);
                         shader.SetUniform("projectionMatrix", projectionMatrix);

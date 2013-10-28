@@ -206,7 +206,7 @@ namespace pxl
             }
         }
 
-        public override void SetUniform(string name, int uniform)
+        override public void SetUniform(string name, int uniform)
         {
             int location = GL.GetUniformLocation(glname, name);
             GLHelper.CheckError();
@@ -232,25 +232,42 @@ namespace pxl
             }
         }
 
-        public override void SetUniform(string name, OpenTK.Matrix4 uniform)
+        public override void SetUniform(string name, Matrix4 m)
         {
             int location = GL.GetUniformLocation(glname, name);
             GLHelper.CheckError();
 
             if (location >= 0)
             {
-                GL.UniformMatrix4(location, false, ref uniform);
+                /*
+                OpenTK.Matrix4 om = new OpenTK.Matrix4(
+                    m.m11, m.m12, m.m13, m.m14,
+                    m.m21, m.m22, m.m23, m.m24,
+                    m.m31, m.m32, m.m33, m.m34,
+                    m.m41, m.m42, m.m43, m.m44
+                    );
+                 */
+                
+                OpenTK.Matrix4 om = new OpenTK.Matrix4(
+                    m.m11, m.m21, m.m31, m.m41,
+                    m.m12, m.m22, m.m32, m.m42,
+                    m.m13, m.m23, m.m33, m.m43,
+                    m.m14, m.m24, m.m34, m.m44
+                    );
+                 
+                GL.UniformMatrix4(location, false, ref om);
                 GLHelper.CheckError();
 
             }
         }
 
-        public override void SetUniform(string name, OpenTK.Vector3 uniform)
+        public override void SetUniform(string name, Vector3 v)
         {
             int location = GL.GetUniformLocation(glname, name);
             if (location >= 0)
             {
-                GL.Uniform3(location, ref uniform);
+                OpenTK.Vector3 ov = new OpenTK.Vector3(v.x, v.y, v.z);
+                GL.Uniform3(location, ref ov);
             }
         }
     }
