@@ -25,7 +25,8 @@ void main()
 	//gl_Position = position;
 	albedo = color;
 	//albedo = vec4(1,1,1,1);
-	nor = (modelMatrix*vec4(normal, 1.0)).xyz;
+	//nor = (modelMatrix*vec4(normal, 1.0)).xyz;
+	nor = normal;
 	frag_uv = uv;
 	
 }
@@ -49,7 +50,7 @@ void main()
 	//gl_FragColor = albedo*dot( normalize(nor) , vec3(0,0,1 ) ) ;
 
 	float b = cos(0.1*6.283*_Time)*0.5 + 0.5;
-	gl_FragColor = col*(1.0-b) + col2*(b);
+	gl_FragColor = col*(1.0-b) + col2*(b) + vec4(nor, 0.0)*0.3;
 }
 #endif
 

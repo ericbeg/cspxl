@@ -24,59 +24,6 @@ public class Rotator : Behaviour
 class MainClass
 {
 
-    public static Mesh GetTriangle()
-    {
-        Mesh me = new GLMesh();
-        me.vertcount = 4;
-
-        me.positions = new Vector3[]
-		{
-			new Vector3(-1, -1, 0),
-			new Vector3(1, -1, 0),
-			new Vector3(1, 1, 0),
-			new Vector3(-1, 1, 0)
-		};
-
-        me.normals = new Vector3[]
-		{
-			new Vector3(-1.0f,0.0f, 0.5f),
-			new Vector3(1.0f, 0.0f, 0.5f),
-			new Vector3(0.0f, 0.0f, 1.0f),
-			new Vector3(0.0f, 0.0f, 1.0f)
-		};
-
-        me.uvs = new Vector2[]
-		{
-			new Vector2(0.0f,0.0f),
-			new Vector2(1.0f, 0.0f),
-			new Vector2(1.0f, 1.0f),
-			new Vector2(0.0f, 1.0f)
-		};
-
-        me.colors = new Vector4[]
-		{
-			new Vector4(1, 0, 0, 1),
-			new Vector4(0, 1, 0, 1),
-			new Vector4(0, 0, 1, 1),
-			new Vector4(1, 1, 1, 1)
-		};
-
-        //me.colors = null;
-
-        me.triscount = 2;
-        me.triangles = new uint[]
-		{
-			0, 1, 2,
-			0, 2, 3
-		};
-
-
-        GLMesh glme = me as GLMesh;
-        glme.Apply();
-
-        return me;
-    }
-
     public static Shader GetShader()
     {
         string shaderSource = File.ReadAllText("simple.glsl");
@@ -112,13 +59,14 @@ class MainClass
 
         GameObject go = new GameObject();
         Renderer rdr = go.AddComponent<Renderer>();
-        rdr.mesh     = GetTriangle();
+        //rdr.mesh     = ObjectFactory.BuildMeshQuad();
+        rdr.mesh = ObjectFactory.BuildMeshCube();
         rdr.material = material;
 
         go.AddComponent<Rotator>();
 
         GameObject obCam  = new GameObject();
-        obCam.transform.position = new Vector3(0.0f, 0.0f, 4.0f);
+        obCam.transform.position = new Vector3(0.0f, 0.0f, 2.0f);
         Camera cam = obCam.AddComponent<Camera>();
         //cam.perspective = false;
         cam.scale = 4.0f;
@@ -128,6 +76,7 @@ class MainClass
         cam.near = 0.1f;
         cam.far = 60.0f;
 
+        BlendFile bf = BlendFile.Open("cube.blend");
 		app.Loop( 200.0f );
 		app.Quit();
 		return 0;

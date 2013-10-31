@@ -222,6 +222,11 @@ namespace pxl
                 );
         }
 
+        public static Vector3 operator -(Vector3 v)
+        {
+            return new Vector3(-v.x, -v.y, -v.z);
+        }
+
         public static Vector3 xAxis = new Vector3(1.0f, 0.0f, 0.0f);
         public static Vector3 yAxis = new Vector3(0.0f, 1.0f, 0.0f);
         public static Vector3 zAxis = new Vector3(0.0f, 0.0f, 1.0f);

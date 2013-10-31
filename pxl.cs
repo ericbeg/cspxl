@@ -70,7 +70,8 @@ namespace pxl
 
             ClearFrameBuffer();
 
-            GL.Disable(EnableCap.DepthTest);
+            //GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.DepthTest);
 
 
             GameObject[] objects = GameObject.instances;
@@ -170,9 +171,10 @@ namespace pxl
                     case Camera.ClearFlag.BackgroundColor:
                         GL.ClearColor(cam.backgroundColor);
                         GL.Clear(ClearBufferMask.ColorBufferBit);
+                        GL.Clear(ClearBufferMask.DepthBufferBit);
                         break;
                     case Camera.ClearFlag.DepthOnly:
-                        GL.Clear(ClearBufferMask.ColorBufferBit);
+                        GL.Clear(ClearBufferMask.DepthBufferBit);
                         break;
                 }
             }

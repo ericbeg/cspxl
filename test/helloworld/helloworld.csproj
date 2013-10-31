@@ -69,6 +69,9 @@
     <Compile Include="HelloWorld.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cube.blend">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="simple.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
