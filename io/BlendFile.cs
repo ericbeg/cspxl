@@ -8,9 +8,10 @@ namespace pxl
 {
     public class BlendFile
     {
-
         BinaryReader m_br = null;
         List<FileBlock> m_fileBlocks = new List<FileBlock>();
+        DNAStruct m_DNAStruct = null;
+
         int pointerSize;
         Endianness endianness;
         string version;
@@ -71,15 +72,11 @@ namespace pxl
 
             Console.Write( string.Format("{0} ptrsize={1} {2} ", id , bf.pointerSize, bf.endianness ) );
 
-            // Read file blocks
-            while ( bf.m_br.BaseStream.Position < bf.m_br.BaseStream.Length ) // until EOF
-            {
-                FileBlock fb = bf.ReadFileBlock();
-                bf.m_fileBlocks.Add(fb);
-            }
-
+            bf.ReadFileBlocks();
+            bf.ReadDNAStruct();
             return bf;
         }
+
 
         private void AligneAt4Bytes()
         {
@@ -87,8 +84,30 @@ namespace pxl
             {
 
                 long jump = m_br.BaseStream.Position % 4;
-                m_br.BaseStream.Position += jump;
+                // 0 - 0
+                // 1 - 3
+                // 2 - 2 
+                // 3 - 1
+                m_br.BaseStream.Position += (4 - jump) % 4;
             }
+        }
+
+        private string ReadBytesAsString(int count)
+        {
+            return System.Text.Encoding.ASCII.GetString( m_br.ReadBytes( count) );
+        }
+
+        private string ReadNullTerminatedString()
+        {
+            List<byte> bytes = new List<byte>();
+            byte b = m_br.ReadByte();
+            while (b != '\0')
+            {
+                bytes.Add(b);
+                b = m_br.ReadByte();
+            }
+            return System.Text.Encoding.ASCII.GetString( bytes.ToArray() );
+;
         }
 
         private Int64 ReadPointer()
@@ -107,6 +126,16 @@ namespace pxl
             return ptr;
         }
 
+        private void ReadFileBlocks()
+        {
+            // Read file blocks
+            while (m_br.BaseStream.Position < m_br.BaseStream.Length) // until EOF
+            {
+                FileBlock fb = ReadFileBlock();
+                m_fileBlocks.Add(fb);
+            }
+        }
+
         private FileBlock ReadFileBlock()
         {
             FileBlock fb = new FileBlock();
@@ -123,12 +152,93 @@ namespace pxl
 
             // Advances stream position to next file block
             m_br.BaseStream.Position += fb.size;
-
-            Console.WriteLine( fb.ToString() );
-
-
+            //Console.WriteLine( fb.ToString() );
             return fb;
         }
+
+
+
+        private void ReadDNAStruct()
+        {
+            FileBlock dna1 = null;
+            foreach (FileBlock fb in m_fileBlocks)
+            {
+                if (fb.id == "DNA1")
+                {
+                    dna1 = fb;
+                    break;
+                }
+            }
+
+            if (dna1 == null)
+            {
+                throw new InvalidBlendFileException();
+            }
+
+            m_br.BaseStream.Position = dna1.dataPosition;
+
+
+            DNAStruct dna = new DNAStruct();
+            string id = ReadBytesAsString(4);
+            if (id != "SDNA")
+            {
+                throw new InvalidBlendFileException();
+            }
+            dna.name = ReadBytesAsString(4);
+            
+            Int32 nameCount = m_br.ReadInt32();
+            for (int i = 0; i < nameCount; ++i)
+            {
+                dna.names.Add(ReadNullTerminatedString());    
+            }
+
+            AligneAt4Bytes();
+            string typeid = ReadBytesAsString(4);
+            if (typeid != "TYPE")
+            {
+                throw new InvalidBlendFileException();
+            }
+
+
+            Int32 typeCount = m_br.ReadInt32();
+            for (int i = 0; i < typeCount; ++i)
+            {
+                dna.types.Add(ReadNullTerminatedString());
+            }
+
+            AligneAt4Bytes();
+            string tlenid = ReadBytesAsString(4);
+            if (tlenid != "TLEN")
+            {
+                throw new InvalidBlendFileException();
+            }
+
+            for (int i = 0; i < typeCount; ++i)
+            {
+                dna.lengths.Add(m_br.ReadInt16());
+            }
+
+
+            AligneAt4Bytes();
+            string structid = ReadBytesAsString(4);
+            if (structid != "STRC")
+            {
+                throw new InvalidBlendFileException();
+            }
+
+            Int32 structCount = m_br.ReadInt32();
+            for (int i = 0; i < structCount; ++i)
+            {
+                Structure strc = new Structure();
+                strc.typeIndex = m_br.ReadInt16();
+                strc.nameIndex = m_br.ReadInt16();
+                dna.structures.Add(strc);
+
+            }
+
+            m_DNAStruct = dna;
+        }
+
 
         class Header
         {
@@ -147,13 +257,26 @@ namespace pxl
             public int count;
             public long position;
             public long dataPosition;
-            
 
             public override string ToString()
             {
                 return string.Format("{0}@{1} size={2} old@{3} SDNAindex={4} count={5}",id, position, size,oldPointer, SDNAIndex, count  );
-
             }
+        }
+
+        class DNAStruct
+        {
+            public string name;
+            public List<string> names = new List<string>();
+            public List<string> types = new List<string>();
+            public List<Int16> lengths = new List<short>();
+            public List<Structure> structures = new List<Structure>();
+        }
+
+        class Structure
+        {
+            public Int16 typeIndex;
+            public Int16 nameIndex;
         }
 
         public class InvalidBlendFileException : Exception { }
