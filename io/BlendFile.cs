@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Reflection;
 
 namespace pxl
 {
@@ -18,6 +19,7 @@ namespace pxl
 
         private BlendFile()
         {
+            ;
         }
 
         public static BlendFile Open(string filepath)
@@ -33,7 +35,7 @@ namespace pxl
             string id =  System.Text.Encoding.ASCII.GetString( hdr.identifier ); 
             if (id != "BLENDER")
             {
-                throw new InvalidBlendFileException();
+                throw new ErrorReadingBlendFileException();
             }
 
 
@@ -47,7 +49,7 @@ namespace pxl
             }
             else
             {
-                throw new InvalidBlendFileException();
+                throw new ErrorReadingBlendFileException();
             }
                 
 
@@ -63,7 +65,7 @@ namespace pxl
             }
             else
             {
-                throw new InvalidBlendFileException();
+                throw new ErrorReadingBlendFileException();
             }
 
             bf.version = System.Text.Encoding.ASCII.GetString(hdr.version);
@@ -74,6 +76,8 @@ namespace pxl
 
             bf.ReadFileBlocks();
             bf.ReadDNAStruct();
+            string strdna = bf.GetDNAString();
+            File.WriteAllText( "dna.txt", strdna);
             return bf;
         }
 
@@ -172,7 +176,7 @@ namespace pxl
 
             if (dna1 == null)
             {
-                throw new InvalidBlendFileException();
+                throw new ErrorReadingBlendFileException();
             }
 
             m_br.BaseStream.Position = dna1.dataPosition;
@@ -182,7 +186,7 @@ namespace pxl
             string id = ReadBytesAsString(4);
             if (id != "SDNA")
             {
-                throw new InvalidBlendFileException();
+                throw new ErrorReadingBlendFileException();
             }
             dna.name = ReadBytesAsString(4);
             
@@ -196,7 +200,7 @@ namespace pxl
             string typeid = ReadBytesAsString(4);
             if (typeid != "TYPE")
             {
-                throw new InvalidBlendFileException();
+                throw new ErrorReadingBlendFileException();
             }
 
 
@@ -210,7 +214,7 @@ namespace pxl
             string tlenid = ReadBytesAsString(4);
             if (tlenid != "TLEN")
             {
-                throw new InvalidBlendFileException();
+                throw new ErrorReadingBlendFileException();
             }
 
             for (int i = 0; i < typeCount; ++i)
@@ -223,19 +227,24 @@ namespace pxl
             string structid = ReadBytesAsString(4);
             if (structid != "STRC")
             {
-                throw new InvalidBlendFileException();
+                throw new ErrorReadingBlendFileException();
             }
 
             Int32 structCount = m_br.ReadInt32();
             for (int i = 0; i < structCount; ++i)
             {
-                Structure strc = new Structure();
+                RawDNAStructure strc = new RawDNAStructure();
                 strc.typeIndex = m_br.ReadInt16();
-                strc.nameIndex = m_br.ReadInt16();
+                Int16 fieldCount = m_br.ReadInt16();
+                for (int j = 0; j < fieldCount; ++j)
+                {
+                    RawDNAField field = new RawDNAField();
+                    field.typeIndex = m_br.ReadInt16();
+                    field.nameIndex = m_br.ReadInt16();
+                    strc.fields.Add(field);
+                }
                 dna.structures.Add(strc);
-
             }
-
             m_DNAStruct = dna;
         }
 
@@ -270,16 +279,57 @@ namespace pxl
             public List<string> names = new List<string>();
             public List<string> types = new List<string>();
             public List<Int16> lengths = new List<short>();
-            public List<Structure> structures = new List<Structure>();
+            public List<RawDNAStructure> structures = new List<RawDNAStructure>();
         }
 
-        class Structure
+        class RawDNAStructure
+        {
+            public Int16 typeIndex;
+            public List<RawDNAField> fields = new List<RawDNAField>();
+        }
+
+        class RawDNAField
         {
             public Int16 typeIndex;
             public Int16 nameIndex;
         }
 
-        public class InvalidBlendFileException : Exception { }
+        string GetDNAString()
+        {
+            string str = "";
+            DNAStruct dna = m_DNAStruct;
+
+            foreach (RawDNAStructure strc in dna.structures)
+            {
+                str += string.Format("{0} (type_{1})\n", dna.types[strc.typeIndex], strc.typeIndex);
+                foreach (var f in strc.fields)
+                {
+                    str += string.Format("\t({2}){0} {1}\n", dna.types[f.typeIndex], dna.names[f.nameIndex], f.typeIndex);
+                }
+                str += string.Format("\n\n");
+            }
+
+
+            return str;
+        }
+
+        class BlendVar
+        {
+            internal BlendFile m_blendfile;
+
+            /*
+            public long ReadPointer();
+            public byte readByte();
+
+            public Int16 readInt16();
+            public Int32 readInt32();
+            public Int64 readInt64();
+            */
+
+
+        }
+
+        public class ErrorReadingBlendFileException : Exception { }
 
     }
 }
