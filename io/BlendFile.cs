@@ -9,13 +9,20 @@ namespace pxl
 {
     public class BlendFile
     {
-        BinaryReader m_br = null;
+        internal BinaryReader m_br = null;
         List<FileBlock> m_fileBlocks = new List<FileBlock>();
-        DNAStruct m_DNAStruct = null;
+        DNA1 m_dna1 = null;
 
         int pointerSize;
         Endianness endianness;
         string version;
+
+        internal BlendVar GetVarByOldPointer( long pointer )
+        {
+            BlendVar bvar = null;
+
+            return bvar;
+        }
 
         private BlendFile()
         {
@@ -36,6 +43,7 @@ namespace pxl
             if (id != "BLENDER")
             {
                 throw new ErrorReadingBlendFileException();
+
             }
 
 
@@ -76,8 +84,10 @@ namespace pxl
 
             bf.ReadFileBlocks();
             bf.ReadDNAStruct();
-            string strdna = bf.GetDNAString();
-            File.WriteAllText( "dna.txt", strdna);
+
+            File.WriteAllText("dna.txt", bf.GetDNAString());
+            File.WriteAllText("data.txt", bf.GetFileBlockString());
+
             return bf;
         }
 
@@ -98,7 +108,12 @@ namespace pxl
 
         private string ReadBytesAsString(int count)
         {
-            return System.Text.Encoding.ASCII.GetString( m_br.ReadBytes( count) );
+            string str = System.Text.Encoding.ASCII.GetString(m_br.ReadBytes(count));
+            while (str.Last() == '\0')
+            {
+                str = str.Remove(str.Length - 1);
+            }
+            return str;
         }
 
         private string ReadNullTerminatedString()
@@ -114,17 +129,17 @@ namespace pxl
 ;
         }
 
-        private Int64 ReadPointer()
+        private UInt64 ReadPointer()
         {
-            Int64 ptr = 0;
+            UInt64 ptr = 0;
             if (pointerSize == 4)
             {
-                ptr = m_br.ReadInt32();
+                ptr = m_br.ReadUInt32();
             }
 
             if (pointerSize == 8)
             {
-                ptr = m_br.ReadInt64();
+                ptr = m_br.ReadUInt64();
             }
 
             return ptr;
@@ -142,12 +157,12 @@ namespace pxl
 
         private FileBlock ReadFileBlock()
         {
-            FileBlock fb = new FileBlock();
+            FileBlock fb = new FileBlock( this );
 
             AligneAt4Bytes();
 
             fb.position     = m_br.BaseStream.Position;
-            fb.id           = System.Text.Encoding.ASCII.GetString(m_br.ReadBytes(4));
+            fb.code         = ReadBytesAsString(4);
             fb.size         = m_br.ReadInt32();
             fb.oldPointer   = ReadPointer();
             fb.SDNAIndex    = m_br.ReadInt32();
@@ -167,7 +182,7 @@ namespace pxl
             FileBlock dna1 = null;
             foreach (FileBlock fb in m_fileBlocks)
             {
-                if (fb.id == "DNA1")
+                if (fb.code == "DNA1")
                 {
                     dna1 = fb;
                     break;
@@ -182,7 +197,7 @@ namespace pxl
             m_br.BaseStream.Position = dna1.dataPosition;
 
 
-            DNAStruct dna = new DNAStruct();
+            DNA1 dna = new DNA1();
             string id = ReadBytesAsString(4);
             if (id != "SDNA")
             {
@@ -233,19 +248,19 @@ namespace pxl
             Int32 structCount = m_br.ReadInt32();
             for (int i = 0; i < structCount; ++i)
             {
-                RawDNAStructure strc = new RawDNAStructure();
+                SDNAStruct strc = new SDNAStruct( dna );
                 strc.typeIndex = m_br.ReadInt16();
                 Int16 fieldCount = m_br.ReadInt16();
                 for (int j = 0; j < fieldCount; ++j)
                 {
-                    RawDNAField field = new RawDNAField();
+                    DNAField field = new DNAField(dna );
                     field.typeIndex = m_br.ReadInt16();
                     field.nameIndex = m_br.ReadInt16();
                     strc.fields.Add(field);
                 }
-                dna.structures.Add(strc);
+                dna.Add(strc);
             }
-            m_DNAStruct = dna;
+            m_dna1 = dna;
         }
 
 
@@ -259,9 +274,16 @@ namespace pxl
 
         class FileBlock
         {
-            public string id;
+            private BlendFile m_fb;
+
+            public FileBlock(BlendFile blendFile)
+            {
+                m_fb = blendFile;
+            }
+
+            public string code;
             public int size;
-            public Int64 oldPointer;
+            public UInt64 oldPointer;
             public int SDNAIndex;
             public int count;
             public long position;
@@ -269,64 +291,468 @@ namespace pxl
 
             public override string ToString()
             {
-                return string.Format("{0}@{1} size={2} old@{3} SDNAindex={4} count={5}",id, position, size,oldPointer, SDNAIndex, count  );
+                return string.Format("{0}@{1} size={2} old@{3} SDNAindex={4} count={5}", code, position, size, oldPointer, SDNAIndex, count  );
+            }
+
+            public int elementSize
+            {
+                get
+                {
+                    DNA1 dna1 = m_fb.m_dna1;
+
+                    Int16 typeIndex = dna1.GetSDNAbyIndex(SDNAIndex).typeIndex;
+                    int elementSize = dna1.lengths[typeIndex];
+                    return elementSize;
+
+                }
+            }
+            public string type
+            {
+                get
+                {
+                    DNA1 dna1 = m_fb.m_dna1;
+                    Int16 typeIndex = dna1.GetSDNAbyIndex(SDNAIndex).typeIndex;
+                    return dna1.types[typeIndex];
+                }
+
+
             }
         }
 
-        class DNAStruct
+        class DNA1
         {
             public string name;
+
+            List<SDNAStruct> m_SDNAStructs = new List<SDNAStruct>();
+            Dictionary<Int16, SDNAStruct> m_sdnaByTypeIndex = new Dictionary<short,SDNAStruct>();
+
+            internal void Add( SDNAStruct sdna )
+            {
+                m_SDNAStructs.Add(sdna);
+                m_sdnaByTypeIndex[sdna.typeIndex] = sdna;
+            }
+
+            public SDNAStruct[] sdnaStructs
+            {
+                get
+                {
+                    return m_SDNAStructs.ToArray();
+                }
+            }
+
+            public SDNAStruct GetSDNAbyIndex( int sdnaIndex )
+            {
+                return m_SDNAStructs[ sdnaIndex ];
+            }
+
+            public SDNAStruct GetSDNAbyType(Int16 typeIndex)
+            {
+                SDNAStruct sdna = null;
+                if (m_sdnaByTypeIndex.ContainsKey(typeIndex))
+                {
+                    sdna = m_sdnaByTypeIndex[typeIndex]; 
+                }
+                return sdna;
+            }
+
+
+
             public List<string> names = new List<string>();
             public List<string> types = new List<string>();
             public List<Int16> lengths = new List<short>();
-            public List<RawDNAStructure> structures = new List<RawDNAStructure>();
+
+
         }
 
-        class RawDNAStructure
+        class SDNAStruct
         {
+            private DNA1 m_dna1;
+            internal SDNAStruct(DNA1 dna1)
+            {
+                m_dna1 = dna1;
+            }
+
+            public string type
+            {
+                get
+                {
+                    return m_dna1.types[typeIndex];
+
+                }
+            }
             public Int16 typeIndex;
-            public List<RawDNAField> fields = new List<RawDNAField>();
+            public List<DNAField> fields = new List<DNAField>();
         }
 
-        class RawDNAField
+        class DNAField
         {
+            private DNA1 m_dna1;
+            internal DNAField(DNA1 dna1)
+            {
+                m_dna1 = dna1;
+            }
+
+            public string name
+            {
+                get
+                {
+                    return m_dna1.names[nameIndex];
+                }
+            }
+
+            public string type
+            {
+                get
+                {
+                    return m_dna1.types[typeIndex];
+                }
+            }
+
             public Int16 typeIndex;
             public Int16 nameIndex;
         }
 
-        string GetDNAString()
+        string GetFileBlockString()
         {
-            string str = "";
-            DNAStruct dna = m_DNAStruct;
-
-            foreach (RawDNAStructure strc in dna.structures)
+            StringBuilder str = new StringBuilder();
+            foreach (FileBlock fb in m_fileBlocks)
             {
-                str += string.Format("{0} (type_{1})\n", dna.types[strc.typeIndex], strc.typeIndex);
-                foreach (var f in strc.fields)
+                str.Append( string.Format("{0}\n", fb.ToString()));
+                for (int i = 0; i < fb.count; ++i)
                 {
-                    str += string.Format("\t({2}){0} {1}\n", dna.types[f.typeIndex], dna.names[f.nameIndex], f.typeIndex);
+                    str.Append( string.Format("{0}:{1}/{2}\n", fb.type, i + 1, fb.count) );
+
+                    Stack<BlendVar> fifo = new Stack<BlendVar>();
+                    Stack<int> fifo_indent = new Stack<int>();
+                    BlendVar varfb = new BlendVar(this, fb.dataPosition + i * fb.elementSize, fb.SDNAIndex);
+                    
+                    fifo.Push(varfb);
+                    fifo_indent.Push(1);
+                    while (fifo.Count > 0)
+                    {
+
+                        BlendVar blendVar = fifo.Pop();
+                        int indent = fifo_indent.Pop();
+
+                        for (int t = 0; t < indent; ++t )
+                            str.Append( "\t" );
+
+                        object value = blendVar.Read();
+                        str.Append( string.Format("{0} {1}", blendVar.type, blendVar.name) );
+                        if (value != null)
+                        {
+                            str.Append(" = ");
+                            float[] values = value as float[];
+                            if (values != null )
+                            {
+                                str.Append("[");
+                                foreach (var v in values)
+                                {
+                                    str.Append(v);
+                                    str.Append(", ");
+                                }
+                                str.Remove(str.Length - 2, 2);
+                                str.Append("]");
+
+                            }
+                            else
+                            {
+                                str.Append( value );
+                            }
+                        }
+                        str.Append("\n");
+
+                        BlendVar[] submembers = blendVar.members;
+                        if (submembers != null)
+                        {
+                            int n = submembers.Length;
+                            for (int m = 0; m < n; ++m )
+                            {
+                                fifo.Push(submembers[n -1- m]);
+                                fifo_indent.Push(indent + 1);
+                            }
+                        }
+                    }
+
+                    str.Append( "\n" );
                 }
-                str += string.Format("\n\n");
             }
-
-
-            return str;
+            return str.ToString();
         }
 
-        class BlendVar
+        string GetDNAString()
         {
-            internal BlendFile m_blendfile;
+            StringBuilder str = new StringBuilder();
+            DNA1 dna = m_dna1;
 
-            /*
-            public long ReadPointer();
-            public byte readByte();
+            for (int i = 0; i < dna.types.Count; ++i)
+            {
+                str.Append( string.Format("{0}\t{1}\t{2}\n", i, dna.types[i], dna.lengths[i]) );
+            }
 
-            public Int16 readInt16();
-            public Int32 readInt32();
-            public Int64 readInt64();
-            */
+            for (int i = 0; i < dna.sdnaStructs.Length; ++i )
+            {
+                SDNAStruct strc = dna.sdnaStructs[i];
+                str.Append( string.Format("sdna_{2} {0} (type_{1})\n", strc.type, strc.typeIndex, i) );
+                foreach (DNAField f in strc.fields)
+                {
+                    str.Append( string.Format("\t({2}){0} {1}\n", f.type, f.name, f.typeIndex) );
+                }
+                str.Append( string.Format("\n\n") );
+            }
+            return str.ToString();
+        }
+
+        public class BlendVar
+        {
+            internal BlendFile m_bf;
+
+            private SDNAStruct m_sdna = null;
+            private BlendVarType m_varType;
+            private Int16 m_typeIndex;
+            private long m_offset;
+            private string m_type;
+            private int m_count;
+            private BlendVar[] m_members;
+
+            public string name;
+
+            public BlendVarType varType{ get{ return m_varType;}}
+            public int count { get { return m_count; } }
+
+            internal BlendVar(BlendFile bf, long offset, int sdnaIndex)
+            {
+                m_bf = bf;
+                m_offset = offset;
+                m_typeIndex = bf.m_dna1.sdnaStructs[sdnaIndex].typeIndex;
+                m_varType = GetType(m_typeIndex, null);
+
+                Init(bf, m_typeIndex, null);
+            }
+
+            internal BlendVar(BlendFile bf, long offset, Int16 typeIndex, string name)
+            {
+                m_bf        = bf;
+                m_offset    = offset;
+                m_typeIndex = typeIndex;  
+                m_varType   = GetType(typeIndex, name);
+                this.name = name;
+
+                Init(bf, typeIndex, name);
+            }
+
+            private void Init(BlendFile bf, Int16 typeIndex, string name)
+            {
+                if (m_varType == BlendVarType.Structure)
+                {
+                    m_sdna = bf.m_dna1.GetSDNAbyType(typeIndex);
+                    if (m_sdna != null)
+                    {
+                        m_type = m_sdna.type;
+                    }
+                }
+                else
+                {
+                    m_type = bf.m_dna1.types[ typeIndex ];
+                }
+
+                if (m_varType == BlendVarType.Array || m_varType == BlendVarType.List)
+                {
+                    m_count = 1;
+                    int startIndex = 0;
+                    {
+                        int s = name.IndexOf('[', startIndex);
+                        int e = name.IndexOf(']', startIndex);
+                        if (s >= 0)
+                        {
+                            int l = e - (s+1);
+                            string num = name.Substring(s + 1, l);
+                            m_count *= Convert.ToInt32(num);
+                            startIndex = e;
+                        }
+                    }
+                }
+                else
+                {
+                    m_count = 1;
+                }
+            }
+
+            public string type
+            {
+                get { return m_type; }
+            }
+
+            public Object Read()
+            {
+                Object obj = null;
+                m_bf.m_br.BaseStream.Position = m_offset;
 
 
+                if (varType == BlendVarType.Primitive)
+                {
+                    switch (type)
+                    {
+                        case "char":    obj = m_bf.m_br.ReadByte();     break;
+                        case "short":   obj = m_bf.m_br.ReadInt16();    break;
+                        case "int":     obj = m_bf.m_br.ReadInt32();    break;
+                        case "float":   obj = m_bf.m_br.ReadSingle();   break;
+                        case "double":  obj = m_bf.m_br.ReadDouble();   break;
+                    }
+                }
+                else if( varType == BlendVarType.Array )
+                {
+                    int count = m_count;
+                    switch (type)
+                    {
+                        case "char":    obj = new byte[count];   break;
+                        case "short":   obj = new Int16[count];  break;
+                        case "int":     obj = new Int32[count];  break;
+                        case "float":   obj = new float[count];  break;
+                        case "double":  obj = new double[count]; break;
+                    }
+
+                    for (int i = 0; i < count; ++i)
+                    {
+                        switch (type)
+                        {
+                            case "char":    ((byte[])   obj)[i]  = m_bf.m_br.ReadByte();     break;
+                            case "short":   ((Int16[])  obj)[i]  = m_bf.m_br.ReadInt16();    break;
+                            case "int":     ((Int32[])  obj)[i]  = m_bf.m_br.ReadInt32();    break;
+                            case "float":   ((float[])  obj)[i]  = m_bf.m_br.ReadSingle();   break;
+                            case "double":  ((double[]) obj)[i]  = m_bf.m_br.ReadDouble();   break;
+                        }
+
+                    }
+                    
+                    if (type == "char")
+                    {
+                        string str = System.Text.Encoding.ASCII.GetString(((byte[])obj));
+                        obj = str.Trim(new char[] { '\0' }); 
+                    }
+                }
+                else if (varType == BlendVarType.Pointer)
+                {
+                    obj = m_bf.ReadPointer();
+                }
+                
+                return obj;
+            }
+
+            public BlendVar[] members
+            {
+                get
+                {
+                    if (m_members == null)
+                    {
+                        if (varType == BlendVarType.Structure)
+                        {
+                            long offset = m_offset;
+                            List<BlendVar> members = new List<BlendVar>();
+                            foreach (DNAField f in m_sdna.fields)
+                            {
+                                BlendVar member = new BlendVar(m_bf, offset, f.typeIndex, f.name);
+                                members.Add( member );
+
+                                int typeLength = m_bf.m_dna1.lengths[f.typeIndex];
+                                if (member.m_varType == BlendVarType.Pointer || member.m_varType == BlendVarType.List)
+                                {
+                                    typeLength = m_bf.pointerSize;
+                                }
+                                
+                                offset += member.count * typeLength;
+                            }
+                            m_members = members.ToArray();
+                        }
+                    }
+                    return m_members;
+                }
+            }
+
+            public BlendVar this[int index]
+            {
+                get
+                {
+                    return null;
+                }   
+            }
+
+            public BlendVar this[string name]
+            {
+                get
+                {
+                    return null;
+                }
+            }
+
+            public static BlendVarType GetType(int typeIndex, string name)
+            {
+                BlendVarType type = BlendVarType.Structure;
+                bool isPointer = false;
+                bool isArray   = false;
+                if (name != null)
+                {
+                    if ( name.Length > 0 && name[0] == '*')
+                    {
+                        isPointer = true;
+                    }
+
+                    if (name.Length > 0 && name.Last() == ']')
+                    {
+                        isArray = true;
+                    }
+                }
+
+                if (!isArray && !isPointer)
+                {
+                    if (typeIndex < 12)
+                    {
+                        type = BlendVarType.Primitive;
+                    }
+                }
+                else if (isArray && !isPointer)
+                {
+                    type = BlendVarType.Array;
+                }
+                else if (isPointer)
+                {
+                    type = BlendVarType.Pointer;
+                }
+
+                return type;
+            }
+
+            // primitive implicit casting
+            public static implicit operator byte(BlendVar v) { return (byte)v.Read(); }
+            public static implicit operator Int16(BlendVar v) { return (Int16)v.Read(); }
+            public static implicit operator Int32(BlendVar v) { return (Int32)v.Read(); }
+            public static implicit operator Int64(BlendVar v) { return (Int64)v.Read(); }
+
+            public static implicit operator float(BlendVar v) { return (float)v.Read(); }
+            public static implicit operator double(BlendVar v) { return (double)v.Read(); }
+
+            public static implicit operator string(BlendVar v) { return (string)v.Read(); }
+
+            // array of primitive implicit casting
+            public static implicit operator byte[](BlendVar v) { return (byte[])v.Read(); }
+            public static implicit operator Int16[](BlendVar v) { return (Int16[])v.Read(); }
+            public static implicit operator Int32[](BlendVar v) { return (Int32[])v.Read(); }
+            public static implicit operator Int64[](BlendVar v) { return (Int64[])v.Read(); }
+
+            public static implicit operator float[](BlendVar v) { return (float[])v.Read(); }
+            public static implicit operator double[](BlendVar v) { return (double[])v.Read(); }
+
+            public static implicit operator string[](BlendVar v) { return (string[])v.Read(); }
+
+
+            public enum BlendVarType
+            {
+                Primitive,
+                Pointer,
+                List,
+                Array,
+                Structure
+            }
         }
 
         public class ErrorReadingBlendFileException : Exception { }

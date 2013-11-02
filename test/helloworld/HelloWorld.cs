@@ -41,6 +41,8 @@ class MainClass
 
 	public static int Main (string[] args)
 	{
+
+
 		Application app = new Application( 400, 300);
         Console.WriteLine( pxl.GLHelper.infoString );
         
@@ -77,7 +79,7 @@ class MainClass
         cam.far = 60.0f;
 
         BlendFile bf = BlendFile.Open("cube.blend");
-		app.Loop( 200.0f );
+		app.Loop( 60.0f );
 		app.Quit();
 		return 0;
 	}
