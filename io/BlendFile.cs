@@ -442,7 +442,7 @@ namespace pxl
                         if (value != null)
                         {
                             str.Append(" = ");
-                            float[] values = value as float[];
+                            Object[] values = blendVar;
                             if (values != null )
                             {
                                 str.Append("[");
@@ -560,15 +560,20 @@ namespace pxl
                 {
                     m_count = 1;
                     int startIndex = 0;
+                    while( startIndex >= 0)
                     {
                         int s = name.IndexOf('[', startIndex);
                         int e = name.IndexOf(']', startIndex);
                         if (s >= 0)
                         {
-                            int l = e - (s+1);
+                            int l = e - (s + 1);
                             string num = name.Substring(s + 1, l);
                             m_count *= Convert.ToInt32(num);
-                            startIndex = e;
+                            startIndex = e + 1;
+                        }
+                        else
+                        {
+                            startIndex = -1;
                         }
                     }
                 }
@@ -627,8 +632,17 @@ namespace pxl
                     
                     if (type == "char")
                     {
-                        string str = System.Text.Encoding.ASCII.GetString(((byte[])obj));
-                        obj = str.Trim(new char[] { '\0' }); 
+                        List<byte> bstr = new List<byte>();
+                        byte[] bytes = ((byte[])obj);
+
+                        foreach (byte b in bytes )
+                        {
+                            if (b == '\0')
+                                break;
+                            bstr.Add(b);
+                        }
+                        string str = System.Text.Encoding.ASCII.GetString( bstr.ToArray() );
+                        obj = string.Format("\"{0}\"", str); 
                     }
                 }
                 else if (varType == BlendVarType.Pointer)
@@ -734,15 +748,47 @@ namespace pxl
             public static implicit operator string(BlendVar v) { return (string)v.Read(); }
 
             // array of primitive implicit casting
-            public static implicit operator byte[](BlendVar v) { return (byte[])v.Read(); }
-            public static implicit operator Int16[](BlendVar v) { return (Int16[])v.Read(); }
-            public static implicit operator Int32[](BlendVar v) { return (Int32[])v.Read(); }
-            public static implicit operator Int64[](BlendVar v) { return (Int64[])v.Read(); }
+            public static implicit operator byte[](BlendVar v) { return v.Read() as byte[]; }
+            public static implicit operator Int16[](BlendVar v) { return v.Read() as Int16[]; }
+            public static implicit operator Int32[](BlendVar v) { return v.Read() as Int32[]; }
+            public static implicit operator Int64[](BlendVar v) { return v.Read() as Int64[]; }
 
-            public static implicit operator float[](BlendVar v) { return (float[])v.Read(); }
-            public static implicit operator double[](BlendVar v) { return (double[])v.Read(); }
+            public static implicit operator float[](BlendVar v) { return v.Read() as float[]; }
+            public static implicit operator double[](BlendVar v) { return v.Read() as double[]; }
 
-            public static implicit operator string[](BlendVar v) { return (string[])v.Read(); }
+            public static implicit operator string[](BlendVar v) { return v.Read() as string[]; }
+
+            public static implicit operator object[](BlendVar v)
+            {
+                Object[] objs = null;
+                List<Object> list = new List<Object>();
+                
+                byte[] bytes = v;
+                Int16[] int16s = v;
+                Int32[] int32s = v;
+                Int64[] int64s = v;
+
+                float[] floats  = v;
+                double[] doubles = v;
+
+                string[] strings = v;
+
+                if (bytes != null) foreach (var o in bytes) list.Add(o);
+                if (int16s != null) foreach (var o in int16s) list.Add(o);
+                if (int32s != null) foreach (var o in int32s) list.Add(o);
+                if (int64s != null) foreach (var o in int64s) list.Add(o);
+
+                if (doubles != null) foreach (var o in doubles) list.Add(o);
+                if (floats != null) foreach (var o in floats) list.Add(o);
+
+                if (strings != null) foreach (var o in strings) list.Add(o);
+
+                if( list.Count > 0 )
+                    objs = list.ToArray();
+
+                return objs;
+            }
+
 
 
             public enum BlendVarType
