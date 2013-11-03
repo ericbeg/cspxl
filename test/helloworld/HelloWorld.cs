@@ -79,6 +79,13 @@ class MainClass
         cam.far = 60.0f;
 
         BlendFile bf = BlendFile.Open("cube.blend");
+        var list = bf.datablockNames;
+        var v = bf["OBCube"];
+        var m = v.fields;
+        var id = v["id"];
+
+        bf.Close(); bf = null;
+
 		app.Loop( 60.0f );
 		app.Quit();
 		return 0;
