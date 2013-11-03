@@ -20,7 +20,10 @@ namespace pxl
 		// Constructor 
 		public Application() : this( 800, 600 ){ }
 			
-		public Application(int width, int height) : base(width, height, new GraphicsMode(32, 24) ){}
+		public Application(int width, int height) : base(width, height, new GraphicsMode(32, 24) )
+        {
+            RegisterBlendLoaders();
+        }
 
         protected override void OnResize(EventArgs e)
         {
@@ -29,8 +32,13 @@ namespace pxl
             GL.Viewport(0, 0, Width, Height);
 
             double aspect_ratio = Width / (double)Height;
-        }		
-		
+        }
+
+        private void RegisterBlendLoaders()
+        {
+            BlendFile.Register(new BMeshBlendLoader(), "ME");
+        }
+
         /// <summary>
         /// Prepares the next frame for rendering.
         /// </summary>

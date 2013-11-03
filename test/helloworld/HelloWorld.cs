@@ -84,6 +84,9 @@ class MainClass
         var m = v.fields;
         var id = v["id"];
 
+        string test = bf.Load("MECube") as string;
+
+
         bf.Close(); bf = null;
 
 		app.Loop( 60.0f );

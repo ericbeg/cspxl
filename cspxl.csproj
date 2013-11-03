@@ -60,8 +60,10 @@
   <ItemGroup>
     <Compile Include="core\Behaviour.cs" />
     <Compile Include="core\ObjectFactory.cs" />
+    <Compile Include="graphics\BMesh.cs" />
     <Compile Include="graphics\Extensions.cs" />
     <Compile Include="io\BlendFile.cs" />
+    <Compile Include="io\BlendLoader\BMeshBlendLoader.cs" />
     <Compile Include="io\EndiannessSaveBinaryReader.cs" />
     <Compile Include="math\cgmath.cs" />
     <Compile Include="opengl\GLTexture.cs" />

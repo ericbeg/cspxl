@@ -12,10 +12,16 @@ namespace pxl
     /// </summary>
     public class BlendFile
     {
+        private BlendFile()
+        {
+            ;
+        }
+
         internal BinaryReader m_br = null;
         List<FileBlock> m_fileBlocks = new List<FileBlock>();
         Dictionary<ulong, FileBlock> m_fileBlockByOldPointer = new Dictionary<ulong, FileBlock>();
         Dictionary<string, FileBlock> m_fileBlockByName = new Dictionary<string, FileBlock>();
+        static Dictionary<string, IBlendLoader> m_loaders = new Dictionary<string, IBlendLoader>();
         DNA1 m_dna1 = null;
 
         int pointerSize;
@@ -41,7 +47,37 @@ namespace pxl
             }
             return fb;
         }
-        
+
+        /// <summary>
+        /// Resgister a datablock loader.
+        /// </summary>
+        /// <param name="loader"></param>
+        /// <param name="code"></param>
+        public static void Register(IBlendLoader loader, string code)
+        {
+            m_loaders[code] = loader;
+        }
+
+        /// <summary>
+        /// Load the datablock that has this name.
+        /// </summary>
+        /// <param name="datablock"></param>
+        /// <returns></returns>
+        public Object Load(string datablock)
+        {
+            Object data = null;
+
+            IBlendLoader loader = GetLoaderFor(datablock);
+            if (loader != null)
+            {
+                BlendVar bvar = GetVar(datablock);
+                if (bvar != null)
+                {
+                    data = loader.Load(bvar);
+                }
+            }
+            return data;
+        }
         /// <summary>
         /// Returns the datablock with the name as a BlendVar.
         /// </summary>
@@ -72,6 +108,11 @@ namespace pxl
         /// </summary>
         public BinaryReader binaryReader { get { return m_br; } }
 
+        static IBlendLoader GetLoaderFor(string name)
+        {
+            string code = name.Substring(0, 2);
+            return m_loaders[code];
+        }
 
         internal BlendVar GetVar(string name)
         {
@@ -80,6 +121,7 @@ namespace pxl
             if (fb != null)
             {
                 bvar = new BlendVar(this, fb.dataPosition, fb.SDNAIndex);
+                bvar.m_oldPointer = fb.oldPointer;
             }
             return bvar;
         }
@@ -92,6 +134,7 @@ namespace pxl
             if (fb != null)
             {
                 bvar = new BlendVar(this, fb.dataPosition, fb.SDNAIndex);
+                bvar.m_oldPointer = fb.oldPointer;
             }
             return bvar;
         }
@@ -105,6 +148,8 @@ namespace pxl
                 for (int i = 0; i < fb.count; ++i)
                 {
                     BlendVar varfb = new BlendVar(this, fb.dataPosition + i * fb.elementSize, fb.SDNAIndex);
+                    if( i==0 )
+                        varfb.m_oldPointer = fb.oldPointer;
                     bvars.Add(varfb);
                 }
             }
@@ -112,10 +157,6 @@ namespace pxl
         }
 
 
-        private BlendFile()
-        {
-            ;
-        }
 
 
         /// <summary>
@@ -650,16 +691,27 @@ namespace pxl
         /// </summary>
         public class BlendVar
         {
-            internal BlendFile m_bf;
+            /// <summary>
+            /// BlendFile this BlendVar originates from.
+            /// </summary>
+            public BlendFile blendFile { get { return m_bf; } }
 
+            internal BlendFile m_bf;
+            internal ulong m_oldPointer;
             private SDNAStruct m_sdna = null;
             private BlendVarType m_varType;
             private Int16 m_typeIndex;
             private long m_offset;
             private string m_type;
+            private int m_typeSize;
             private int m_count;
             private BlendVar[] m_fields;
             private Dictionary<string, int> m_memberIndexByName = new Dictionary<string, int>();
+
+            /// <summary>
+            /// The original type size in bytes.
+            /// </summary>
+            public int typeSize { get { return m_typeIndex; } }
 
             internal string m_name;
 
@@ -672,7 +724,6 @@ namespace pxl
                 m_offset = offset;
                 m_typeIndex = bf.m_dna1.sdnaStructs[sdnaIndex].typeIndex;
                 m_varType = GetType(m_typeIndex, null);
-
                 Init(bf, m_typeIndex, null);
             }
 
@@ -688,6 +739,8 @@ namespace pxl
 
             private void Init(BlendFile bf, Int16 typeIndex, string name)
             {
+                m_typeSize = bf.m_dna1.lengths[typeIndex];
+
                 if (m_varType == BlendVarType.Structure)
                 {
                     m_sdna = bf.m_dna1.GetSDNAbyType(typeIndex);
@@ -885,7 +938,6 @@ namespace pxl
 
                     if (member != null && member.varType == BlendVarType.Pointer)
                     {
-                        // Dereferenced the pointer
                         BlendPointer ptr = (BlendPointer)member;
                         member = ptr;
                     }
@@ -960,10 +1012,9 @@ namespace pxl
             public static implicit operator BlendVar[] (BlendVar v)
             {
                 BlendVar[] referenced = null;
-                if (v != null && v.varType == BlendVarType.Pointer)
+                if ( v != null )
                 {
-                    ulong address = v;
-                    referenced = v.m_bf.GetVarsByOldPointer(address);
+                    referenced = v.m_bf.GetVarsByOldPointer(v.m_oldPointer);
                 }
                 return referenced;
             }
@@ -1076,8 +1127,19 @@ namespace pxl
             {
                 return ptr.address;
             }
+        }
 
-
+        /// <summary>
+        /// Interface of a datablock loader.
+        /// </summary>
+        public interface IBlendLoader
+        {
+            /// <summary>
+            /// The method specifying how a datablock is loaded.
+            /// </summary>
+            /// <param name="bvar"></param>
+            /// <returns></returns>
+            Object Load(BlendVar bvar);
         }
 
         /// <summary>
