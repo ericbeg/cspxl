@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma  warning disable 1591
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,6 +49,8 @@ namespace pxl
             }
             return fb;
         }
+
+        public FileBlock[] fileBloks { get { return m_fileBlocks.ToArray(); } }
 
         /// <summary>
         /// Resgister a datablock loader.
@@ -121,7 +125,7 @@ namespace pxl
             if (fb != null)
             {
                 bvar = new BlendVar(this, fb.dataPosition, fb.SDNAIndex);
-                bvar.m_oldPointer = fb.oldPointer;
+                bvar.m_fileBlockIndex = fb.fileBlockIndex;
             }
             return bvar;
         }
@@ -134,7 +138,7 @@ namespace pxl
             if (fb != null)
             {
                 bvar = new BlendVar(this, fb.dataPosition, fb.SDNAIndex);
-                bvar.m_oldPointer = fb.oldPointer;
+                bvar.m_fileBlockIndex = fb.fileBlockIndex;
             }
             return bvar;
         }
@@ -148,8 +152,7 @@ namespace pxl
                 for (int i = 0; i < fb.count; ++i)
                 {
                     BlendVar varfb = new BlendVar(this, fb.dataPosition + i * fb.elementSize, fb.SDNAIndex);
-                    if( i==0 )
-                        varfb.m_oldPointer = fb.oldPointer;
+                    varfb.m_fileBlockIndex = fb.m_fileBlockIndex;
                     bvars.Add(varfb);
                 }
             }
@@ -321,11 +324,14 @@ namespace pxl
         private void ReadFileBlocks()
         {
             // Read file blocks
+            int i = 0;
             while (m_br.BaseStream.Position < m_br.BaseStream.Length) // until EOF
             {
                 FileBlock fb = ReadFileBlock();
+                fb.m_fileBlockIndex = i;
                 m_fileBlocks.Add(fb);
                 m_fileBlockByOldPointer[fb.oldPointer] = fb;
+                ++i;
             }
         }
 
@@ -446,13 +452,16 @@ namespace pxl
             public byte[] version;
         }
 
-        internal class FileBlock
+        /// <summary>
+        /// Represents a Blender File Block.
+        /// </summary>
+        public class FileBlock
         {
-            private BlendFile m_fb;
+            private BlendFile m_bf;
 
             public FileBlock(BlendFile blendFile)
             {
-                m_fb = blendFile;
+                m_bf = blendFile;
             }
 
             public string code;
@@ -463,6 +472,33 @@ namespace pxl
             public long position;
             public long dataPosition;
 
+            internal int m_fileBlockIndex;
+
+            public int fileBlockIndex { get { return m_fileBlockIndex; } }
+
+            /// <summary>
+            /// Set the binaryReader stream position at the the position of this fileblock data.
+            /// This is used to access the binary data directly by using binaryReader.
+            /// </summary>
+            public void Seek()
+            {
+                if (m_bf != null && m_bf.m_br != null)
+                    m_bf.m_br.BaseStream.Position = dataPosition;
+            }
+
+            /// <summary>
+            /// Set the binaryReader stream position at the the position of the ith data element.
+            /// This is used to access the binary data directly by using binaryReader.
+            /// </summary>
+            public void Seek( int i)
+            {
+                if (m_bf != null && m_bf.m_br != null)
+                {
+                    m_bf.m_br.BaseStream.Position = dataPosition + i*elementSize;
+                }
+            }
+
+
             public override string ToString()
             {
                 return string.Format("{0}@{1} size={2} old@{3} SDNAindex={4} count={5}", code, position, size, oldPointer.ToString("x16"), SDNAIndex, count  );
@@ -472,7 +508,7 @@ namespace pxl
             {
                 get
                 {
-                    DNA1 dna1 = m_fb.m_dna1;
+                    DNA1 dna1 = m_bf.m_dna1;
 
                     Int16 typeIndex = dna1.GetSDNAbyIndex(SDNAIndex).typeIndex;
                     int elementSize = dna1.lengths[typeIndex];
@@ -484,7 +520,7 @@ namespace pxl
             {
                 get
                 {
-                    DNA1 dna1 = m_fb.m_dna1;
+                    DNA1 dna1 = m_bf.m_dna1;
                     Int16 typeIndex = dna1.GetSDNAbyIndex(SDNAIndex).typeIndex;
                     return dna1.types[typeIndex];
                 }
@@ -697,7 +733,7 @@ namespace pxl
             public BlendFile blendFile { get { return m_bf; } }
 
             internal BlendFile m_bf;
-            internal ulong m_oldPointer;
+            internal int m_fileBlockIndex;
             private SDNAStruct m_sdna = null;
             private BlendVarType m_varType;
             private Int16 m_typeIndex;
@@ -708,10 +744,6 @@ namespace pxl
             private BlendVar[] m_fields;
             private Dictionary<string, int> m_memberIndexByName = new Dictionary<string, int>();
 
-            /// <summary>
-            /// The original type size in bytes.
-            /// </summary>
-            public int typeSize { get { return m_typeIndex; } }
 
             internal string m_name;
 
@@ -796,6 +828,24 @@ namespace pxl
                     }
                 }
 
+            }
+
+            /// <summary>
+            /// The original type size in bytes.
+            /// </summary>
+            public int typeSize { get { return m_typeIndex; } }
+
+            /// <summary>
+            /// The Blender file block this BlendVar originates from.
+            /// </summary>
+            public FileBlock fileBlock
+            {
+                get
+                {
+                    FileBlock fb = null;
+                    fb = m_bf.m_fileBlocks[m_fileBlockIndex];
+                    return fb;
+                }
             }
 
             /// <summary>
@@ -981,6 +1031,25 @@ namespace pxl
 
                 return type;
             }
+            /// <summary>
+            /// ToString()
+            /// </summary>
+            /// <returns></returns>
+
+            public override string ToString()
+            {
+                string str = null;
+                if (m_name != null)
+                {
+                    str = m_name;
+                }
+                else
+                {
+                   str = base.ToString();
+                }
+
+                return str;
+            }
 
             // primitive implicit casting
 #pragma  warning disable 1591
@@ -988,13 +1057,24 @@ namespace pxl
             public static implicit operator Int16(BlendVar v) { return (Int16)v.Read(); }
             public static implicit operator Int32(BlendVar v) { return (Int32)v.Read(); }
             public static implicit operator Int64(BlendVar v) { return (Int64)v.Read(); }
-            public static implicit operator BlendPointer(BlendVar v) { return (BlendPointer)v.Read(); }
 
 
             public static implicit operator float(BlendVar v) { return (float)v.Read(); }
             public static implicit operator double(BlendVar v) { return (double)v.Read(); }
 
             public static implicit operator string(BlendVar v) { return (string)v.Read(); }
+
+            public static implicit operator BlendPointer(BlendVar v) { return (BlendPointer)v.Read(); }
+            public static implicit operator FileBlock(BlendVar v)
+            {
+                FileBlock fb = null;
+                if (v != null)
+                {
+                    fb = v.fileBlock;
+                }
+                return fb; 
+            }
+
             
             /*
             public static implicit operator BlendPointer(BlendVar v)
@@ -1014,7 +1094,7 @@ namespace pxl
                 BlendVar[] referenced = null;
                 if ( v != null )
                 {
-                    referenced = v.m_bf.GetVarsByOldPointer(v.m_oldPointer);
+                    referenced = v.m_bf.GetVarsByOldPointer( v.fileBlock.oldPointer );
                 }
                 return referenced;
             }

@@ -7,13 +7,9 @@ using System.Text;
 
 namespace pxl
 {
-    public class Vector2
+    public struct Vector2
     {
         public float x, y;
-        public Vector2()
-            : this(0.0f, 0.0f)
-        {
-        }
 
         public Vector2(float x, float y)
         {
@@ -111,13 +107,9 @@ namespace pxl
 
     }
 
-    public class Vector3
+    public struct Vector3
     {
         public float x, y, z;
-        public Vector3()
-            : this(0.0f, 0.0f, 0.0f)
-        {
-        }
 
         public Vector3(float x, float y, float z)
         {
@@ -235,7 +227,7 @@ namespace pxl
 
     }
 
-    public class Vector4
+    public struct Vector4
     {
         public float x, y, z, w;
         public Vector3 xyz
@@ -252,11 +244,6 @@ namespace pxl
                 z = value.z;
             }
 
-        }
-
-        public Vector4()
-            : this(0.0f, 0.0f, 0.0f, 1.0f)
-        {
         }
 
         public Vector4(float x, float y, float z, float w)
@@ -346,7 +333,7 @@ namespace pxl
 
     }
 
-    public class Matrix4
+    public struct Matrix4
     {
         public float m11, m12, m13, m14;
         public float m21, m22, m23, m24;
@@ -419,17 +406,6 @@ namespace pxl
                 m34 = v.z;
                 m44 = v.w;
             }
-        }
-
-
-        public Matrix4()
-            : this(
-                1.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, 1.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f
-        )
-        {
         }
 
         public Matrix4(
@@ -744,15 +720,9 @@ m41, m42, m43, m44
 
     }
 
-    public class Quaternion
+    public struct Quaternion
     {
         public float x, y, z, w;
-
-        public Quaternion()
-            : this(0.0f, 0.0f, 0.0f, 1.0f)
-        {
-
-        }
 
         public Quaternion(float x, float y, float z, float w)
         {

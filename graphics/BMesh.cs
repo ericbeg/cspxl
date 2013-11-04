@@ -19,39 +19,39 @@ namespace pxl
         public List<BMEdge> edges = new List<BMEdge>();
         public List<BMVert> verts = new List<BMVert>();
 
-        public class BMVert
+        public struct BMVert
         {
-            public Vector3 ve = new Vector3();
-            public Vector3 no = new Vector3();
+            public Vector3 ve;
+            public Vector3 no;
         }
 
 
-        public class BMEdge
+        public struct BMEdge
         {
             public int v1;
             public int v2;
         }
 
 
-        public class BMLoop
+        public struct BMLoop
         {
             public int v;
             public int e;
         }
 
 
-        public class BMLoopUV
+        public struct BMLoopUV
         {
-            public Vector2 uv = new Vector2();
+            public Vector2 uv;
         }
 
 
-        public class BMLoopCol
+        public struct BMLoopCol
         {
             public Color4 col;
         }
 
-        public class BMFace
+        public struct BMFace
         {
             public int loop;
             public int count;

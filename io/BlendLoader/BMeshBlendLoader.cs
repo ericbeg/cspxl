@@ -29,24 +29,20 @@ namespace pxl
                    char bweight;
                 };
                 */
-                BlendFile.BlendPointer ptrVerts = (BlendFile.BlendPointer)bvar["mvert"].Read();
-                BlendFile.FileBlock fbVerts = bvar.m_bf.GetFileBlockByOldPointer(ptrVerts.address);
+                BlendFile.FileBlock fbVerts = bvar["mvert"];;
 
-                if ( fbVerts.count > 0)
+                if ( fbVerts != null && fbVerts.count > 0)
                 {
-                    reader.BaseStream.Position = fbVerts.dataPosition;
 
                    long ptr0 = bvar.blendFile.binaryReader.BaseStream.Position;
                    bm.verts.Capacity = fbVerts.count;
                    for (int i = 0; i < fbVerts.count; ++i)
                    {
-                      long ptr = ptr0 + i * fbVerts.elementSize;
+                      fbVerts.Seek( i );
 
                       BMesh.BMVert v = new BMesh.BMVert();
 
-                      v.ve.x = reader.ReadSingle();
-                      v.ve.y = reader.ReadSingle();
-                      v.ve.z = reader.ReadSingle();
+                      v.ve = reader.ReadVector3();
 
                       short[] sno = new short[3];
                       sno[0] = reader.ReadInt16();
@@ -56,8 +52,6 @@ namespace pxl
                       v.no.x = sno[0];
                       v.no.y = sno[1];
                       v.no.z = sno[2];
-
-                      v.no.Normalize();
 
                       bm.verts.Add( v );
                    }
@@ -73,26 +67,22 @@ namespace pxl
                    short flag;
                 };
                 */
-
-                /*
-               Blendbvar medges = *bvar["*medge"];
-               if( medges.isValid() && medges.count() > 0 )
+               
+               BlendFile.FileBlock fbMedges = bvar["medge"];
+               if (fbMedges != null && fbMedges.count > 0)
                {
-                  Blendbvar edge = medges[0];
-                  char* ptr0 = (buffer->ptr + edge.offset);
-                  bm->edges.reserve( medges.count() );
-                  for ( int i=0; i < medges.count(); ++i )
+                  bm.edges.Capacity = fbMedges.count;
+                  for ( int i=0; i < fbMedges.count; ++i )
                   {
-                     char* ptr = ptr0+i*edge.size;
-                     BMEdge e;
+                     fbMedges.Seek( i );
+                     BMesh.BMEdge e ;
+                     
+                     e.v1 = reader.ReadInt32();
+                     e.v2 = reader.ReadInt32();
 
-                     memcpyES( &e.v1, ptr + 0            , sizeof(int), 1);
-                     memcpyES( &e.v2, ptr + sizeof(int)  , sizeof(int), 1);
-                     bm->edges.push_back( e );
-                     //printf("edge %d ( %d -> %d )\n", i, e.v1, e.v2);
+                     bm.edges.Add( e );
                   }
                }
-               */
                 // Load loops
                 /*
                 #0059: struct MLoop (8 bytes)
@@ -102,25 +92,20 @@ namespace pxl
                 };
                 */
 
-                /*
-               Blendbvar mloops = *bvar["*mloop"];
-
-               if( mloops.isValid() && mloops.count() > 0 )
+                
+               BlendFile.FileBlock fbLoops = bvar["mloop"];
+               if( fbLoops != null && fbLoops.count > 0 )
                {
-                  Blendbvar loop = mloops[0];
-                  char* ptr0 = (buffer->ptr + loop.offset);
-                  bm->loops.reserve( mloops.count() );
-                  for ( int i=0; i < mloops.count(); ++i )
+                  bm.loops.Capacity = fbLoops.count;
+                  for ( int i=0; i < fbLoops.count; ++i )
                   {
-                     char* ptr = ptr0 + i*loop.size;
-                     BMLoop l;
-                     memcpyES( &l.v, ptr + 0          , sizeof(int), 1);
-                     memcpyES( &l.e, ptr + sizeof(int), sizeof(int), 1);
-                     bm->loops.push_back( l );
-                     //printf("loop %d e:%d v:%d\n",i ,l.e, l.v);
+                     fbLoops.Seek( i );
+                     BMesh.BMLoop l;
+                     l.v = reader.ReadInt32();
+                     l.e = reader.ReadInt32();
+                     bm.loops.Add( l );
                   }
                }
-               */
 
                 // Load loops UV
                 /*
@@ -131,24 +116,19 @@ namespace pxl
                 };
                 */
 
-                /*
-               Blendbvar mloopuvs = *bvar["*mloopuv"];
-               if ( mloops.isValid() && mloopuvs.count() > 0 )
-               {
-                  Blendbvar uv = mloopuvs[0];
-                  char* ptr0 = (buffer->ptr + uv.offset);
-                  bm->uvs.reserve( mloopuvs.count() );
-                  for ( int i=0; i < mloopuvs.count(); ++i )
-                  {
-                     char* ptr = ptr0 + i*uv.size;
-                     BMLoopUV l;
-                     memcpyES(&l.uv, ptr  + 0, sizeof(float), 2 );
-                     bm->uvs.push_back( l );
-                     //printf("loop %d e:%d v:%d\n",i ,l.e, l.v);
-                  }
-               }
-               */
 
+               BlendFile.FileBlock fbMloopUVs = bvar["mloopuv"];
+               if (fbMloopUVs != null && fbMloopUVs.count > 0)
+               {
+                   bm.uvs.Capacity = fbMloopUVs.count;
+                   for (int i = 0; i < fbMloopUVs.count; ++i)
+                   {
+                       fbLoops.Seek(i);
+                       BMesh.BMLoopUV l;
+                       l.uv = reader.ReadVector2();
+                       bm.uvs.Add(l);
+                   }
+               }
                 // Load loops Colors
                 /*
                 #0062: struct MLoopCol (4 bytes)
@@ -222,7 +202,7 @@ namespace pxl
                 }
               */
             }// if ( bvar.type == "Mesh" )
-            return null;
+            return bm;
         }
     }
 }
