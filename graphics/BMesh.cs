@@ -14,7 +14,7 @@ namespace pxl
         public List<BMFace> faces = new List<BMFace>();
         public List<BMLoop> loops = new List<BMLoop>();
         public List<BMLoopUV> uvs = new List<BMLoopUV>();
-        public List<BMLoopCol> cols = new List<BMLoopCol>();
+        public List<BMLoopCol> colors = new List<BMLoopCol>();
 
         public List<BMEdge> edges = new List<BMEdge>();
         public List<BMVert> verts = new List<BMVert>();
@@ -48,7 +48,7 @@ namespace pxl
 
         public struct BMLoopCol
         {
-            public Color4 col;
+            public Color4 color;
         }
 
         public struct BMFace

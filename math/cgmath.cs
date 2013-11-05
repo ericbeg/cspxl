@@ -180,6 +180,24 @@ namespace pxl
 
         }
 
+        public static float Angle(Vector3 a, Vector3 b)
+        {
+            float div = Vector3.Norm(a) * Vector3.Norm(b);
+
+            if (div == 0.0f)
+                return 0.0f;
+
+            float dot_ab = Vector3.Dot(a, b);
+
+            if (!(dot_ab < div))
+            {
+                return 0.0f;
+            }
+
+            return (float)Math.Acos(dot_ab / div);
+        }
+
+
         public static Vector3 operator +(Vector3 left, Vector3 right)
         {
             return new Vector3(
@@ -489,7 +507,7 @@ namespace pxl
             return o;
         }
 
-        public static Vector4 operator*( Matrix4 mat, Vector4 r)
+        public static Vector4 operator *(Matrix4 mat, Vector4 r)
         {
             Vector4 o = new Vector4();
 
@@ -554,7 +572,12 @@ namespace pxl
         }
 
 
-        public static Matrix4 Identity = new Matrix4();
+        public static Matrix4 Identity = new Matrix4(
+                1.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, 1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f
+                );
 
         public static Matrix4 Translate(Vector3 displacement)
         {
@@ -621,23 +644,23 @@ namespace pxl
         }
 
         public static Matrix4 OrthographicProjection(
-	     float left,
- 	     float right,
- 	     float bottom,
- 	     float top,
- 	     float zNear,
- 	     float zFar
+         float left,
+         float right,
+         float bottom,
+         float top,
+         float zNear,
+         float zFar
             )
         {
-	        float tx = -( right + left   )/( right - left   );
-	        float ty = -( top   + bottom )/( top   - bottom );
-	        float tz = -( zFar  + zNear  )/( zFar  - zNear  );
+            float tx = -(right + left) / (right - left);
+            float ty = -(top + bottom) / (top - bottom);
+            float tz = -(zFar + zNear) / (zFar - zNear);
 
-	        return new Matrix4(
-	        2.0f/(right - left)  , 0.0f               , 0.0f                    , tx,
-	        0.0f                 , 2.0f/(top - bottom), 0.0f                    , ty,
-	        0.0f                 , 0.0f               , -2.0f/(zFar - zNear)    , tz,
-	        0.0f                 , 0.0f               , 0.0f                    , 1.0f);
+            return new Matrix4(
+            2.0f / (right - left), 0.0f, 0.0f, tx,
+            0.0f, 2.0f / (top - bottom), 0.0f, ty,
+            0.0f, 0.0f, -2.0f / (zFar - zNear), tz,
+            0.0f, 0.0f, 0.0f, 1.0f);
         }
 
         public static Matrix4 Frustum(
@@ -684,34 +707,34 @@ namespace pxl
    Vector3 at,
    Vector3 up
 )
-{
+        {
 
-	Vector3 f = Vector3.Normalized( at - eye );
+            Vector3 f = Vector3.Normalized(at - eye);
 
-    Vector3 s = Vector3.Normalized(Vector3.Cross(f, Vector3.Normalized(up)));
-    Vector3 u = Vector3.Normalized(Vector3.Cross(s, f));
+            Vector3 s = Vector3.Normalized(Vector3.Cross(f, Vector3.Normalized(up)));
+            Vector3 u = Vector3.Normalized(Vector3.Cross(s, f));
 
-	Matrix4 Rot = new Matrix4(
-	 s.x,  s.y,  s.z, 0.0f,
-	 u.x,  u.y,  u.z, 0.0f,
-	-f.x, -f.y, -f.z, 0.0f,
-	 0.0f,  0.0f,  0.0f, 1.0f);
+            Matrix4 Rot = new Matrix4(
+             s.x, s.y, s.z, 0.0f,
+             u.x, u.y, u.z, 0.0f,
+            -f.x, -f.y, -f.z, 0.0f,
+             0.0f, 0.0f, 0.0f, 1.0f);
 
-	Matrix4 Trans = Matrix4.Translate( new Vector3(0.0f, 0.0f, 0.0f) -eye );
+            Matrix4 Trans = Matrix4.Translate(new Vector3(0.0f, 0.0f, 0.0f) - eye);
 
-	return Rot*Trans;
-}
+            return Rot * Trans;
+        }
 
 
         override public string ToString()
         {
-           return string.Format(
-"{0}\t{1}\t{2}\t{3}\n{4}\t{5}\t{6}\t{7}\n{8}\t{9}\t{10}\t{11}\n{12}\t{13}\t{14}\t{15}\n",
-m11, m12, m13, m14,
-m21, m22, m23, m24,
-m31, m32, m33, m34,
-m41, m42, m43, m44
-);
+            return string.Format(
+ "{0}\t{1}\t{2}\t{3}\n{4}\t{5}\t{6}\t{7}\n{8}\t{9}\t{10}\t{11}\n{12}\t{13}\t{14}\t{15}\n",
+ m11, m12, m13, m14,
+ m21, m22, m23, m24,
+ m31, m32, m33, m34,
+ m41, m42, m43, m44
+ );
         }
 
         public class Matrix4NotInvertibleException : Exception
@@ -732,7 +755,7 @@ m41, m42, m43, m44
             this.w = w;
         }
 
-        public static Quaternion Identity = new Quaternion();
+        public static Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
         public static Quaternion operator +(Quaternion left, Quaternion right)
         {

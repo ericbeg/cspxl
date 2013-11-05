@@ -7,6 +7,8 @@ using System.Text;
 
 using System.IO;
 
+using OpenTK.Graphics;
+
 namespace pxl
 {
     public class BMeshBlendLoader : BlendFile.IBlendLoader
@@ -53,6 +55,7 @@ namespace pxl
                       v.no.y = sno[1];
                       v.no.z = sno[2];
 
+                      v.no.Normalize();
                       bm.verts.Add( v );
                    }
                 }
@@ -116,14 +119,13 @@ namespace pxl
                 };
                 */
 
-
                BlendFile.FileBlock fbMloopUVs = bvar["mloopuv"];
                if (fbMloopUVs != null && fbMloopUVs.count > 0)
                {
                    bm.uvs.Capacity = fbMloopUVs.count;
                    for (int i = 0; i < fbMloopUVs.count; ++i)
                    {
-                       fbLoops.Seek(i);
+                       fbMloopUVs.Seek(i);
                        BMesh.BMLoopUV l;
                        l.uv = reader.ReadVector2();
                        bm.uvs.Add(l);
@@ -140,26 +142,31 @@ namespace pxl
                 };
                 */
 
-                /*
-                Blendbvar mloopcols = *bvar["*mloopcol"];
-                if ( mloopcols.isValid() && mloopcols.count() > 0)
-                {
-                   Blendbvar col = mloopcols[0];
-                   char* ptr0 = (buffer->ptr + col.offset);
-                   bm->cols.reserve( mloopcols.count() );
-                   for ( int i=0; i < mloopcols.count(); ++i )
+               BlendFile.FileBlock fbMloopCols = bvar["mloopcols"];
+               if (fbMloopCols != null && fbMloopCols.count > 0)
+               {
+                   bm.uvs.Capacity = fbMloopCols.count;
+                   for (int i = 0; i < fbMloopCols.count; ++i)
                    {
-                      char* ptr = ptr0+i*col.size;
-                      BMLoopCol l;
-                      l.col.r = *(char*)(ptr + 0*sizeof(char));
-                      l.col.g = *(char*)(ptr + 1*sizeof(char));
-                      l.col.b = *(char*)(ptr + 2*sizeof(char));
-                      l.col.a = *(char*)(ptr + 3*sizeof(char));
-                      bm->cols.push_back( l );
-                      //printf("loop %d e:%d v:%d\n",i ,l.e, l.v);
+                       fbMloopCols.Seek(i);
+                       byte[] c = new byte[4];
+
+                       c[0] = reader.ReadByte();
+                       c[1] = reader.ReadByte();
+                       c[2] = reader.ReadByte();
+                       c[3] = reader.ReadByte();
+
+                       BMesh.BMLoopCol l;
+                       Color4 col;
+                       col.R = (float)c[0] / 255.0f;
+                       col.G = (float)c[1] / 255.0f;
+                       col.B = (float)c[2] / 255.0f;
+                       col.A = (float)c[3] / 255.0f;
+
+                       l.color = col ;
+                       bm.colors.Add(l);
                    }
-                }
-                */
+               }
 
                 // Load polygons
                 /*
@@ -174,33 +181,24 @@ namespace pxl
                 */
                 // from blender/makesdna/DNA_meshdata_types.h +290
 
-                /*
-                #ifndef ME_SMOOTH
-                #define ME_SMOOTH     1
-                #endif
-                Blendbvar mpolys = *bvar["*mpoly"];
-                if( mpolys.isValid() && mpolys.count() > 0 )
-                {
-                   Blendbvar  poly = mpolys[0];
-                   char* ptr0 = (buffer->ptr + poly.offset);
-                   bm->faces.reserve( mpolys.count() );
-                   for ( int i=0; i < mpolys.count(); ++i )
+               const uint ME_SMOOTH = 1;
+               BlendFile.FileBlock fbMpolys = bvar["mpoly"];
+               if (fbMpolys != null && fbMpolys.count > 0)
+               {
+                   bm.faces.Capacity = fbMpolys.count;
+                   for (int i = 0; i < fbMpolys.count; ++i)
                    {
-                      char* ptr = ptr0+i*poly.size;
-                      BMFace f;
-                      short mat_nr;
-                      char flag;
-                      memcpyES(&f.loop  , ptr +      0                      , sizeof(int), 1);
-                      memcpyES(&f.count , ptr +   sizeof(int)               , sizeof(int), 1);
-                      memcpyES(&mat_nr  , ptr + 2*sizeof(int)               , sizeof(short), 1);
-                      memcpyES(&flag    , ptr + 2*sizeof(int)+sizeof(short) , sizeof(char), 1);
-                      f.matidx = mat_nr;
-                      f.smooth = flag & ME_SMOOTH;
-                      bm->faces.push_back( f );
-                      //printf("face %d loop:%d count:%d mat:%d \n", i, f.loop, f.count, f.matidx);
+                       fbMpolys.Seek(i);
+                       BMesh.BMFace f = new BMesh.BMFace();
+                       f.loop  = reader.ReadInt32();
+                       f.count = reader.ReadInt32();
+                       f.matidx = reader.ReadInt16();
+                       byte flag = reader.ReadByte();
+                       f.smooth = (flag & ME_SMOOTH) == ME_SMOOTH;
+                       bm.faces.Add(f);
                    }
-                }
-              */
+               }
+
             }// if ( bvar.type == "Mesh" )
             return bm;
         }

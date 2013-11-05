@@ -61,6 +61,8 @@
     <Compile Include="core\Behaviour.cs" />
     <Compile Include="core\ObjectFactory.cs" />
     <Compile Include="graphics\BMesh.cs" />
+    <Compile Include="graphics\MeshConvert.cs" />
+    <Compile Include="graphics\EarClippingTriangulation.cs" />
     <Compile Include="graphics\Extensions.cs" />
     <Compile Include="io\BlendFile.cs" />
     <Compile Include="io\BlendLoader\BMeshBlendLoader.cs" />

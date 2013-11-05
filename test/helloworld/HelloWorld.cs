@@ -74,7 +74,7 @@ class MainClass
         cam.scale = 4.0f;
         cam.fovy = 0.2f*(2.0f*(float)Math.PI);
         Camera.active = cam;
-        cam.backgroundColor = Color4.Chocolate;
+        cam.backgroundColor = Color4.Black;
         cam.near = 0.1f;
         cam.far = 60.0f;
 
@@ -84,7 +84,8 @@ class MainClass
         var m = v.fields;
         var id = v["id"];
 
-        string test = bf.Load("MECube") as string;
+        BMesh  meCube = bf.Load("MESuzanne") as BMesh;
+        rdr.mesh = meCube.ToMesh();
 
 
         bf.Close(); bf = null;

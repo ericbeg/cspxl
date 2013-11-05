@@ -4,7 +4,7 @@ uniform mat4 modelViewProjectionMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-//uniform float _Time;
+uniform float _Time;
 
 attribute vec4 position;
 attribute vec3 normal;
@@ -18,15 +18,10 @@ varying vec2 frag_uv;
 void main()
 {
 	
-	//vec3 offset = vec3(cos(_Time), sin(_Time), 0.0)*0.1;
-	//gl_Position = projectionMatrix*viewMatrix*modelMatrix*position;
 	gl_Position = modelViewProjectionMatrix*position;
-	//gl_Position = modelMatrix*position;
-	//gl_Position = position;
 	albedo = color;
-	//albedo = vec4(1,1,1,1);
-	//nor = (modelMatrix*vec4(normal, 1.0)).xyz;
-	nor = normal;
+	nor = (modelMatrix*vec4(normal, 1.0)).xyz;
+	//nor = normal;
 	frag_uv = uv;
 	
 }
@@ -44,13 +39,12 @@ varying vec2 frag_uv;
 
 void main()
 {
-	vec4 col = texture2D( mainTex, frag_uv);
-	vec4 col2 = texture2D( secondTex, frag_uv);
-	//gl_FragColor = vec4(0.0,0.8,0.0,1.0);
-	//gl_FragColor = albedo*dot( normalize(nor) , vec3(0,0,1 ) ) ;
+	vec4 col = texture2D( mainTex, frag_uv)*0.0;
+	vec4 col2 = texture2D( secondTex, frag_uv)*0.0;
 
 	float b = cos(0.1*6.283*_Time)*0.5 + 0.5;
-	gl_FragColor = col*(1.0-b) + col2*(b) + vec4(nor, 0.0)*0.3;
+	gl_FragColor = (col*(1.0-b) + col2*(b) + vec4(nor, 0.0)*0.6)*dot( nor, vec3( 0.0, 0.0, 1.0) );
+	//gl_FragColor = col*(1.0-b) + col2*(b);
 }
 #endif
 

@@ -116,8 +116,8 @@ namespace pxl
 				int attributeSize = vertexAttributeFormat [attrIdx].count * SizeOf (vertexAttributeFormat [attrIdx].type);
 				for( int v=0; v < mesh.vertcount; ++v)
 				{
-					Vector4 col = mesh.colors[v];
-					Buffer.BlockCopy(  col.GetBytes(), 0, attrBuffer, offset + v * strideSize, attributeSize);
+					Color4 col = mesh.colors[v];
+					Buffer.BlockCopy(  col.ToRGBA32(), 0, attrBuffer, offset + v * strideSize, attributeSize);
 				}
 				++attrIdx;
 				offset += attributeSize;

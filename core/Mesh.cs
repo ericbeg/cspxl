@@ -3,6 +3,7 @@
 using System;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics;
 
 namespace pxl
 {
@@ -16,7 +17,7 @@ namespace pxl
 		public Vector3[] positions;
 		public Vector3[] normals;
 		public Vector2[] uvs;
-		public Vector4[] colors;
+		public Color4[] colors;
 		
 		public uint[] triangles;
 		

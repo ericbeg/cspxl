@@ -7,10 +7,87 @@ using System.Text;
 
 namespace pxl
 {
-    class EarClippingTriangulation
+    /// <summary>
+    /// 
+    /// </summary>
+    public static class EarClippingTriangulation
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="polygon"></param>
+        /// <returns></returns>
+        public static uint[] Triangulate(Vector3[] polygon)
+        {
+            return Triangulate(polygon, Vector3.zAxis);
+        }
 
-        bool IsPointInsideTriangle(Vector3 v, Vector3 a, Vector3 b, Vector3 c)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="polygon"></param>
+        /// <param name="normal"></param>
+        /// <returns></returns>
+        public static uint[] Triangulate(Vector3[] polygon, Vector3 normal)
+        {
+            List<uint> triangulation = new List<uint>( (polygon.Length - 2)*3);
+            List<uint> cropped = new List<uint>();
+            cropped.Capacity = polygon.Length;
+
+            // put all vertex indices in cropped
+            for (uint v = 0; v < polygon.Length; ++v)
+            {
+                cropped.Add(v);
+            }
+
+            // Ears clipping
+            bool earFound = true;
+            while (cropped.Count > 2 && earFound)
+            {
+                earFound = false;
+                float max_min_angle = -1.0f;
+                uint clip_ear = 0;
+
+                // search for the ear with the maximum smallest angle.
+                for (uint i = 0; i < cropped.Count; ++i)
+                {
+                    if (IsEar(polygon, cropped, i, normal))
+                    {
+                        //printf("is ear %u\n", i);
+                        uint v0, v1, v2; GetTriangleFromEar(cropped, i, out v0, out v1, out v2);
+                        float min_angle = SmallestAngle(
+                            polygon[(int)cropped[(int)v0]],
+                            polygon[(int)cropped[(int)v1]],
+                            polygon[(int)cropped[(int)v2]]);
+                        if (min_angle > max_min_angle)
+                        {
+                            max_min_angle = min_angle;
+                            clip_ear = i;
+                        }
+                        earFound = true;
+                    }
+                }
+
+                // clip the ear; removes its ear tip vertex from polygon.
+                if (earFound)
+                {
+                    uint v0, v1, v2; GetTriangleFromEar(cropped, clip_ear, out v0, out v1, out v2);
+
+                    // add the ear as a new triangle
+                    triangulation.Add(cropped[(int)v0]);
+                    triangulation.Add(cropped[(int)v1]);
+                    triangulation.Add(cropped[(int)v2]);
+
+                    // remove the ear tip vertex from cropped
+                    cropped.RemoveAt((int)clip_ear);
+                }
+            }
+
+            return triangulation.ToArray();
+
+        }
+
+        private static bool IsPointInsideTriangle(Vector3 v, Vector3 a, Vector3 b, Vector3 c)
         {
             Vector3 av = a - v;
             Vector3 bv = b - v;
@@ -20,17 +97,15 @@ namespace pxl
             return isInside;
         }
 
-
-        bool isLeftTurn(Vector3 a, Vector3 b, Vector3 c)
+        private static bool IsLeftTurn(Vector3 a, Vector3 b, Vector3 c, Vector3 normal)
         {
             Vector3 u = b - a;
             Vector3 v = c - b;
             Vector3 t = Vector3.Cross(u, v);
-            return t.z > 0.0f;
+            return Vector3.Dot( t, normal) > 0.0f;
         }
 
-
-        float smallestAngle(Vector3 a, Vector3 b, Vector3 c)
+        private static float SmallestAngle(Vector3 a, Vector3 b, Vector3 c)
         {
 
             Vector3 ba = b - a;
@@ -49,30 +124,30 @@ namespace pxl
             return Math.Min(A, Math.Min(B, C));
         }
 
-        void getTriangleFromEar(List<int> cropped,  int v, out int v0, out  int v1, out int v2)
+        private static void GetTriangleFromEar(List<uint> cropped, uint v, out uint v0, out  uint v1, out uint v2)
         {
             v1 = v;
-            v0 = (v1 == 0) ? cropped.Count - 1 : v1 - 1;
-            v2 = (v1 + 1) % cropped.Count;
+            v0 = (v1 == 0) ? (uint)(cropped.Count - 1) : v1 - 1;
+            v2 = (v1 + 1) % (uint)cropped.Count;
         }
 
-        bool isEar(List<Vector3> polygon, List<int> cropped, int v)
+        private static bool IsEar(Vector3[] polygon, List<uint> cropped, uint v, Vector3 normal)
         {
-            int v0, v1, v2;
-            getTriangleFromEar(cropped, v, out v0, out v1, out v2);
+            uint v0, v1, v2;
+            GetTriangleFromEar(cropped, v, out v0, out v1, out v2);
 
             bool isEmptyTriangle = false;
-            bool isLeftTurn_b = isLeftTurn(polygon[cropped[v0]], polygon[cropped[v1]], polygon[cropped[v2]]);
+            bool isLeftTurn_b = IsLeftTurn(polygon[cropped[(int)v0]], polygon[cropped[(int)v1]], polygon[cropped[(int)v2]], normal);
 
             if (isLeftTurn_b)
             {
                 isEmptyTriangle = true;
-                for (int i = 0; i < cropped.Count; ++i)
+                for (uint i = 0; i < cropped.Count; ++i)
                 {
                     if (i == v0 || i == v1 || i == v2)
                         continue;
 
-                    if (IsPointInsideTriangle(polygon[cropped[i]], polygon[cropped[v0]], polygon[cropped[v1]], polygon[cropped[v2]]))
+                    if (IsPointInsideTriangle(polygon[cropped[(int)i]], polygon[cropped[(int)v0]], polygon[cropped[(int)v1]], polygon[cropped[(int)v2]]))
                     {
                         isEmptyTriangle = false;
                         break;
@@ -82,65 +157,6 @@ namespace pxl
 
             return isLeftTurn_b && isEmptyTriangle;
         }
-
-
-        void polygon_triangulation(List<Vector3> polygon, List<int> triangulation)
-{
-   triangulation.Clear();
-   triangulation.Capacity = polygon.Count - 2 ;
-   
-   List<int> cropped = new List<int>();
-   cropped.Capacity = polygon.Count;
-   
-   // put all vertex indices in cropped
-   for(int v = 0; v < polygon.Count; ++v)
-   {
-      cropped.Add(v);
-   }
-   
-   // Ears clipping
-   bool earFound = true;
-   while ( cropped.Count > 2  && earFound )
-   {
-      earFound = false;
-      float max_min_angle = -1.0f;
-      int clip_ear = 0;
-
-      // search for the ear with the maximum smallest Vector3.Angle.
-      for(int i = 0; i < cropped.Count; ++i)
-      {
-         if( isEar(polygon, cropped, i) )
-         {
-            //printf("is ear %u\n", i);
-            int v0, v1, v2; getTriangleFromEar( cropped, i, out v0, out v1, out v2 );
-            float min_angle = smallestAngle(  polygon[cropped[v0]], polygon[cropped[v1]], polygon[cropped[v2]] );
-            if( min_angle > max_min_angle )
-            {
-               max_min_angle = min_angle;
-               clip_ear = i;
-            }
-            earFound = true;
-         }
-      }
-      
-      // clip the ear; removes its ear tip vertex from polygon.
-      if( earFound )
-      {
-         int v0, v1, v2; getTriangleFromEar( cropped, clip_ear, out v0, out v1, out v2 );
-         
-         // add the ear as a new triangle
-         triangulation.Add( cropped[v0] );
-         triangulation.Add( cropped[v1] );
-         triangulation.Add( cropped[v2] );
-         
-         // remove the ear tip vertex from cropped
-         cropped.Remove( clip_ear );
-
-         
-      }
-   }
-   
-}
 
     }
 }
