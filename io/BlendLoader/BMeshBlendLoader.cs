@@ -15,6 +15,17 @@ namespace pxl
     {
         public Object Load(BlendFile.BlendVar bvar)
         {
+            Mesh me = null;
+            BMesh bme = LoadBmesh(bvar) as BMesh;
+            if (bme != null)
+            {
+                me = bme.ToMesh();
+            }
+            return me;
+        }
+
+        private Object LoadBmesh(BlendFile.BlendVar bvar)
+        {
             BMesh bm = null;
             if (bvar.type == "Mesh")
             {

@@ -37,6 +37,7 @@ namespace pxl
         private void RegisterBlendLoaders()
         {
             BlendFile.Register(new BMeshBlendLoader(), "ME");
+            BlendFile.Register(new ObjectBlendLoader(), "OB");
         }
 
         /// <summary>

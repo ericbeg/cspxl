@@ -11,6 +11,8 @@ namespace pxl
     {
         public float x, y;
 
+        public Vector2(float[] vec ) : this( vec[0], vec[1] )  {}
+
         public Vector2(float x, float y)
         {
             this.x = x;
@@ -110,6 +112,8 @@ namespace pxl
     public struct Vector3
     {
         public float x, y, z;
+
+        public Vector3(float[] vec ) : this( vec[0], vec[1], vec[2] )  {}
 
         public Vector3(float x, float y, float z)
         {
@@ -248,6 +252,7 @@ namespace pxl
     public struct Vector4
     {
         public float x, y, z, w;
+
         public Vector3 xyz
         {
             get
@@ -263,6 +268,8 @@ namespace pxl
             }
 
         }
+
+        public Vector4(float[] vec ) : this( vec[0], vec[1], vec[2], vec[3] )  {}
 
         public Vector4(float x, float y, float z, float w)
         {
@@ -425,6 +432,14 @@ namespace pxl
                 m44 = v.w;
             }
         }
+
+        public Matrix4(float[] m)
+        :this(
+            m[0], m[4], m[8], m[12],  
+            m[1], m[5], m[9], m[13],  
+            m[2], m[6], m[10], m[14],  
+            m[3], m[7], m[11], m[15] 
+            ){}
 
         public Matrix4(
             float m11, float m12, float m13, float m14,
@@ -746,6 +761,9 @@ namespace pxl
     public struct Quaternion
     {
         public float x, y, z, w;
+
+        public Quaternion(float[] qua) : this(qua[0], qua[1], qua[2], qua[3]) { }
+
 
         public Quaternion(float x, float y, float z, float w)
         {

@@ -232,9 +232,9 @@ namespace pxl
             bf.ReadDNAStruct();
             bf.CreateNameIndex();
 
-            //File.WriteAllText("dna.txt", bf.GetDNAString());
-            //File.WriteAllText("data.txt", bf.GetFileBlockString());
-
+            File.WriteAllText("dna.txt", bf.GetDNAString());
+            File.WriteAllText("data.txt", bf.GetFileBlockString());
+            
             return bf;
         }
         /// <summary>

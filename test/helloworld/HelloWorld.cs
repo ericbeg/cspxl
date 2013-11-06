@@ -42,7 +42,6 @@ class MainClass
 	public static int Main (string[] args)
 	{
 
-
 		Application app = new Application( 400, 300);
         Console.WriteLine( pxl.GLHelper.infoString );
         
@@ -59,11 +58,14 @@ class MainClass
         material.textures = new Texture[] { texture0, texture1 };        
         material.shader = GetShader();
 
-        GameObject go = new GameObject();
-        Renderer rdr = go.AddComponent<Renderer>();
-        //rdr.mesh     = ObjectFactory.BuildMeshQuad();
-        rdr.mesh = ObjectFactory.BuildMeshCube();
+
+        BlendFile bf = BlendFile.Open("cube.blend");
+        GameObject go = bf.Load("OBSuzanne") as GameObject;
+        bf.Close(); bf = null;
+
+        Renderer rdr = go.GetComponent<Renderer>();
         rdr.material = material;
+
 
         go.AddComponent<Rotator>();
 
@@ -78,17 +80,6 @@ class MainClass
         cam.near = 0.1f;
         cam.far = 60.0f;
 
-        BlendFile bf = BlendFile.Open("cube.blend");
-        var list = bf.datablockNames;
-        var v = bf["OBCube"];
-        var m = v.fields;
-        var id = v["id"];
-
-        BMesh  meCube = bf.Load("MESuzanne") as BMesh;
-        rdr.mesh = meCube.ToMesh();
-
-
-        bf.Close(); bf = null;
 
 		app.Loop( 60.0f );
 		app.Quit();

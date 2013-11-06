@@ -10,7 +10,8 @@ namespace pxl
         private List<Component> m_components;
         private Transform m_transform;
 
-        
+        public string name = "GameObject";
+
         public static GameObject[] instances
         {
             get
