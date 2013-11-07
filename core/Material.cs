@@ -128,7 +128,7 @@ namespace pxl
             }
         }
 
-        public void SetColor4(string name, Color4 value)
+        public void SetColor(string name, Color4 value)
         {
             int i = m_colorNames.IndexOf(name);
             if (i < 0)

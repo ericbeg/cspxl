@@ -82,7 +82,6 @@ class MainClass
         cam.near = 0.1f;
         cam.far = 60.0f;
 
-
 		app.Loop( 60.0f );
 		app.Quit();
 		return 0;

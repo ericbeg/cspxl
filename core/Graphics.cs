@@ -7,7 +7,7 @@ namespace pxl
 {
     public abstract class Graphics
     {
-        
+        internal static float screenApect = 1.0f; 
     }
 }
 

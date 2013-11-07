@@ -22,6 +22,7 @@ namespace pxl
 			
 		public Application(int width, int height) : base(width, height, new GraphicsMode(32, 24) )
         {
+            Graphics.screenApect = (float)width/(float)height;
             RegisterBlendLoaders();
         }
 
@@ -31,13 +32,15 @@ namespace pxl
 
             GL.Viewport(0, 0, Width, Height);
 
-            double aspect_ratio = Width / (double)Height;
+            Graphics.screenApect = (float)Width / (float)Height;
+
         }
 
         private void RegisterBlendLoaders()
         {
             BlendFile.Register(new BMeshBlendLoader(), "ME");
             BlendFile.Register(new ObjectBlendLoader(), "OB");
+            BlendFile.Register(new MaterialBlendLoader(), "MA");
         }
 
         /// <summary>

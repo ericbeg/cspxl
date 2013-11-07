@@ -79,7 +79,7 @@ namespace pxl
 			{
 				if( m_perspective )
 				{
-					m_projectionMatrix = Matrix4.Perspective(fovy, aspect, near, far); 
+					m_projectionMatrix = Matrix4.Perspective(fovy, aspect*Graphics.screenApect, near, far); 
 				}
 				else
 				{

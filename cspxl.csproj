@@ -67,6 +67,7 @@
     <Compile Include="io\BlendFile.cs" />
     <Compile Include="io\BlendLoader\BMeshBlendLoader.cs" />
     <Compile Include="io\BinaryReaderExtensions.cs" />
+    <Compile Include="io\BlendLoader\MaterialBlendLoader.cs" />
     <Compile Include="io\BlendLoader\ObjectBlendLoader.cs" />
     <Compile Include="io\EndiannessSaveBinaryReader.cs" />
     <Compile Include="math\cgmath.cs" />
