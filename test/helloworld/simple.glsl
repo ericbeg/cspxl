@@ -39,8 +39,8 @@ varying vec2 frag_uv;
 
 void main()
 {
-	vec4 col = texture2D( mainTex, frag_uv)*0.0;
-	vec4 col2 = texture2D( secondTex, frag_uv)*0.0;
+	vec4 col = texture2D( mainTex, frag_uv);
+	vec4 col2 = texture2D( secondTex, frag_uv);
 
 	float b = cos(0.1*6.283*_Time)*0.5 + 0.5;
 	gl_FragColor = (col*(1.0-b) + col2*(b) + vec4(nor, 0.0)*0.6)*dot( nor, vec3( 0.0, 0.0, 1.0) );

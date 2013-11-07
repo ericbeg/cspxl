@@ -114,21 +114,8 @@ namespace pxl
                         shader.Link();
                         shader.Use();
 
-                        // Bind textures
-                        Texture[] textures    = rdr.material.textures;
-                        string[] samplerNames = rdr.material.shader.samplerNames;
-                        for (int i = 0; i < textures.Length; ++i)
-                        {
-
-                            GLTexture texture = textures[i] as GLTexture;
-                            string name = samplerNames[i];
-                            if (texture != null)
-                            {
-                                texture.Bind(i);
-                                shader.SetUniform(name, i);
-                            }
-                        }
-
+                        rdr.material.ApplyShaderUniforms();
+                        
                         modelMatrix = go.transform.matrix;
 
                         modelViewMatrix = viewMatrix*modelMatrix;

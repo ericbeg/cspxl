@@ -32,7 +32,6 @@ class MainClass
         shader.source = shaderSource;
 
 
-        shader.samplerNames = new string[]{"mainTex", "secondTex"};
         
         shader.Apply();
 
@@ -51,11 +50,14 @@ class MainClass
 
         Bitmap img0 = new Bitmap("shiphull.jpg");
         Bitmap img1 = new Bitmap("floor.jpg");
+        
 
         texture0.Copy(img0);
         texture1.Copy(img1);
 
-        material.textures = new Texture[] { texture0, texture1 };        
+        material.SetTexture("mainTex", texture0);
+        material.SetTexture("secondTex", texture1);
+
         material.shader = GetShader();
 
 

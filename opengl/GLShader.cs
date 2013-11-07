@@ -263,6 +263,16 @@ namespace pxl
             }
         }
 
+        public override void SetUniform(string name, Vector2 v)
+        {
+            int location = GL.GetUniformLocation(glname, name);
+            if (location >= 0)
+            {
+                OpenTK.Vector2 ov = new OpenTK.Vector2(v.x, v.y);
+                GL.Uniform2(location, ref ov);
+            }
+        }
+
         public override void SetUniform(string name, Vector3 v)
         {
             int location = GL.GetUniformLocation(glname, name);
@@ -272,6 +282,24 @@ namespace pxl
                 GL.Uniform3(location, ref ov);
             }
         }
+
+        public override void SetUniform(string name, Vector4 v)
+        {
+            int location = GL.GetUniformLocation(glname, name);
+            if (location >= 0)
+            {
+                OpenTK.Vector4 ov = new OpenTK.Vector4(v.x, v.y, v.z, v.w);
+                GL.Uniform4(location, ref ov);
+            }
+        }
+
+        public override void SetUniform(string name, Color4 v)
+        {
+            SetUniform(name, new Vector4(v.R, v.G, v.B, v.A));
+        }
+
+
+
     }
 }
 

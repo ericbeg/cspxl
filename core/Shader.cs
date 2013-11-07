@@ -1,6 +1,7 @@
 #pragma  warning disable 1591
 
 using System;
+using OpenTK.Graphics;
 
 namespace pxl
 {
@@ -9,7 +10,7 @@ namespace pxl
         protected bool m_isCompiled = false;
         protected bool m_hasAttemptedCompilation = false;
         private string m_source;
-        public string[] samplerNames;
+        
         public string source
         {
             get
@@ -38,7 +39,10 @@ namespace pxl
 
         public abstract void SetUniform(string name, int uniform);
         public abstract void SetUniform(string name, float uniform);
+        public abstract void SetUniform(string name, Vector2 uniform);
         public abstract void SetUniform(string name, Vector3 uniform);
+        public abstract void SetUniform(string name, Vector4 uniform);
+        public abstract void SetUniform(string name, Color4 uniform);
         public abstract void SetUniform(string name, Matrix4 uniform);
     }
 }
