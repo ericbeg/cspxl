@@ -314,6 +314,7 @@ namespace pxl
                     var name = id["name"];
                     if (name != null)
                     {
+                        string strname = (string)name;
                         m_fileBlockByName[(string)name] = fb;
                     }
                 }
@@ -629,6 +630,12 @@ namespace pxl
             foreach (FileBlock fb in m_fileBlocks)
             {
                 str.Append( string.Format("{0}\n", fb.ToString()));
+                this.binaryReader.BaseStream.Position = fb.dataPosition;
+
+                //byte[] data = this.binaryReader.ReadBytes(fb.size);
+                //foreach (byte b in data)
+                //    str.Append( string.Format("{0}.", b.ToString("x2")) );
+
                 for (int i = 0; i < fb.count; ++i)
                 {
                     str.Append( string.Format("{0}:{1}/{2}\n", fb.type, i + 1, fb.count) );
@@ -651,12 +658,8 @@ namespace pxl
                         object value = blendVar.Read();
                         string indicator = "";
 
-                        switch (blendVar.varType)
-                        {
-                            case BlendVar.BlendVarType.Pointer: indicator = "*"; break;
-                            case BlendVar.BlendVarType.Array: indicator = "[]"; break;
-                            case BlendVar.BlendVarType.List: indicator = "*[]"; break;
-                        }
+                        if( blendVar.isPointer ) indicator = "*";
+                        if( blendVar.count > 1 ) indicator += "[]";
 
                         str.Append(string.Format("{0}{1} {2}", blendVar.type, indicator , blendVar.m_name));
                         if (value != null)
@@ -682,14 +685,17 @@ namespace pxl
                         }
                         str.Append("\n");
 
-                        BlendVar[] submembers = blendVar.fields;
-                        if (submembers != null)
+                        if (!blendVar.isPointer)
                         {
-                            int n = submembers.Length;
-                            for (int m = 0; m < n; ++m)
+                            BlendVar[] submembers = blendVar.fields;
+                            if (submembers != null)
                             {
-                                fifo.Push(submembers[n - 1 - m]);
-                                fifo_indent.Push(indent + 1);
+                                int n = submembers.Length;
+                                for (int m = 0; m < n; ++m)
+                                {
+                                    fifo.Push(submembers[n - 1 - m]);
+                                    fifo_indent.Push(indent + 1);
+                                }
                             }
                         }
                     }
@@ -707,16 +713,16 @@ namespace pxl
 
             for (int i = 0; i < dna.types.Count; ++i)
             {
-                str.Append( string.Format("{0}\t{1}\t{2}\n", i, dna.types[i], dna.lengths[i]) );
+                str.Append( string.Format("{0}\t{1}\t{2} bytes\n", i, dna.types[i], dna.lengths[i]) );
             }
 
             for (int i = 0; i < dna.sdnaStructs.Length; ++i )
             {
                 SDNAStruct strc = dna.sdnaStructs[i];
-                str.Append( string.Format("sdna_{2} {0} (type_{1})\n", strc.type, strc.typeIndex, i) );
+                str.Append( string.Format("sdna_{2} {0} (type_{1} - {3} bytes)\n", strc.type, strc.typeIndex, i, dna.lengths[ strc.typeIndex ]) );
                 foreach (DNAField f in strc.fields)
                 {
-                    str.Append( string.Format("\t({2}){0} {1}\n", f.type, f.name, f.typeIndex) );
+                    str.Append( string.Format("\t({2}){0} {1} - {3} bytes\n", f.type, f.name, f.typeIndex,  dna.lengths[ f.typeIndex ]) );
                 }
                 str.Append( string.Format("\n\n") );
             }
@@ -732,10 +738,13 @@ namespace pxl
             /// </summary>
             public BlendFile blendFile { get { return m_bf; } }
 
+            internal bool m_isPointer;
+            internal bool m_isPrimitive;
+            internal bool m_isFixedSizeArray;
+
             internal BlendFile m_bf;
             internal int m_fileBlockIndex;
             private SDNAStruct m_sdna = null;
-            private BlendVarType m_varType;
             private Int16 m_typeIndex;
             private long m_offset;
             private string m_type;
@@ -747,7 +756,6 @@ namespace pxl
 
             internal string m_name;
 
-            internal BlendVarType varType{ get{ return m_varType;}}
             internal int count { get { return m_count; } }
 
             internal BlendVar(BlendFile bf, long offset, int sdnaIndex)
@@ -755,7 +763,7 @@ namespace pxl
                 m_bf = bf;
                 m_offset = offset;
                 m_typeIndex = bf.m_dna1.sdnaStructs[sdnaIndex].typeIndex;
-                m_varType = GetType(m_typeIndex, null);
+                SetType(m_typeIndex, null);
                 Init(bf, m_typeIndex, null);
             }
 
@@ -764,16 +772,23 @@ namespace pxl
                 m_bf        = bf;
                 m_offset    = offset;
                 m_typeIndex = typeIndex;  
-                m_varType   = GetType(typeIndex, name);
+                SetType(typeIndex, name);
 
                 Init(bf, typeIndex, name);
             }
 
             private void Init(BlendFile bf, Int16 typeIndex, string name)
             {
-                m_typeSize = bf.m_dna1.lengths[typeIndex];
+                if (isPointer)
+                {
+                    m_typeSize = bf.pointerSize;
+                }
+                else
+                {
+                    m_typeSize = bf.m_dna1.lengths[typeIndex];
+                }
 
-                if (m_varType == BlendVarType.Structure)
+                if (!isPrimitive)
                 {
                     m_sdna = bf.m_dna1.GetSDNAbyType(typeIndex);
                     if (m_sdna != null)
@@ -786,11 +801,10 @@ namespace pxl
                     m_type = bf.m_dna1.types[ typeIndex ];
                 }
 
-                if (m_varType == BlendVarType.Array || m_varType == BlendVarType.List)
                 {
                     m_count = 1;
                     int startIndex = 0;
-                    while( startIndex >= 0)
+                    while( startIndex >= 0 && name != null)
                     {
                         int s = name.IndexOf('[', startIndex);
                         int e = name.IndexOf(']', startIndex);
@@ -800,16 +814,13 @@ namespace pxl
                             string num = name.Substring(s + 1, l);
                             m_count *= Convert.ToInt32(num);
                             startIndex = e + 1;
+                            m_isFixedSizeArray = true;
                         }
                         else
                         {
                             startIndex = -1;
                         }
                     }
-                }
-                else
-                {
-                    m_count = 1;
                 }
 
                 m_name = name;
@@ -866,13 +877,16 @@ namespace pxl
                     m_bf.m_br.BaseStream.Position = m_offset;
             }
 
+            public bool isPrimitive         { get { return m_isPrimitive; } }
+            public bool isPointer           { get { return m_isPointer; } }
+            public bool isFixedSizeArray    { get { return m_isFixedSizeArray; } } 
+
             internal Object Read()
             {
                 Object obj = null;
                 Seek();
 
-
-                if (varType == BlendVarType.Primitive)
+                if (isPrimitive && !isPointer && m_count == 1)
                 {
                     switch (type)
                     {
@@ -883,7 +897,7 @@ namespace pxl
                         case "double":  obj = m_bf.m_br.ReadDouble();   break;
                     }
                 }
-                else if( varType == BlendVarType.Array )
+                else if (isPrimitive && !isPointer && m_count > 1)
                 {
                     int count = m_count;
                     switch (type)
@@ -924,7 +938,7 @@ namespace pxl
                         obj = str; 
                     }
                 }
-                else if (varType == BlendVarType.Pointer)
+                else if ( isPointer )
                 {
                     ulong pointer = m_bf.ReadPointer();
                     obj = new BlendPointer(m_bf, pointer);
@@ -942,7 +956,7 @@ namespace pxl
                 {
                     if (m_fields == null)
                     {
-                        if (varType == BlendVarType.Structure)
+                        if (!isPrimitive && !m_isPointer)
                         {
                             long offset = m_offset;
                             List<BlendVar> members = new List<BlendVar>();
@@ -953,7 +967,7 @@ namespace pxl
                                 members.Add( member );
 
                                 int typeLength = m_bf.m_dna1.lengths[f.typeIndex];
-                                if (member.m_varType == BlendVarType.Pointer || member.m_varType == BlendVarType.List)
+                                if (member.isPointer)
                                 {
                                     typeLength = m_bf.pointerSize;
                                 }
@@ -986,7 +1000,7 @@ namespace pxl
                         }
                     }
 
-                    if (member != null && member.varType == BlendVarType.Pointer)
+                    if (member != null && member.isPointer)
                     {
                         BlendPointer ptr = (BlendPointer)member;
                         member = ptr;
@@ -995,11 +1009,9 @@ namespace pxl
                 }
             }
 
-            internal static BlendVarType GetType(int typeIndex, string name)
+            internal void SetType(int typeIndex, string name)
             {
-                BlendVarType type = BlendVarType.Structure;
                 bool isPointer = false;
-                bool isArray   = false;
                 if (name != null)
                 {
                     if ( name.Length > 0 && name[0] == '*')
@@ -1007,29 +1019,16 @@ namespace pxl
                         isPointer = true;
                     }
 
+                    /*
                     if (name.Length > 0 && name.Last() == ']')
                     {
                         isArray = true;
                     }
+                     */
                 }
 
-                if (!isArray && !isPointer)
-                {
-                    if (typeIndex < 12)
-                    {
-                        type = BlendVarType.Primitive;
-                    }
-                }
-                else if (isArray && !isPointer)
-                {
-                    type = BlendVarType.Array;
-                }
-                else if (isPointer)
-                {
-                    type = BlendVarType.Pointer;
-                }
-
-                return type;
+                m_isPrimitive = typeIndex < 12;
+                m_isPointer  = isPointer;
             }
             /// <summary>
             /// ToString()
@@ -1145,15 +1144,6 @@ namespace pxl
 
 #pragma  warning restore 1591
 
-
-            internal enum BlendVarType
-            {
-                Primitive,
-                Pointer,
-                List,
-                Array,
-                Structure
-            }
         }
 
         /// <summary>

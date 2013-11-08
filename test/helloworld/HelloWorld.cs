@@ -62,7 +62,7 @@ class MainClass
 
 
         BlendFile bf = BlendFile.Open("cube.blend");
-        GameObject go = bf.Load("OBSuzanne") as GameObject;
+        GameObject go = bf.Load("OBCube") as GameObject;
         bf.Close(); bf = null;
 
         Renderer rdr = go.GetComponent<Renderer>();
