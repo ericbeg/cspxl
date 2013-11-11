@@ -659,7 +659,15 @@ namespace pxl
                         string indicator = "";
 
                         if( blendVar.isPointer ) indicator = "*";
-                        if( blendVar.count > 1 ) indicator += "[]";
+
+                        if (blendVar.isFixedSizeArray)
+                        {
+                            indicator += string.Format("[{0}]", blendVar.count );
+                        }
+                        else if (blendVar.count > 1)
+                        {
+                            indicator += "[]";
+                        }
 
                         str.Append(string.Format("{0}{1} {2}", blendVar.type, indicator , blendVar.m_name));
                         if (value != null)
@@ -999,8 +1007,8 @@ namespace pxl
                             member = m_fields[m_memberIndexByName[name]];
                         }
                     }
-
-                    if (member != null && member.isPointer)
+                    
+                    if (member != null && member.isPointer && !member.isFixedSizeArray && member.count == 1  )
                     {
                         BlendPointer ptr = (BlendPointer)member;
                         member = ptr;
@@ -1091,12 +1099,51 @@ namespace pxl
             public static implicit operator BlendVar[] (BlendVar v)
             {
                 BlendVar[] referenced = null;
-                if ( v != null )
+                if (v.m_name == "mtex")
+                {
+                    ;
+                }
+
+                if ( v.isPointer && !v.isFixedSizeArray )
                 {
                     referenced = v.m_bf.GetVarsByOldPointer( v.fileBlock.oldPointer );
                 }
+                else if (v.isPointer && v.isFixedSizeArray)
+                {
+                    List<BlendVar> bvars = new List<BlendVar>();
+                    BlendPointer[] pointers = v;
+                    foreach (var ptr in pointers)
+                    {
+                        BlendVar bvar = ptr;
+                        if (bvar != null)
+                        {
+                            bvars.Add(bvar);
+                        }
+                    }
+                    referenced = bvars.ToArray();
+                }
+
                 return referenced;
             }
+
+            public static implicit operator BlendPointer[](BlendVar v)
+            {
+                BlendPointer[] pointers = null;
+                if(v.isPointer && v.isFixedSizeArray)
+                {
+                    List<BlendPointer> ptrs = new List<BlendPointer>();
+                    v.Seek();
+                    for (int i = 0; i < v.count; ++i)
+                    {
+                        ulong address = v.blendFile.ReadPointer();
+                        ptrs.Add( new BlendPointer(v.blendFile, address) );
+                    }
+                    pointers = ptrs.ToArray();
+                }
+
+                return pointers;
+            }
+
 
 
 
@@ -1115,26 +1162,35 @@ namespace pxl
             {
                 Object[] objs = null;
                 List<Object> list = new List<Object>();
-                
-                byte[] bytes = v;
-                Int16[] int16s = v;
-                Int32[] int32s = v;
-                Int64[] int64s = v;
 
-                float[] floats  = v;
-                double[] doubles = v;
+                if (v.isPrimitive)
+                {
+                    byte[] bytes = v;
+                    Int16[] int16s = v;
+                    Int32[] int32s = v;
+                    Int64[] int64s = v;
 
-                string[] strings = v;
+                    float[] floats = v;
+                    double[] doubles = v;
 
-                if (bytes != null) foreach (var o in bytes) list.Add(o);
-                if (int16s != null) foreach (var o in int16s) list.Add(o);
-                if (int32s != null) foreach (var o in int32s) list.Add(o);
-                if (int64s != null) foreach (var o in int64s) list.Add(o);
+                    string[] strings = v;
 
-                if (doubles != null) foreach (var o in doubles) list.Add(o);
-                if (floats != null) foreach (var o in floats) list.Add(o);
+                    if (bytes != null) foreach (var o in bytes) list.Add(o);
+                    if (int16s != null) foreach (var o in int16s) list.Add(o);
+                    if (int32s != null) foreach (var o in int32s) list.Add(o);
+                    if (int64s != null) foreach (var o in int64s) list.Add(o);
 
-                if (strings != null) foreach (var o in strings) list.Add(o);
+                    if (doubles != null) foreach (var o in doubles) list.Add(o);
+                    if (floats != null) foreach (var o in floats) list.Add(o);
+
+                    if (strings != null) foreach (var o in strings) list.Add(o);
+                } if ( v.isPointer && v.isFixedSizeArray )
+                {
+                    BlendPointer[] pointers = v;
+                    foreach (var p in pointers)
+                        list.Add(p);
+
+                }
 
                 if( list.Count > 0 )
                     objs = list.ToArray();

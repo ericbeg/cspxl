@@ -82,6 +82,9 @@ namespace pxl
                 OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 
             bitmap.UnlockBits(data);
+            
+            width  = bitmap.Width;
+            height = bitmap.Height;
 
             m_isValid = true;
         }

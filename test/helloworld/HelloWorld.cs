@@ -63,6 +63,8 @@ class MainClass
 
         BlendFile bf = BlendFile.Open("cube.blend");
         GameObject go = bf.Load("OBCube") as GameObject;
+
+        Material mat01 = bf.Load("MAMaterial01") as Material;
         bf.Close(); bf = null;
 
         Renderer rdr = go.GetComponent<Renderer>();
@@ -82,7 +84,9 @@ class MainClass
         cam.near = 0.1f;
         cam.far = 60.0f;
 
-		app.Loop( 60.0f );
+        
+
+		//app.Loop( 60.0f );
 		app.Quit();
 		return 0;
 	}
