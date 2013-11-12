@@ -48,28 +48,32 @@ class MainClass
         GLTexture texture0 = new GLTexture();
         GLTexture texture1 = new GLTexture();
 
-        Bitmap img0 = new Bitmap("shiphull.jpg");
-        Bitmap img1 = new Bitmap("floor.jpg");
+        Bitmap img0 = new Bitmap("floor.jpg");
+        Bitmap img1 = new Bitmap("shiphull.jpg");
         
 
         texture0.Copy(img0);
         texture1.Copy(img1);
 
+        img0.Dispose(); img1.Dispose();
+        img0 = img1 = null;
+
         material.SetTexture("mainTex", texture0);
         material.SetTexture("secondTex", texture1);
 
-        material.shader = GetShader();
+        //material.shader = GetShader();
 
 
         BlendFile bf = BlendFile.Open("cube.blend");
         GameObject go = bf.Load("OBCube") as GameObject;
 
-        Material mat01 = bf.Load("MAMaterial01") as Material;
+        Material mat01 = bf.Load("MAMaterial03") as Material;
         bf.Close(); bf = null;
 
         Renderer rdr = go.GetComponent<Renderer>();
-        rdr.material = material;
-
+        mat01.shader = GetShader();
+        mat01.SetTexture("secondTex", texture1);
+        rdr.material = mat01;
 
         go.AddComponent<Rotator>();
 
@@ -84,9 +88,7 @@ class MainClass
         cam.near = 0.1f;
         cam.far = 60.0f;
 
-        
-
-		//app.Loop( 60.0f );
+		app.Loop( 60.0f );
 		app.Quit();
 		return 0;
 	}

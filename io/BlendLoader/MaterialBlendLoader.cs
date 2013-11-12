@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma  warning disable 1591
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +17,51 @@ namespace pxl
     {
         public Object Load(BlendFile.BlendVar bvar)
         {
+
+            // from blender 2.63: blender/makesdna/DNA_material_types.h
+
+            /* texco */
+            const uint TEXCO_ORCO = 1;
+            const uint TEXCO_REFL = 2;
+            const uint TEXCO_NORM = 4;
+            const uint TEXCO_GLOB = 8;
+            const uint TEXCO_UV = 16;
+            const uint TEXCO_OBJECT = 32;
+            const uint TEXCO_LAVECTOR = 64;
+            const uint TEXCO_VIEW = 128;
+            const uint TEXCO_STICKY = 256;
+            const uint TEXCO_OSA = 512;
+            const uint TEXCO_WINDOW = 1024;
+            const uint NEED_UV = 2048;
+            const uint TEXCO_TANGENT = 4096;
+            /* still stored in vertex->accum, 1 D */
+            const uint TEXCO_STRAND = 8192;
+            const uint TEXCO_PARTICLE = 8192;/* strand is used for normal materials, particle for halo materials */
+            const uint TEXCO_STRESS = 16384;
+            const uint TEXCO_SPEED = 32768;
+
+            /* mapto */
+            const uint MAP_COL = 1;
+            const uint MAP_NORM = 2;
+            const uint MAP_COLSPEC = 4;
+            const uint MAP_COLMIR = 8;
+            const uint MAP_VARS = (0xFFF0);
+            const uint MAP_REF = 16;
+            const uint MAP_SPEC = 32;
+            const uint MAP_EMIT = 64;
+            const uint MAP_ALPHA = 128;
+            const uint MAP_HAR = 256;
+            const uint MAP_RAYMIRR = 512;
+            const uint MAP_TRANSLU = 1024;
+            const uint MAP_AMB = 2048;
+            const uint MAP_DISPLACE = 4096;
+            const uint MAP_WARP = 8192;
+            const uint MAP_LAYER = 16384;    /* unused */
+            // //////////////////////////////////////
+
+
+
+
             Material mat = null;
             if (bvar != null && bvar.type == "Material")
             {
@@ -44,7 +91,15 @@ namespace pxl
                     Texture tex = LoadTexture( mtex );
                     if (tex != null)
                     {
-                        mat.SetTexture("mainTexture", tex); // TODO: define texture name
+                        string samplerName = "undefined";
+                        
+                        short mapto = mtex["mapto"];
+
+                        // TODO: ??? The same texture can be mapped to several channels.
+                        if ( (mapto & MAP_COL)  > 0 ) samplerName = "mainTex";
+                        if ( (mapto & MAP_NORM) > 0 ) samplerName = "normalTex";
+
+                        mat.SetTexture(samplerName, tex); 
                     }
                 }
 
@@ -65,6 +120,9 @@ namespace pxl
                     if (ima != null)
                     {
                         string imname = ima["id"]["name"];
+                        string impath = ima["name"];
+                        Stream stream = null;
+
                         BlendFile.BlendVar packedFile = ima["packedfile"];
                         if (packedFile != null)
                         {
@@ -73,16 +131,29 @@ namespace pxl
                             BlendFile.BlendVar data = packedFile["data"];
                             data.Seek();
                             byte[] bytes = data.blendFile.binaryReader.ReadBytes(size);
-                            MemoryStream ms = new MemoryStream(bytes);
-                            Bitmap bitmap = new Bitmap(ms);
+                            stream = new MemoryStream(bytes);
+                        }
+                        else
+                        {
+                            string cleanpath = BlendFile.GetFilepath(impath);
+                            stream = new FileStream(cleanpath, System.IO.FileMode.Open);
+                        }
+
+                        if (stream != null)
+                        {
+                            Bitmap bitmap = new Bitmap(stream);
                             GLTexture gltexture = new GLTexture();
                             gltexture.Copy(bitmap);
                             texture = gltexture;
+                            stream.Close();
                         }
+
                     }
 
+
+
                 }
-            }
+            } // if mtex
             return texture;
         }
 

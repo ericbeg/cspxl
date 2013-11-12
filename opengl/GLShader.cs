@@ -10,7 +10,7 @@ namespace pxl
 {
     public class GLShader : Shader
     {
-        private int m_program;
+        private int m_glname;
 
         private int m_vertex;
         private int m_fragment;
@@ -24,7 +24,7 @@ namespace pxl
             get
             {
                
-                return m_program;
+                return m_glname;
             }
         }
 
@@ -45,7 +45,7 @@ namespace pxl
             GLHelper.CheckError();
 
             if ( m_isValidProgram )
-                GL.DeleteProgram( m_program );
+                GL.DeleteProgram( m_glname );
             GLHelper.CheckError();
 
             m_isValidFragment = m_isValidVertex = m_isValidProgram = false;
@@ -101,12 +101,12 @@ namespace pxl
 
             if (m_isValidVertex && m_isValidFragment)
             {
-                m_program = GL.CreateProgram();
-                GL.AttachShader(m_program, m_vertex);
-                GL.AttachShader(m_program, m_fragment);
+                m_glname = GL.CreateProgram();
+                GL.AttachShader(m_glname, m_vertex);
+                GL.AttachShader(m_glname, m_fragment);
                 
                 GLHelper.CheckError();
-                GL.ValidateProgram(m_program);
+                GL.ValidateProgram(m_glname);
                 GLHelper.CheckError();
                 
                 m_isCompiled = true;
@@ -114,7 +114,7 @@ namespace pxl
                 //GL.GetProgram(m_program, ProgramParameter.ValidateStatus, out param);
                 //m_isValidProgram &= (param == (int)All.True);
                 
-                string infoLog = GL.GetProgramInfoLog(m_program);
+                string infoLog = GL.GetProgramInfoLog(m_glname);
                 GLHelper.CheckError();
                 if (infoLog != null && infoLog != "")
                 {
@@ -150,7 +150,7 @@ namespace pxl
             GLHelper.CheckError();
 
             if ( ! m_isValidProgram )
-                GL.DeleteProgram( m_program );
+                GL.DeleteProgram( m_glname );
 
             GLHelper.CheckError();
 
@@ -185,10 +185,10 @@ namespace pxl
             if ( m_isCompiled )
             {
                 
-                GL.LinkProgram( m_program );
+                GL.LinkProgram( m_glname );
                 GLHelper.CheckError();
                 int param;
-                GL.GetProgram(m_program, ProgramParameter.LinkStatus, out param);
+                GL.GetProgram(m_glname, ProgramParameter.LinkStatus, out param);
                 m_isValidProgram = (param == (int)All.True);
                 //m_isValidProgram = true;
                 GLHelper.CheckError();
@@ -203,7 +203,7 @@ namespace pxl
 
             if ( m_isValidProgram )
             {
-                GL.UseProgram( m_program );
+                GL.UseProgram( m_glname );
                 GLHelper.CheckError();
             }
         }

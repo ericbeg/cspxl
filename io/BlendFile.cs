@@ -19,6 +19,18 @@ namespace pxl
             ;
         }
 
+        public static string GetFilepath( string path )
+        {
+            string abspath = null;
+
+            if (path != null)
+            {
+                abspath = path.Replace("//", "./");
+            }
+
+            return abspath;
+        }
+
         internal BinaryReader m_br = null;
         List<FileBlock> m_fileBlocks = new List<FileBlock>();
         Dictionary<ulong, FileBlock> m_fileBlockByOldPointer = new Dictionary<ulong, FileBlock>();
@@ -307,7 +319,11 @@ namespace pxl
         {
             foreach( FileBlock fb in m_fileBlocks)
             {
+                if (fb.oldPointer == 0)
+                    continue;
+
                 BlendVar var = GetVarByOldPointer(fb.oldPointer);
+                
                 BlendVar id = var["id"];
                 if (id != null )
                 {
@@ -331,7 +347,8 @@ namespace pxl
                 FileBlock fb = ReadFileBlock();
                 fb.m_fileBlockIndex = i;
                 m_fileBlocks.Add(fb);
-                m_fileBlockByOldPointer[fb.oldPointer] = fb;
+                if( fb.oldPointer != 0 )
+                    m_fileBlockByOldPointer[fb.oldPointer] = fb;
                 ++i;
             }
         }
@@ -841,9 +858,9 @@ namespace pxl
                         m_name = m_name.Remove(p);
                     }
 
-                    if (m_name.Length > 0 && m_name[0] == '*')
+                    if (m_name.Length > 0 )
                     {
-                        m_name = m_name.Substring(1);
+                        m_name = m_name.Replace("*", "");
                     }
                 }
 
@@ -948,9 +965,12 @@ namespace pxl
                 }
                 else if ( isPointer )
                 {
-                    ulong pointer = m_bf.ReadPointer();
-                    obj = new BlendPointer(m_bf, pointer);
-                    //obj = pointer;
+                    ulong address = m_bf.ReadPointer();
+                    if (address != 0)
+                    {
+                        obj = new BlendPointer(m_bf, address);
+                        //obj = pointer;
+                    }
                 }
                 
                 return obj;
@@ -962,8 +982,14 @@ namespace pxl
             {
                 get
                 {
+                    
                     if (m_fields == null)
                     {
+                        if (this.type == "Object")
+                        {
+                            ;
+                        }
+
                         if (!isPrimitive && !m_isPointer)
                         {
                             long offset = m_offset;
@@ -1007,12 +1033,20 @@ namespace pxl
                             member = m_fields[m_memberIndexByName[name]];
                         }
                     }
-                    
+
                     if (member != null && member.isPointer && !member.isFixedSizeArray && member.count == 1  )
                     {
                         BlendPointer ptr = (BlendPointer)member;
-                        member = ptr;
+                        if (ptr != null && ptr.address != 0)
+                        {
+                            member = ptr;
+                        }
+                        else
+                        {
+                            member = null;
+                        }
                     }
+
                     return member;
                 }
             }
@@ -1108,7 +1142,7 @@ namespace pxl
                 {
                     referenced = v.m_bf.GetVarsByOldPointer( v.fileBlock.oldPointer );
                 }
-                else if (v.isPointer && v.isFixedSizeArray)
+                else if (v.isPointer && v.isFixedSizeArray && v.type != "Link")
                 {
                     List<BlendVar> bvars = new List<BlendVar>();
                     BlendPointer[] pointers = v;
@@ -1119,6 +1153,24 @@ namespace pxl
                         {
                             bvars.Add(bvar);
                         }
+                    }
+                    referenced = bvars.ToArray();
+                }
+                else if (v.type == "Link")
+                {
+                    FileBlock link = v.fileBlock;
+                    //FileBlock next = v.blendFile.fileBloks[link.fileBlockIndex + 1];
+                    //int count = (int)(next.position - link.dataPosition) /v.blendFile.pointerSize;
+                    int count = (int)(link.size) /v.blendFile.pointerSize;
+
+                    List<BlendVar> bvars = new List<BlendVar>();
+                    for (int i = 0; i < count; ++i)
+                    {
+                        v.blendFile.binaryReader.BaseStream.Position = link.dataPosition + i * v.blendFile.pointerSize;
+                        ulong address = v.blendFile.ReadPointer();
+                        BlendVar pointed = v.blendFile.GetVarByOldPointer(address);
+                        if (pointed != null)
+                            bvars.Add(pointed);
                     }
                     referenced = bvars.ToArray();
                 }
