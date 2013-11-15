@@ -120,38 +120,15 @@ namespace pxl
                     if (ima != null)
                     {
                         string imname = ima["id"]["name"];
-                        string impath = ima["name"];
-                        Stream stream = null;
 
-                        BlendFile.BlendVar packedFile = ima["packedfile"];
-                        if (packedFile != null)
+                        Bitmap bitmap = bvar.blendFile.Load(imname) as Bitmap;
+                        if (bitmap != null)
                         {
-                            int size = packedFile["size"];
-                            int seek = packedFile["seek"];
-                            BlendFile.BlendVar data = packedFile["data"];
-                            data.Seek();
-                            byte[] bytes = data.blendFile.binaryReader.ReadBytes(size);
-                            stream = new MemoryStream(bytes);
-                        }
-                        else
-                        {
-                            string cleanpath = BlendFile.GetFilepath(impath);
-                            stream = new FileStream(cleanpath, System.IO.FileMode.Open);
-                        }
-
-                        if (stream != null)
-                        {
-                            Bitmap bitmap = new Bitmap(stream);
                             GLTexture gltexture = new GLTexture();
                             gltexture.Copy(bitmap);
                             texture = gltexture;
-                            stream.Close();
                         }
-
                     }
-
-
-
                 }
             } // if mtex
             return texture;

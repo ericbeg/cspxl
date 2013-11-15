@@ -47,19 +47,33 @@ namespace pxl
 				return m_components.ToArray();
 			}
 		}
-	
+
+        /// <summary>
+        /// Do not use this function unless you know what your are doing.
+        /// You are advised to use the non-static AddComponent method.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <param name="component"></param>
+        static public void AddComponent(GameObject gameObject, Component component)
+        {
+            if (component != null && !gameObject.m_components.Contains(component))
+            {
+                component.m_gameObject = gameObject;
+                gameObject.m_components.Add(component);
+            }
+            else
+            {
+                component.m_gameObject = null;
+            }
+        }
+
 		public T AddComponent<T>()
 			where T:  new( )
 		{
 			T newT  = new T();
 			
 			Component component = newT as Component;
-			if( component != null )
-			{
-				component.m_gameObject = this;
-				m_components.Add( component );
-			}
-
+            AddComponent(this, component);
             return newT;
 		}
 		

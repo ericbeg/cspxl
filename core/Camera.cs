@@ -67,7 +67,7 @@ namespace pxl
 				Vector3 target = eye - t.z;
 				Vector3 up     = t.y;
 
-				m_viewMatrix = Matrix4.LookAt (eye, target, up);
+				m_viewMatrix = Matrix4.ViewLookAt (eye, target, up);
 				m_updateView = false;
 				m_updateViewProjection = true;
 			}

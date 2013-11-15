@@ -244,8 +244,8 @@ namespace pxl
             bf.ReadDNAStruct();
             bf.CreateNameIndex();
 
-            File.WriteAllText("dna.txt", bf.GetDNAString());
-            File.WriteAllText("data.txt", bf.GetFileBlockString());
+            //File.WriteAllText("dna.txt", bf.GetDNAString());
+            //File.WriteAllText("data.txt", bf.GetFileBlockString());
             
             return bf;
         }
@@ -1132,11 +1132,10 @@ namespace pxl
 
             public static implicit operator BlendVar[] (BlendVar v)
             {
+                if (v == null)
+                    return null;
+
                 BlendVar[] referenced = null;
-                if (v.m_name == "mtex")
-                {
-                    ;
-                }
 
                 if ( v.isPointer && !v.isFixedSizeArray )
                 {

@@ -68,6 +68,23 @@ namespace pxl
 				child.Touch();
 			}
 		}
+
+        public void LookAt(Vector3 target, Vector3 up)
+        {
+            Vector3 f = Vector3.Normalized(target - position);
+
+            Vector3 s = Vector3.Normalized(Vector3.Cross(f, Vector3.Normalized(up)));
+            Vector3 u = Vector3.Normalized(Vector3.Cross(s, f));
+
+            Matrix4 rot = new Matrix4(
+             s.x, u.x, -f.x, 0.0f,
+             s.y, u.y, -f.y, 0.0f,
+             s.z, u.z, -f.z, 0.0f,
+             0.0f, 0.0f, 0.0f, 1.0f);
+
+            rotation = Quaternion.FromMatrix(rot);
+        }
+
 		public Transform[] children
         {
             get

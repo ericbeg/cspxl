@@ -66,6 +66,15 @@ class MainClass
 
         BlendFile bf = BlendFile.Open("cube.blend");
         GameObject go = bf.Load("OBCube") as GameObject;
+        
+        GameObject obIco = bf.Load("OBIcosphere") as GameObject;
+        obIco.GetComponent<Renderer>().material.shader = GetShader();
+
+        GameObject obMonk = bf.Load("OBSuzanne") as GameObject;
+        obMonk.GetComponent<Renderer>().material.shader = GetShader();
+
+
+        GameObject obcam = bf.Load("OBCamera") as GameObject;
 
         Material mat01 = bf.Load("MAMaterial03") as Material;
         bf.Close(); bf = null;
@@ -77,16 +86,14 @@ class MainClass
 
         go.AddComponent<Rotator>();
 
-        GameObject obCam  = new GameObject();
-        obCam.transform.position = new Vector3(0.0f, 0.0f, 2.0f);
-        Camera cam = obCam.AddComponent<Camera>();
+        Camera cam = obcam.GetComponent<Camera>();
         //cam.perspective = false;
-        cam.scale = 4.0f;
-        cam.fovy = 0.2f*(2.0f*(float)Math.PI);
+        //cam.scale = 4.0f;
+        //cam.fovy = 0.2f*(2.0f*(float)Math.PI);
         Camera.active = cam;
         cam.backgroundColor = Color4.Black;
-        cam.near = 0.1f;
-        cam.far = 60.0f;
+        //cam.near = 0.1f;
+        //cam.far = 60.0f;
 
 		app.Loop( 60.0f );
 		app.Quit();

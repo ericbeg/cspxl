@@ -27,6 +27,9 @@ namespace pxl
                         case "Mesh":
                             LoadMeshOn(go, bvar);
                             break;
+                        case "Camera":
+                            LoadCameraOn(go, bvar);
+                            break;
                     }
                 }
 
@@ -37,16 +40,37 @@ namespace pxl
             return obj;
         }
 
+        private void LoadCameraOn(GameObject go, BlendFile.BlendVar bvar)
+        {
+            BlendFile.BlendVar data = bvar["data"];
+            string camname = data["id"]["name"];
+            Camera cam = bvar.blendFile.Load(camname) as Camera;
+            if ( cam != null )
+            {
+                GameObject.AddComponent(go, cam);
+            }
+
+        }
+
         private void LoadTransformOn(GameObject go, BlendFile.BlendVar bvar)
         {
             // Load Transform
-            float[] loc = bvar["loc"];
-            float[] size = bvar["size"];
-            float[] quat = bvar["quat"];
+            float[] loc   = bvar["loc"];
+            float[] size  = bvar["size"];
+            //float[] quat  = bvar["quat"];
+            float[] obmat = bvar["obmat"];
+            Matrix4 mat = new Matrix4(obmat);
 
             go.transform.localPosition = new Vector3(loc);
             go.transform.localScale = new Vector3(size);
-            go.transform.localRotation = new Quaternion(quat[1], quat[2], quat[3], quat[0]);
+            //go.transform.localRotation = new Quaternion(quat[1], quat[2], quat[3], quat[0]); // Apparently, this is not updated when the blend file is saved.
+            go.transform.localRotation = Quaternion.FromMatrix( mat );
+
+            Quaternion q = go.transform.localRotation;
+            go.transform.localRotation = new Quaternion( q.x, q.y, q.z, -q.w); // ???: Convention?
+            Matrix4 m = Matrix4.Rotate(go.transform.localRotation);
+
+            Matrix4 d = m - mat;
 
         }
              

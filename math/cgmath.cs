@@ -717,11 +717,11 @@ namespace pxl
             return Matrix4.Frustum(xmin, xmax, ymin, ymax, zNear, zFar);
         }
 
-        public static Matrix4 LookAt(
-   Vector3 eye,
-   Vector3 at,
-   Vector3 up
-)
+        public static Matrix4 ViewLookAt(
+           Vector3 eye,
+           Vector3 at,
+           Vector3 up
+        )
         {
 
             Vector3 f = Vector3.Normalized(at - eye);
@@ -735,7 +735,7 @@ namespace pxl
             -f.x, -f.y, -f.z, 0.0f,
              0.0f, 0.0f, 0.0f, 1.0f);
 
-            Matrix4 Trans = Matrix4.Translate(new Vector3(0.0f, 0.0f, 0.0f) - eye);
+            Matrix4 Trans = Matrix4.Translate(-eye);
 
             return Rot * Trans;
         }
