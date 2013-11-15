@@ -904,8 +904,33 @@ namespace pxl
 
             public bool isPrimitive         { get { return m_isPrimitive; } }
             public bool isPointer           { get { return m_isPointer; } }
-            public bool isFixedSizeArray    { get { return m_isFixedSizeArray; } } 
+            public bool isFixedSizeArray    { get { return m_isFixedSizeArray; } }
 
+            internal static BlendVar[] GetListBase(BlendVar listbase)
+            {
+                List<BlendVar> vars = new List<BlendVar>();
+
+                if (listbase != null && listbase.type == "ListBase")
+                {
+                    BlendVar next = listbase["first"];
+                    BlendVar last = listbase["last"];
+
+                    if (next != null && last != null)
+                    {
+                        while (next != null && next.m_offset != last.m_offset)
+                        {
+                            vars.Add(next);
+                            next = next["next"];
+                        }
+                        vars.Add(last);
+                    }
+
+                }
+
+                return vars.ToArray();
+            }
+
+            
             internal Object Read()
             {
                 Object obj = null;
@@ -1173,6 +1198,12 @@ namespace pxl
                     }
                     referenced = bvars.ToArray();
                 }
+                else if (v.type == "ListBase")
+                {
+                    referenced = GetListBase(v);
+                }
+
+
 
                 return referenced;
             }
@@ -1191,7 +1222,6 @@ namespace pxl
                     }
                     pointers = ptrs.ToArray();
                 }
-
                 return pointers;
             }
 

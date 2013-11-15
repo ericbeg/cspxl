@@ -30,59 +30,24 @@ class MainClass
         Console.WriteLine(shaderSource);
         Shader shader = new GLShader();
         shader.source = shaderSource;
-
-
-        
         shader.Apply();
-
         return shader;
     }
 
-	public static int Main (string[] args)
-	{
-
-		Application app = new Application( 400, 300);
-        Console.WriteLine( pxl.GLHelper.infoString );
-        
-        Material material = new Material();
-        GLTexture texture0 = new GLTexture();
-        GLTexture texture1 = new GLTexture();
-
-        Bitmap img0 = new Bitmap("floor.jpg");
-        Bitmap img1 = new Bitmap("shiphull.jpg");
-        
-
-        texture0.Copy(img0);
-        texture1.Copy(img1);
-
-        img0.Dispose(); img1.Dispose();
-        img0 = img1 = null;
-
-        material.SetTexture("mainTex", texture0);
-        material.SetTexture("secondTex", texture1);
-
-        //material.shader = GetShader();
-
-
+    public static void BuildScene()
+    {
+        Shader shader = GetShader();
+        Shader.fallback = shader;
         BlendFile bf = BlendFile.Open("cube.blend");
+
+        GameObject scene = bf.Load("SCScene") as GameObject;
+             
+
         GameObject go = bf.Load("OBCube") as GameObject;
-        
-        GameObject obIco = bf.Load("OBIcosphere") as GameObject;
-        obIco.GetComponent<Renderer>().material.shader = GetShader();
-
-        GameObject obMonk = bf.Load("OBSuzanne") as GameObject;
-        obMonk.GetComponent<Renderer>().material.shader = GetShader();
-
 
         GameObject obcam = bf.Load("OBCamera") as GameObject;
 
-        Material mat01 = bf.Load("MAMaterial03") as Material;
         bf.Close(); bf = null;
-
-        Renderer rdr = go.GetComponent<Renderer>();
-        mat01.shader = GetShader();
-        mat01.SetTexture("secondTex", texture1);
-        rdr.material = mat01;
 
         go.AddComponent<Rotator>();
 
@@ -94,7 +59,15 @@ class MainClass
         cam.backgroundColor = Color4.Black;
         //cam.near = 0.1f;
         //cam.far = 60.0f;
+    }
 
+	public static int Main (string[] args)
+	{
+
+		Application app = new Application( 400, 300);
+        Console.WriteLine( pxl.GLHelper.infoString );
+
+        BuildScene();
 		app.Loop( 60.0f );
 		app.Quit();
 		return 0;

@@ -219,7 +219,7 @@ namespace pxl
                 if (texture != null)
                 {
                     texture.Bind(i);
-                    shader.SetUniform(name, i);
+                    Shader.active.SetUniform(name, i);
                 }
             }
 

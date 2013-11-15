@@ -27,6 +27,7 @@ namespace pxl
         }
 
         public static Shader active = null;
+        public static Shader fallback = null;
 
         public Texture texture;
 

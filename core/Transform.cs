@@ -202,7 +202,7 @@ namespace pxl
 					parent.m_children.Remove( this );
 				}
 				
-				parent = newParent;
+				m_parent = newParent;
                 Touch();
             }
 		}

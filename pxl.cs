@@ -43,6 +43,7 @@ namespace pxl
             BlendFile.Register(new MaterialBlendLoader(), "MA");
             BlendFile.Register(new BMeshBlendLoader(), "ME");
             BlendFile.Register(new ObjectBlendLoader(), "OB");
+            BlendFile.Register(new SceneBlendLoader(), "SC");
         }
 
         /// <summary>
@@ -113,7 +114,10 @@ namespace pxl
                 {
                     var me = rdr.mesh;
                     var shader = rdr.material.shader;
-                    if (me != null)
+                    if (shader == null)
+                        shader = Shader.fallback;
+
+                    if (me != null )
                     {
 
                         shader.Link();
