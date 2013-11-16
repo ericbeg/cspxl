@@ -39,17 +39,24 @@ class MainClass
         Shader shader = GetShader();
         Shader.fallback = shader;
         BlendFile bf = BlendFile.Open("cube.blend");
-
         GameObject scene = bf.Load("SCScene") as GameObject;
+        bf.Close(); bf = null;
              
 
-        GameObject go = bf.Load("OBCube") as GameObject;
 
-        GameObject obcam = bf.Load("OBCamera") as GameObject;
+        GameObject obcam = GameObject.Find("OBCamera");
 
-        bf.Close(); bf = null;
 
-        go.AddComponent<Rotator>();
+        //GameObject go = GameObject.Find("OBSuzanne");
+        //go.AddComponent<Rotator>();
+        
+        GameObject[] gos = GameObject.FindObjectsOfType<Transform>();
+        foreach (var go in gos)
+        {
+            if( go.GetComponent<Renderer>() != null )
+                go.AddComponent<Rotator>();
+        }
+        
 
         Camera cam = obcam.GetComponent<Camera>();
         //cam.perspective = false;

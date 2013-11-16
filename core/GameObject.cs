@@ -119,6 +119,65 @@ namespace pxl
                 return m_transform;
             }
         }
-	
-	}
+
+        public static GameObject Find(string name)
+        {
+            GameObject go = null;
+            foreach (var g in m_instances)
+            {
+                if (g.name == name)
+                {
+                    go = g;
+                    break;
+                }
+            }
+            return go;
+        }
+
+        public static GameObject[] FindAll(string name)
+        {
+            List<GameObject> gos = new List<GameObject>(); 
+            foreach (var g in m_instances)
+            {
+                if (g.name == name)
+                {
+                    gos.Add(g);
+                }
+            }
+            return gos.ToArray();
+        }
+
+
+        public static GameObject FindObjectOfType<T>()
+            where T : Component
+        {
+            GameObject go = null;
+            foreach (var g in m_instances)
+            {
+                T c = g.GetComponent<T>();
+                if ( c != null )
+                {
+                    go = g;
+                    break;
+                }
+            }
+            return go;
+        }
+
+        public static GameObject[] FindObjectsOfType<T>()
+            where T : Component
+        {
+            List<GameObject> gos = new List<GameObject>();
+            foreach (var g in m_instances)
+            {
+                T c = g.GetComponent<T>();
+                if (c != null)
+                {
+                    gos.Add(g);
+                }
+            }
+            return gos.ToArray();
+        }
+
+    }
 }

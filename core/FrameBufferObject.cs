@@ -11,6 +11,5 @@ namespace pxl
     {
         public FrameBufferObject(int width, int height, int depth) { }
         public abstract void AttachColorTexture(Texture tex, int attachment);
-
     }
 }

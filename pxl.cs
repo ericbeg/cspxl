@@ -107,6 +107,7 @@ namespace pxl
                 viewProjectionMatrix = cam.viewProjectionMatrix;
                 
             }
+
             foreach (var go in objects)
             {
                 var rdr = go.GetComponent<Renderer>();
@@ -146,14 +147,14 @@ namespace pxl
 
             this.SwapBuffers();
             GLHelper.CheckError();
-            //Thread.Sleep(100);
         }
 
         public void Loop()
         {
             Loop(70.0f);
         }
-		public void Loop(float updateRate)
+
+        public void Loop(float updateRate)
 		{
             Time._startingDate = DateTime.Now;
             Time._previousFrameDate = Time._startingDate;
