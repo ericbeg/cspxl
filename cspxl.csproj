@@ -86,7 +86,6 @@
     <Compile Include="core\Renderer.cs" />
     <Compile Include="core\Shader.cs" />
     <Compile Include="core\Transform.cs" />
-    <Compile Include="core\Scene.cs" />
     <Compile Include="core\Texture.cs" />
     <Compile Include="math\mathutils.cs" />
     <Compile Include="opengl\GLMesh.cs" />

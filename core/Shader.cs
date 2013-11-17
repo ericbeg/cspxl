@@ -44,6 +44,7 @@ namespace pxl
         public abstract void SetUniform(string name, Vector3 uniform);
         public abstract void SetUniform(string name, Vector4 uniform);
         public abstract void SetUniform(string name, Color4 uniform);
+        public abstract void SetUniform(string name, Matrix3 uniform);
         public abstract void SetUniform(string name, Matrix4 uniform);
     }
 }

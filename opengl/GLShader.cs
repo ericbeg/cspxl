@@ -54,7 +54,7 @@ namespace pxl
             GLHelper.CheckError();
             m_fragment = GL.CreateShader( ShaderType.FragmentShader );
             GLHelper.CheckError();
-            string glslVersion = "#version 110\n";
+            string glslVersion = "#version 120\n";
             string[] vertexSources = new string[3] { glslVersion, "#define VERTEX_SHADER\n", source };
             string[] fragmentSources = new string[3] { glslVersion, "#define FRAGMENT_SHADER\n", source }; 
 
@@ -234,6 +234,32 @@ namespace pxl
             }
         }
 
+        public override void SetUniform(string name, Matrix3 m)
+        {
+            int location = GL.GetUniformLocation(glname, name);
+            GLHelper.CheckError();
+
+            if (location >= 0)
+            {
+                float[] mf = new float[]{
+                    m.m11, m.m21, m.m31,
+                    m.m12, m.m22, m.m32,
+                    m.m13, m.m23, m.m33
+                };
+
+                unsafe
+                {
+                    fixed (float* ptr = mf)
+                    {
+                        GL.UniformMatrix3(location, 1, false, ptr);
+                    }
+                }
+                GLHelper.CheckError();
+            }
+        }
+
+
+
         public override void SetUniform(string name, Matrix4 m)
         {
             int location = GL.GetUniformLocation(glname, name);
@@ -241,15 +267,6 @@ namespace pxl
 
             if (location >= 0)
             {
-                /*
-                OpenTK.Matrix4 om = new OpenTK.Matrix4(
-                    m.m11, m.m12, m.m13, m.m14,
-                    m.m21, m.m22, m.m23, m.m24,
-                    m.m31, m.m32, m.m33, m.m34,
-                    m.m41, m.m42, m.m43, m.m44
-                    );
-                 */
-                
                 OpenTK.Matrix4 om = new OpenTK.Matrix4(
                     m.m11, m.m21, m.m31, m.m41,
                     m.m12, m.m22, m.m32, m.m42,

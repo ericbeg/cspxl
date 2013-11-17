@@ -29,6 +29,14 @@ namespace pxl
                 info += "Version: " + GL.GetString(StringName.Version) + "\n";
                 //info += "GLSL version: " + GL.GetString(StringName.ShadingLanguageVersion) + "\n";
                 info += "Extensions: " + GL.GetString(StringName.Extensions) + "\n";
+                
+                int i = 0;
+                GL.GetInteger(GetPName.MaxVertexAttribs, out i); info += "MaxVertexAttribs=" + i + "\n";
+                GL.GetInteger(GetPName.MaxVertexUniformComponents, out i); info += "MaxVertexUniformComponents=" + i + "\n";
+                GL.GetInteger(GetPName.MaxFragmentUniformComponents, out i); info += "MaxFragmentUniformComponents=" + i + "\n";
+                GL.GetInteger(GetPName.MaxVaryingComponents, out i); info += "MaxVaryingComponents=" + i + "\n";
+                GL.GetInteger(GetPName.MaxTextureUnits, out i); info += "MaxTextureUnits=" + i + "\n";
+                
                 return info;
             }
         }

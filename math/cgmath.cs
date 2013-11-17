@@ -355,6 +355,28 @@ namespace pxl
 
     public class Matrix3
     {
+        public float m11, m12, m13;
+        public float m21, m22, m23;
+        public float m31, m32, m33;
+        public Matrix3(float[] m)
+        :this(
+            m[0], m[3], m[6],  
+            m[1], m[4], m[7],   
+            m[2], m[5], m[8]
+            ){}
+
+        public Matrix3(
+            float m11, float m12, float m13,
+            float m21, float m22, float m23,
+            float m31, float m32, float m33
+            )
+        {
+            this.m11 = m11; this.m12 = m12; this.m13 = m13;
+            this.m21 = m21; this.m22 = m22; this.m23 = m23;
+            this.m31 = m31; this.m32 = m32; this.m33 = m33;
+        }
+
+
 
     }
 
@@ -432,6 +454,26 @@ namespace pxl
                 m44 = v.w;
             }
         }
+
+        public Matrix3 sub3
+        {
+            get
+            {
+                return new Matrix3(
+                    m11, m12, m13,
+                    m21, m22, m23,
+                    m31, m32, m33
+                    );
+            }
+
+            set
+            {
+                m11 = value.m11; m12 = value.m12; m13 = value.m13;
+                m21 = value.m21; m22 = value.m22; m23 = value.m23;
+                m31 = value.m31; m32 = value.m32; m33 = value.m33;
+            }
+        }
+
 
         public Matrix4(float[] m)
         :this(

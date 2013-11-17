@@ -121,6 +121,7 @@ namespace pxl
                     if (me != null )
                     {
 
+                        Shader.active = shader;
                         shader.Link();
                         shader.Use();
 
@@ -132,14 +133,24 @@ namespace pxl
                         modelViewProjectionMatrix =  projectionMatrix*modelViewMatrix;
 
                         shader.SetUniform("_Time", Time.t);
-                        shader.SetUniform("modelMatrix", modelMatrix);
+                        //shader.SetUniform("modelMatrix", modelMatrix);
 
                         shader.SetUniform("viewMatrix", viewMatrix);
                         shader.SetUniform("projectionMatrix", projectionMatrix);
                         shader.SetUniform("viewProjectionMatrix", viewProjectionMatrix);
+                        shader.SetUniform("modelMatrix", modelMatrix);
                         shader.SetUniform("modelViewMatrix", modelViewMatrix);
+                        shader.SetUniform("normalMatrix", modelViewMatrix.sub3);
                         shader.SetUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
 
+                        /*
+                        int uniforms;
+                        GL.GetProgram((shader as GLShader).glname, ProgramParameter.ActiveUniforms, out uniforms);
+                        for (int i = 0; i < uniforms; ++i)
+                        {
+                            string name = GL.GetActiveUniform((shader as GLShader).glname, i); 
+                        }
+                        */
 	                    me.Draw();
                     }
                 }
