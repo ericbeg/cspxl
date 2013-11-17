@@ -38,14 +38,15 @@ class MainClass
     {
         Shader shader = GetShader();
         Shader.fallback = shader;
+
         BlendFile bf = BlendFile.Open("cube.blend");
         GameObject scene = bf.Load("SCScene") as GameObject;
         bf.Close(); bf = null;
-             
 
-
+        
         GameObject obcam = GameObject.Find("OBCamera");
-
+        Camera cam = obcam.GetComponent<Camera>();
+        cam.backgroundColor = Color4.Black;
 
         //GameObject go = GameObject.Find("OBSuzanne");
         //go.AddComponent<Rotator>();
@@ -56,16 +57,7 @@ class MainClass
             if( go.GetComponent<Renderer>() != null )
                 go.AddComponent<Rotator>();
         }
-        
 
-        Camera cam = obcam.GetComponent<Camera>();
-        //cam.perspective = false;
-        //cam.scale = 4.0f;
-        //cam.fovy = 0.2f*(2.0f*(float)Math.PI);
-        Camera.active = cam;
-        cam.backgroundColor = Color4.Black;
-        //cam.near = 0.1f;
-        //cam.far = 60.0f;
     }
 
 	public static int Main (string[] args)

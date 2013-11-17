@@ -1,12 +1,14 @@
 #pragma  warning disable 1591
 
 using System;
+using System.Collections.Generic;
+
 using OpenTK;
 using OpenTK.Graphics;
 
 namespace pxl
 {
-	public class Camera : Component
+	public class Camera : Component, IDisposable
 	{
 		private float m_fovy;
 		private float m_aspect;
@@ -29,8 +31,14 @@ namespace pxl
             DepthOnly
         }
 
+        private static List<Camera> m_instances = new List<Camera>();
+
+        public static Camera[] instances { get { return m_instances.ToArray(); } }
+
         public Camera()
         {
+            m_instances.Add(this);
+
             fovy = (float)Math.PI / 2.0f;
             aspect = 1.0f;
             perspective = true;
@@ -42,6 +50,17 @@ namespace pxl
             m_updateView = true;
             m_updateProjection = true;
             m_updateViewProjection = true;
+        }
+
+        public void Dispose()
+        {
+            m_instances.Remove(this);
+        }
+
+        public void Render()
+        {
+            Camera.active = this;
+            Graphics.RenderActiveCamera();
         }
 
         public ClearFlag clearFlag = ClearFlag.BackgroundColor;
