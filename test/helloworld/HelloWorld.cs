@@ -48,17 +48,19 @@ class MainClass
         Camera cam = obcam.GetComponent<Camera>();
         cam.backgroundColor = Color4.Black;
 
-        //GameObject go = GameObject.Find("OBSuzanne");
-        //go.AddComponent<Rotator>();
+        //GameObject go = GameObject.Find("OBSuzanne");go.AddComponent<Rotator>();
 
         GameObject[] objects =  GameObject.instances;
 
         GameObject[] gos = GameObject.FindObjectsOfType<Transform>();
+        /*
         foreach (var go in gos)
         {
-            if( go.GetComponent<Renderer>() != null )
+            if( go.GetComponent<Renderer>() != null && false)
                 go.AddComponent<Rotator>();
         }
+        */
+        
 
     }
 

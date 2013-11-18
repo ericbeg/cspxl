@@ -18,11 +18,11 @@ namespace pxl
                 obj = go;
 
                 go.name = bvar["id"]["name"];
-                LoadTransformOn( go, bvar );
+                LoadTransformOn(go, bvar);
                 BlendFile.BlendVar data = bvar["data"];
                 if (data != null)
                 {
-                    switch( data.type )
+                    switch (data.type)
                     {
                         case "Camera":
                             LoadCameraOn(go, bvar);
@@ -38,6 +38,26 @@ namespace pxl
 
                 LoadMaterialsOn(go, bvar);
 
+
+                // load the children
+                if (go != null)
+                {
+                    //string obname = "OB" + ob->getName();
+                    string obname = go.name;
+                    string[] childrennames = bvar.blendFile.GetChildrenNames( obname );
+                    if (childrennames != null)
+                    {
+                        for (uint i = 0; i < childrennames.Length; ++i)
+                        {
+                            BlendFile.BlendVar childvar = bvar.blendFile[ childrennames[i] ];
+                            GameObject child = bvar.blendFile.Load( childvar["id"]["name"] ) as GameObject;
+                            child.transform.parent = go.transform;
+                        }
+                    }
+                }
+
+
+
             } // if bvar is object
 
             return obj;
@@ -48,7 +68,7 @@ namespace pxl
             BlendFile.BlendVar data = bvar["data"];
             string camname = data["id"]["name"];
             Camera cam = bvar.blendFile.Load(camname) as Camera;
-            if ( cam != null )
+            if (cam != null)
             {
                 GameObject.AddComponent(go, cam);
             }
@@ -71,8 +91,8 @@ namespace pxl
         private void LoadTransformOn(GameObject go, BlendFile.BlendVar bvar)
         {
             // Load Transform
-            float[] loc   = bvar["loc"];
-            float[] size  = bvar["size"];
+            float[] loc = bvar["loc"];
+            float[] size = bvar["size"];
             //float[] quat  = bvar["quat"];
             float[] obmat = bvar["obmat"];
             Matrix4 mat = new Matrix4(obmat);
@@ -80,17 +100,17 @@ namespace pxl
             go.transform.localPosition = new Vector3(loc);
             go.transform.localScale = new Vector3(size);
             //go.transform.localRotation = new Quaternion(quat[1], quat[2], quat[3], quat[0]); // Apparently, this is not updated when the blend file is saved.
-            go.transform.localRotation = Quaternion.FromMatrix( mat );
+            go.transform.localRotation = Quaternion.FromMatrix(mat);
 
             Quaternion q = go.transform.localRotation;
-            go.transform.localRotation = new Quaternion( q.x, q.y, q.z, -q.w); // ???: Convention?
+            go.transform.localRotation = new Quaternion(q.x, q.y, q.z, -q.w); // ???: Convention?
             Matrix4 m = Matrix4.Rotate(go.transform.localRotation);
 
             Matrix4 d = m - mat;
 
         }
-             
-        private void LoadMeshOn( GameObject go, BlendFile.BlendVar bvar )
+
+        private void LoadMeshOn(GameObject go, BlendFile.BlendVar bvar)
         {
             BlendFile.BlendVar data = bvar["data"];
             string meshName = data["id"]["name"];
@@ -113,7 +133,7 @@ namespace pxl
             BlendFile.BlendVar[] mats = null;
             mats = bvar["mat"];
 
-            if ( (mats == null || mats.Length == 0 ) &&  data.type == "Mesh")
+            if ((mats == null || mats.Length == 0) && data.type == "Mesh")
             {
                 mats = data["mat"];
             }

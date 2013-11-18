@@ -35,6 +35,7 @@ namespace pxl
         List<FileBlock> m_fileBlocks = new List<FileBlock>();
         Dictionary<ulong, FileBlock> m_fileBlockByOldPointer = new Dictionary<ulong, FileBlock>();
         Dictionary<string, FileBlock> m_fileBlockByName = new Dictionary<string, FileBlock>();
+        Dictionary<string, List<string>> m_childrenNames = new Dictionary<string, List<string>>();
         static Dictionary<string, IBlendLoader> m_loaders = new Dictionary<string, IBlendLoader>();
         DNA1 m_dna1 = null;
 
@@ -243,6 +244,7 @@ namespace pxl
             bf.ReadFileBlocks();
             bf.ReadDNAStruct();
             bf.CreateNameIndex();
+            bf.SearchObjectChildren();
 
             //File.WriteAllText("dna.txt", bf.GetDNAString());
             //File.WriteAllText("data.txt", bf.GetFileBlockString());
@@ -260,6 +262,7 @@ namespace pxl
             m_fileBlockByName = null;
             m_fileBlockByOldPointer = null;
             m_fileBlocks = null;
+            m_childrenNames.Clear();
         }
 
         private void AligneAt4Bytes()
@@ -374,7 +377,6 @@ namespace pxl
         }
 
 
-
         private void ReadDNAStruct()
         {
             FileBlock dna1 = null;
@@ -461,6 +463,40 @@ namespace pxl
             m_dna1 = dna;
         }
 
+        public string[] GetChildrenNames(string objectName)
+        {
+            string[] childrenNames = null;
+            if (m_childrenNames.ContainsKey(objectName))
+            {
+                childrenNames = m_childrenNames[objectName].ToArray();
+            }
+            return childrenNames;
+        }
+
+        private void SearchObjectChildren()
+        {
+            for (int i = 0; i < datablockNames.Length; ++i)
+            {
+                string name = datablockNames[i];
+                if (name.StartsWith("OB"))
+                {
+                    BlendVar ob  = this[name];
+                    BlendVar par = ob["parent"];
+                    if (par != null)
+                    {
+                        string parentName = par["id"]["name"];
+                        string childName  =  ob["id"]["name"];
+
+                        if (!m_childrenNames.ContainsKey(parentName))
+                        {
+                            m_childrenNames[parentName] = new List<string>();
+                        }
+                        m_childrenNames[parentName].Add(childName);
+                    }
+ 
+                }
+            }
+        }
 
         internal class Header
         {

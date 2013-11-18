@@ -62,7 +62,7 @@ namespace pxl
 			m_updateLocalMatrix    = true;
 			m_updateMatrixInv      = true;
 			m_updateLocalMatrixInv = true;
-			
+           
 			foreach( Transform child in m_children )
 			{
 				child.Touch();
@@ -77,9 +77,9 @@ namespace pxl
             Vector3 u = Vector3.Normalized(Vector3.Cross(s, f));
 
             Matrix4 rot = new Matrix4(
-             s.x, u.x, -f.x, 0.0f,
-             s.y, u.y, -f.y, 0.0f,
-             s.z, u.z, -f.z, 0.0f,
+             s.x, u.x, f.x, 0.0f,
+             s.y, u.y, f.y, 0.0f,
+             s.z, u.z, f.z, 0.0f,
              0.0f, 0.0f, 0.0f, 1.0f);
 
             rotation = Quaternion.FromMatrix(rot);
@@ -106,7 +106,7 @@ namespace pxl
 			set
 			{
 				Vector3 newPosition = value;
-				localPosition = ancestorsMatrixInverse * newPosition;
+				m_localPosition = ancestorsMatrixInverse * newPosition;
                 Touch();
 			}
 		}
@@ -134,7 +134,7 @@ namespace pxl
 			{
 				Quaternion newRotation = value;
 				Matrix4 rot =  ancestorsMatrixInverse * Matrix4.Rotate( newRotation ) ;
-				localRotation  = Quaternion.FromMatrix( rot );
+				m_localRotation  = Quaternion.FromMatrix( rot );
                 Touch();
             }
 		}
