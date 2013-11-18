@@ -50,7 +50,9 @@ class MainClass
 
         //GameObject go = GameObject.Find("OBSuzanne");
         //go.AddComponent<Rotator>();
-        
+
+        GameObject[] objects =  GameObject.instances;
+
         GameObject[] gos = GameObject.FindObjectsOfType<Transform>();
         foreach (var go in gos)
         {

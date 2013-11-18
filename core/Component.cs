@@ -8,6 +8,8 @@ namespace pxl
 		internal GameObject m_gameObject = null;
 		
 		internal Component(){}
+
+        public bool enable = true;
 		
 		public Component(GameObject gameObject)
 		{

@@ -40,6 +40,7 @@ namespace pxl
         {
             BlendFile.Register(new CameraBlendLoader(), "CA");
             BlendFile.Register(new ImageBlendLoader(), "IM");
+            BlendFile.Register(new LightBlendLoader(), "LA");
             BlendFile.Register(new MaterialBlendLoader(), "MA");
             BlendFile.Register(new BMeshBlendLoader(), "ME");
             BlendFile.Register(new ObjectBlendLoader(), "OB");

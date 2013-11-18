@@ -24,11 +24,14 @@ namespace pxl
                 {
                     switch( data.type )
                     {
-                        case "Mesh":
-                            LoadMeshOn(go, bvar);
-                            break;
                         case "Camera":
                             LoadCameraOn(go, bvar);
+                            break;
+                        case "Lamp":
+                            LoadLightOn(go, bvar);
+                            break;
+                        case "Mesh":
+                            LoadMeshOn(go, bvar);
                             break;
                     }
                 }
@@ -51,6 +54,19 @@ namespace pxl
             }
 
         }
+
+        private void LoadLightOn(GameObject go, BlendFile.BlendVar bvar)
+        {
+            BlendFile.BlendVar data = bvar["data"];
+            string camname = data["id"]["name"];
+            Light light = bvar.blendFile.Load(camname) as Light;
+            if (light != null)
+            {
+                GameObject.AddComponent(go, light);
+            }
+
+        }
+
 
         private void LoadTransformOn(GameObject go, BlendFile.BlendVar bvar)
         {

@@ -23,7 +23,8 @@ namespace pxl
 
             foreach (Camera cam in Camera.instances)
             {
-                cam.Render();
+                if( cam.enable )
+                    cam.Render();
             }
             GLHelper.CheckError();
         }

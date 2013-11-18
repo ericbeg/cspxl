@@ -1,4 +1,5 @@
-﻿#pragma  warning disable 1591
+﻿#pragma warning disable 1591 // doc
+#pragma warning disable 219 // is assigned but never used
 
 using System;
 using System.Collections.Generic;

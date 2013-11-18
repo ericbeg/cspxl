@@ -238,6 +238,44 @@ namespace pxl
                 );
         }
 
+        public static Vector3 operator +(Vector3 left, float right)
+        {
+            return new Vector3(
+                left.x + right,
+                left.y + right,
+                left.z + right
+                );
+        }
+
+        public static Vector3 operator -(Vector3 left, float right)
+        {
+            return new Vector3(
+                left.x - right,
+                left.y - right,
+                left.z - right
+                );
+        }
+
+        public static Vector3 operator *(Vector3 left, float right)
+        {
+            return new Vector3(
+                left.x * right,
+                left.y * right,
+                left.z * right
+                );
+        }
+
+        public static Vector3 operator /(Vector3 left, float right)
+        {
+            return new Vector3(
+                left.x / right,
+                left.y / right,
+                left.z / right
+                );
+        }
+
+
+        
         public static Vector3 operator -(Vector3 v)
         {
             return new Vector3(-v.x, -v.y, -v.z);
@@ -347,6 +385,47 @@ namespace pxl
                 left.y / right.y,
                 left.z / right.z,
                 left.w / right.w
+                );
+        }
+
+
+        public static Vector4 operator +(Vector4 left, float right)
+        {
+            return new Vector4(
+                left.x + right,
+                left.y + right,
+                left.z + right,
+                left.w + right
+                );
+        }
+
+        public static Vector4 operator -(Vector4 left, float right)
+        {
+            return new Vector4(
+                left.x - right,
+                left.y - right,
+                left.z - right,
+                left.w - right
+                );
+        }
+
+        public static Vector4 operator *(Vector4 left, float right)
+        {
+            return new Vector4(
+                left.x * right,
+                left.y * right,
+                left.z * right,
+                left.w * right
+                );
+        }
+
+        public static Vector4 operator /(Vector4 left, float right)
+        {
+            return new Vector4(
+                left.x / right,
+                left.y / right,
+                left.z / right,
+                left.w / right
                 );
         }
 
