@@ -231,6 +231,12 @@ namespace pxl
 				}
 				return m_matrix;
 			}
+            
+            set
+            {
+                Matrix4 m = ancestorsMatrixInverse*value; // local matrix
+                localMatrix = m;
+            }
 		}
 		
 		public Matrix4 localMatrix
@@ -247,6 +253,31 @@ namespace pxl
 				}
 				return m_localMatrix;
 			}
+
+            set
+            {
+                Matrix4 m = value;
+                Vector3 loc = m.column4.xyz;
+
+                Vector3 x = m.column1.xyz;
+                Vector3 y = m.column2.xyz;
+                Vector3 z = m.column3.xyz;
+
+                Vector3 scl = new Vector3(x.Norm(), y.Norm(), z.Norm());
+                x.Normalize(); y.Normalize(); z.Normalize();
+                Matrix4 mrot = new Matrix4(
+                     x.x, y.x, z.x, 0.0f,
+                     x.y, y.y, z.y, 0.0f,
+                     x.z, y.z, z.z, 0.0f,
+                    0.0f, 0.0f, 0.0f, 1.0f
+                    );
+
+                m_localPosition = loc;
+                m_localScale = scl;
+                m_localRotation = Quaternion.FromMatrix(mrot);
+
+                Touch();
+            }
 		}
 		
 		public Matrix4 matrixInverse

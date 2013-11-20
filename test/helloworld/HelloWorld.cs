@@ -53,13 +53,16 @@ class MainClass
         GameObject[] objects =  GameObject.instances;
 
         GameObject[] gos = GameObject.FindObjectsOfType<Transform>();
-        /*
+        
         foreach (var go in gos)
         {
-            if( go.GetComponent<Renderer>() != null && false)
+            if (go.GetComponent<Renderer>() != null)
+            {
                 go.AddComponent<Rotator>();
+                Matrix4 m = go.transform.matrix;
+            }
         }
-        */
+        
         
 
     }
@@ -69,6 +72,9 @@ class MainClass
 
 		Application app = new Application( 400, 300);
         Console.WriteLine( pxl.GLHelper.infoString );
+        Matrix4 m = Matrix4.Translate(new Vector3(1.0f, 0.0f, 0.0f));
+        Matrix4 inv = Matrix4.Transpose( Matrix4.Inverse(m) );
+
 
         BuildScene();
 		app.Loop( 60.0f );

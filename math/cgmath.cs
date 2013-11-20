@@ -672,7 +672,7 @@ namespace pxl
                    + m.m31 * (m.m12 * (jpln) - m.m22 * (iplm) + m.m42 * (injm))
                    - m.m41 * (m.m12 * (jokn) - m.m22 * (iokm) + m.m32 * (injm));
 
-            if (det == 0.0)
+            if (det == 0.0f)
             {
                 /*
                 return new Matrix4(
@@ -684,7 +684,9 @@ namespace pxl
                 throw new Matrix4NotInvertibleException();
             }
 
-            return new Matrix4(
+            return
+                Matrix4.Transpose(
+                new Matrix4(
             (m.m22 * (kplo) - m.m32 * (jpln) + m.m42 * (jokn)),
             (-m.m21 * (kplo) + m.m31 * (jpln) - m.m41 * (jokn)),
             (m.m21 * (gpho) - m.m31 * (fphn) + m.m41 * (fogn)),
@@ -704,7 +706,8 @@ namespace pxl
             (m.m11 * (jokn) - m.m21 * (iokm) + m.m31 * (injm)),
             (-m.m11 * (fogn) + m.m21 * (eogm) - m.m31 * (enfm)),
             (m.m11 * (fkgj) - m.m21 * (ekgi) + m.m31 * (ejfi))
-            ) / det;
+            ) / det
+            );
         }
 
 
@@ -722,6 +725,17 @@ namespace pxl
                 0.0f, 1.0f, 0.0f, displacement.y,
                 0.0f, 0.0f, 1.0f, displacement.z,
                 0.0f, 0.0f, 0.0f, 1.0f
+                );
+        }
+
+
+        public static Matrix4 Transpose(Matrix4 m)
+        {
+            return new Matrix4(
+                m.m11, m.m21, m.m31, m.m41,
+                m.m12, m.m22, m.m32, m.m42,
+                m.m13, m.m23, m.m33, m.m43,
+                m.m14, m.m24, m.m34, m.m44
                 );
         }
 

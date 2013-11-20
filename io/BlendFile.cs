@@ -246,8 +246,8 @@ namespace pxl
             bf.CreateNameIndex();
             bf.SearchObjectChildren();
 
-            //File.WriteAllText("dna.txt", bf.GetDNAString());
-            //File.WriteAllText("data.txt", bf.GetFileBlockString());
+            File.WriteAllText("dna.txt", bf.GetDNAString());
+            File.WriteAllText("data.txt", bf.GetFileBlockString());
             
             return bf;
         }

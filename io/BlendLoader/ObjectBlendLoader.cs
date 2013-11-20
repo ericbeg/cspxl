@@ -51,7 +51,11 @@ namespace pxl
                         {
                             BlendFile.BlendVar childvar = bvar.blendFile[ childrennames[i] ];
                             GameObject child = bvar.blendFile.Load( childvar["id"]["name"] ) as GameObject;
+                            
+                            // Attach child to parent and keep world matrix
+                            Matrix4 m = child.transform.matrix;
                             child.transform.parent = go.transform;
+                            child.transform.matrix = m;
                         }
                     }
                 }
@@ -91,22 +95,23 @@ namespace pxl
         private void LoadTransformOn(GameObject go, BlendFile.BlendVar bvar)
         {
             // Load Transform
-            float[] loc = bvar["loc"];
+            //float[] loc = bvar["loc"];
             float[] size = bvar["size"];
             //float[] quat  = bvar["quat"];
             float[] obmat = bvar["obmat"];
             Matrix4 mat = new Matrix4(obmat);
 
-            go.transform.localPosition = new Vector3(loc);
+            go.transform.matrix = mat;
+            //go.transform.localPosition = new Vector3(loc);
             go.transform.localScale = new Vector3(size);
             //go.transform.localRotation = new Quaternion(quat[1], quat[2], quat[3], quat[0]); // Apparently, this is not updated when the blend file is saved.
-            go.transform.localRotation = Quaternion.FromMatrix(mat);
+            //go.transform.localRotation = Quaternion.FromMatrix(mat);
 
-            Quaternion q = go.transform.localRotation;
-            go.transform.localRotation = new Quaternion(q.x, q.y, q.z, -q.w); // ???: Convention?
-            Matrix4 m = Matrix4.Rotate(go.transform.localRotation);
+            //Quaternion q = go.transform.localRotation;
+            //go.transform.localRotation = new Quaternion(q.x, q.y, q.z, -q.w); // ???: Convention?
+            //Matrix4 m = Matrix4.Rotate(go.transform.localRotation);
 
-            Matrix4 d = m - mat;
+            //Matrix4 d = m - mat;
 
         }
 
