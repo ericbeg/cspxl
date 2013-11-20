@@ -19,7 +19,7 @@ varying vec2 frag_uv;
 
 void main()
 {
-	nor = normalMatrix*normal;
+	nor = normalize( normalMatrix*normal );
    frag_uv = uv;
 	gl_Position = modelViewProjectionMatrix*position;
 }
@@ -29,6 +29,9 @@ void main()
 
 uniform sampler2D mainTex;
 uniform sampler2D normalTex;
+
+uniform vec4 color;
+
 uniform float _Time;
 
 varying vec3 nor;
@@ -41,9 +44,11 @@ void main()
 
 	float b = cos(0.1*6.283*_Time)*0.5 + 0.5;
 	//gl_FragColor = (col*(1.0-b) + col2*(b) + vec4(nor, 0.0)*0.6)*dot( nor, vec3( 0.0, 0.0, 1.0) );
-	gl_FragColor = (col*(1.0-b) + col2*(b))*( dot( nor, vec3( 0.0, 0.6, 0.6) ) + 0.1);
+	gl_FragColor = (col*(1.0-b) + col2*(b))*( dot( nor, vec3( 0.0, 0.6, 0.6) ) + 0.1)
+	*color;
 	//gl_FragColor = col*(1.0-b) + col2*(b);
 	//gl_FragColor = vec4( nor*0.5 + 0.5, 1.0);
+	
 }
 #endif
 

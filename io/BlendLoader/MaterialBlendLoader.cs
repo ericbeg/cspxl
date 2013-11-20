@@ -83,8 +83,8 @@ namespace pxl
 
                 spec.A = (float)hardness;
                 
-                mat.SetColor("Color", col);
-                mat.SetColor("Specular", spec);
+                mat.SetColor("color", col);
+                mat.SetColor("specular", spec);
 
                 BlendFile.BlendVar[] mtextures = bvar["mtex"];
                 foreach (var mtex in mtextures)

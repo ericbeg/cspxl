@@ -59,12 +59,12 @@ namespace pxl
         {
             Camera cam = Camera.active;
 
-            GameObject[] objects = GameObject.instances;
-            Matrix4 viewMatrix = Matrix4.Identity;
-            Matrix4 projectionMatrix = Matrix4.Identity;
-            Matrix4 viewProjectionMatrix = Matrix4.Identity;
-            Matrix4 modelMatrix = Matrix4.Identity;
-            Matrix4 modelViewMatrix = Matrix4.Identity;
+            GameObject[] objects              = GameObject.instances;
+            Matrix4 viewMatrix                = Matrix4.Identity;
+            Matrix4 projectionMatrix          = Matrix4.Identity;
+            Matrix4 viewProjectionMatrix      = Matrix4.Identity;
+            Matrix4 modelMatrix               = Matrix4.Identity;
+            Matrix4 modelViewMatrix           = Matrix4.Identity;
             Matrix4 modelViewProjectionMatrix = Matrix4.Identity;
 
 
@@ -86,14 +86,14 @@ namespace pxl
                     if (shader == null)
                         shader = Shader.fallback;
 
-                    if (me != null)
+                    if ( me != null && shader != null )
                     {
 
                         Shader.active = shader;
                         shader.Link();
                         shader.Use();
 
-                        rdr.material.ApplyShaderUniforms();
+                        rdr.material.SetShaderUniforms();
 
                         modelMatrix = go.transform.matrix;
 
@@ -101,7 +101,6 @@ namespace pxl
                         modelViewProjectionMatrix = projectionMatrix * modelViewMatrix;
 
                         shader.SetUniform("_Time", Time.t);
-                        //shader.SetUniform("modelMatrix", modelMatrix);
 
                         shader.SetUniform("viewMatrix", viewMatrix);
                         shader.SetUniform("projectionMatrix", projectionMatrix);
@@ -111,19 +110,12 @@ namespace pxl
                         shader.SetUniform("normalMatrix", modelViewMatrix.sub3);
                         shader.SetUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
 
-                        /*
-                        int uniforms;
-                        GL.GetProgram((shader as GLShader).glname, ProgramParameter.ActiveUniforms, out uniforms);
-                        for (int i = 0; i < uniforms; ++i)
-                        {
-                            string name = GL.GetActiveUniform((shader as GLShader).glname, i); 
-                        }
-                        */
+                        Light.SetShaderUniforms();
+
                         me.Draw();
                     }
                 }
             }
-
 
         }
 

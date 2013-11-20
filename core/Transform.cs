@@ -39,7 +39,8 @@ namespace pxl
 		{
 			m_children = new List<Transform>();
 			m_parent  = null;
-			m_localPosition = new Vector3( 0.0f, 0.0f, 0.0f);
+
+			m_localPosition = Vector3.zero;
 			m_localRotation = Quaternion.Identity;
 			m_localScale    = new Vector3( 1.0f, 1.0f, 1.0f);
 			

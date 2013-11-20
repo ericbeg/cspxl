@@ -107,6 +107,13 @@ namespace pxl
                 );
         }
 
+        public static readonly Vector2 xAxis = new Vector2(1.0f, 0.0f);
+        public static readonly Vector2 yAxis = new Vector2(0.0f, 1.0f);
+
+        public static readonly Vector2 zero = new Vector2(0.0f, 0.0f);
+        public static readonly Vector2 one = new Vector2(1.0f, 1.0f);
+
+
     }
 
     public struct Vector3
@@ -281,9 +288,12 @@ namespace pxl
             return new Vector3(-v.x, -v.y, -v.z);
         }
 
-        public static Vector3 xAxis = new Vector3(1.0f, 0.0f, 0.0f);
-        public static Vector3 yAxis = new Vector3(0.0f, 1.0f, 0.0f);
-        public static Vector3 zAxis = new Vector3(0.0f, 0.0f, 1.0f);
+        public static readonly Vector3 xAxis = new Vector3(1.0f, 0.0f, 0.0f);
+        public static readonly Vector3 yAxis = new Vector3(0.0f, 1.0f, 0.0f);
+        public static readonly Vector3 zAxis = new Vector3(0.0f, 0.0f, 1.0f);
+
+        public static readonly Vector3 one  = new Vector3(1.0f, 1.0f, 1.0f);
+        public static readonly Vector3 zero = new Vector3(0.0f, 0.0f, 0.0f);
 
     }
 
@@ -428,6 +438,14 @@ namespace pxl
                 left.w / right
                 );
         }
+
+        public static readonly Vector4 xAxis = new Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+        public static readonly Vector4 yAxis = new Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+        public static readonly Vector4 zAxis = new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+        public static readonly Vector4 wAxis = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+
+        public static readonly Vector4 zero = new Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+        public static readonly Vector4 one  = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
     }
@@ -659,18 +677,18 @@ namespace pxl
         public static Matrix4 Inverse(Matrix4 m)
         {
 
-            float kplo = m.m33 * m.m44 - m.m43 * m.m34; float jpln = m.m23 * m.m44 - m.m43 * m.m24; float jokn = m.m23 * m.m34 - m.m33 * m.m24;
-            float gpho = m.m32 * m.m44 - m.m42 * m.m34; float fphn = m.m22 * m.m44 - m.m42 * m.m24; float fogn = m.m22 * m.m34 - m.m32 * m.m24;
-            float glhk = m.m32 * m.m43 - m.m42 * m.m33; float flhj = m.m22 * m.m43 - m.m42 * m.m23; float fkgj = m.m22 * m.m33 - m.m32 * m.m23;
-            float iplm = m.m13 * m.m44 - m.m43 * m.m14; float iokm = m.m13 * m.m34 - m.m33 * m.m14; float ephm = m.m12 * m.m44 - m.m42 * m.m14;
-            float injm = m.m13 * m.m24 - m.m23 * m.m14; float eogm = m.m12 * m.m34 - m.m32 * m.m14; float elhi = m.m12 * m.m43 - m.m42 * m.m13;
-            float ekgi = m.m12 * m.m33 - m.m32 * m.m13; float enfm = m.m12 * m.m24 - m.m22 * m.m14; float ejfi = m.m12 * m.m23 - m.m22 * m.m13;
+            float kplo = m.m33 * m.m44 - m.m34 * m.m43; float jpln = m.m32 * m.m44 - m.m34 * m.m42; float jokn = m.m32 * m.m43 - m.m33 * m.m42;
+            float gpho = m.m23 * m.m44 - m.m24 * m.m43; float fphn = m.m22 * m.m44 - m.m24 * m.m42; float fogn = m.m22 * m.m43 - m.m23 * m.m42;
+            float glhk = m.m23 * m.m34 - m.m24 * m.m33; float flhj = m.m22 * m.m34 - m.m24 * m.m32; float fkgj = m.m22 * m.m33 - m.m23 * m.m32;
+            float iplm = m.m31 * m.m44 - m.m34 * m.m41; float iokm = m.m31 * m.m43 - m.m33 * m.m41; float ephm = m.m21 * m.m44 - m.m24 * m.m41;
+            float injm = m.m31 * m.m42 - m.m32 * m.m41; float eogm = m.m21 * m.m43 - m.m23 * m.m41; float elhi = m.m21 * m.m34 - m.m24 * m.m31;
+            float ekgi = m.m21 * m.m33 - m.m23 * m.m31; float enfm = m.m21 * m.m42 - m.m22 * m.m41; float ejfi = m.m21 * m.m32 - m.m22 * m.m31;
 
 
-            float det = m.m11 * (m.m22 * (kplo) - m.m32 * (jpln) + m.m42 * (jokn))
-                   - m.m21 * (m.m12 * (kplo) - m.m32 * (iplm) + m.m42 * (iokm))
-                   + m.m31 * (m.m12 * (jpln) - m.m22 * (iplm) + m.m42 * (injm))
-                   - m.m41 * (m.m12 * (jokn) - m.m22 * (iokm) + m.m32 * (injm));
+            float det = m.m11 * (m.m22 * (kplo) - m.m23 * (jpln) + m.m24 * (jokn))
+                   - m.m12 * (m.m21 * (kplo) - m.m23 * (iplm) + m.m24 * (iokm))
+                   + m.m13 * (m.m21 * (jpln) - m.m22 * (iplm) + m.m24 * (injm))
+                   - m.m14 * (m.m21 * (jokn) - m.m22 * (iokm) + m.m23 * (injm));
 
             if (det == 0.0f)
             {
@@ -684,34 +702,32 @@ namespace pxl
                 throw new Matrix4NotInvertibleException();
             }
 
-            return
-                Matrix4.Transpose(
-                new Matrix4(
-            (m.m22 * (kplo) - m.m32 * (jpln) + m.m42 * (jokn)),
-            (-m.m21 * (kplo) + m.m31 * (jpln) - m.m41 * (jokn)),
-            (m.m21 * (gpho) - m.m31 * (fphn) + m.m41 * (fogn)),
-            (-m.m21 * (glhk) + m.m31 * (flhj) - m.m41 * (fkgj)),
+            return new Matrix4(
+            (m.m22 * (kplo) - m.m23 * (jpln) + m.m24 * (jokn)),
+            (-m.m12 * (kplo) + m.m13 * (jpln) - m.m14 * (jokn)),
+            (m.m12 * (gpho) - m.m13 * (fphn) + m.m14 * (fogn)),
+            (-m.m12 * (glhk) + m.m13 * (flhj) - m.m14 * (fkgj)),
 
-            (-m.m12 * (kplo) + m.m32 * (iplm) - m.m42 * (iokm)),
-            (m.m11 * (kplo) - m.m31 * (iplm) + m.m41 * (iokm)),
-            (-m.m11 * (gpho) + m.m31 * (ephm) - m.m41 * (eogm)),
-            (m.m11 * (glhk) - m.m31 * (elhi) + m.m41 * (ekgi)),
+            (-m.m21 * (kplo) + m.m23 * (iplm) - m.m24 * (iokm)),
+            (m.m11 * (kplo) - m.m13 * (iplm) + m.m14 * (iokm)),
+            (-m.m11 * (gpho) + m.m13 * (ephm) - m.m14 * (eogm)),
+            (m.m11 * (glhk) - m.m13 * (elhi) + m.m14 * (ekgi)),
 
-            (m.m12 * (jpln) - m.m22 * (iplm) + m.m42 * (injm)),
-            (-m.m11 * (jpln) + m.m21 * (iplm) - m.m41 * (injm)),
-            (m.m11 * (fphn) - m.m21 * (ephm) + m.m41 * (enfm)),
-            (-m.m11 * (flhj) + m.m21 * (elhi) - m.m41 * (ejfi)),
+            (m.m21 * (jpln) - m.m22 * (iplm) + m.m24 * (injm)),
+            (-m.m11 * (jpln) + m.m12 * (iplm) - m.m14 * (injm)),
+            (m.m11 * (fphn) - m.m12 * (ephm) + m.m14 * (enfm)),
+            (-m.m11 * (flhj) + m.m12 * (elhi) - m.m14 * (ejfi)),
 
-            (-m.m12 * (jokn) + m.m22 * (iokm) - m.m32 * (injm)),
-            (m.m11 * (jokn) - m.m21 * (iokm) + m.m31 * (injm)),
-            (-m.m11 * (fogn) + m.m21 * (eogm) - m.m31 * (enfm)),
-            (m.m11 * (fkgj) - m.m21 * (ekgi) + m.m31 * (ejfi))
+            (-m.m21 * (jokn) + m.m22 * (iokm) - m.m23 * (injm)),
+            (m.m11 * (jokn) - m.m12 * (iokm) + m.m13 * (injm)),
+            (-m.m11 * (fogn) + m.m12 * (eogm) - m.m13 * (enfm)),
+            (m.m11 * (fkgj) - m.m12 * (ekgi) + m.m13 * (ejfi))
             ) / det
-            );
+            ;
         }
 
 
-        public static Matrix4 Identity = new Matrix4(
+        public static readonly Matrix4 Identity = new Matrix4(
                 1.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,
@@ -908,7 +924,7 @@ namespace pxl
             this.w = w;
         }
 
-        public static Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+        public static readonly Quaternion Identity = new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
         public static Quaternion operator +(Quaternion left, Quaternion right)
         {

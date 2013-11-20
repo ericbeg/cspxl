@@ -8,8 +8,28 @@ using System.Text;
 using OpenTK.Graphics;
 namespace pxl
 {
-    public class Light : Component
+    public class Light : Component, IDisposable
     {
+        private List<Light> m_instances = new List<Light>();
+
+
+        public Light[] instances { get { return m_instances.ToArray(); } }
+
+        public Light()
+        {
+            m_instances.Add(this);
+        }
+
+        public void Dispose()
+        {
+            m_instances.Remove(this);
+        }
+
+        internal static void SetShaderUniforms()
+        {
+
+        }
+
         public Type type;
         public Color4 color;
         public float intensity;

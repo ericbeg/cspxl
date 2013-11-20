@@ -19,7 +19,7 @@ namespace pxl
         public Texture[] textures { get { return m_textures.ToArray(); } }
 
         public string[] floatNames { get { return m_floatNames.ToArray(); } }
-        public string[] vector2Names { get { return m_vector2Names.ToArray(); } }
+        public string[] vectorNames2 { get { return m_vector2Names.ToArray(); } }
         public string[] vectorNames3 { get { return m_vector3Names.ToArray(); } }
         public string[] vectorNames4 { get { return m_vector4Names.ToArray(); } }
         public string[] colorNames { get { return m_colorNames.ToArray(); } }
@@ -209,7 +209,21 @@ namespace pxl
             }
         }
 
-        internal void ApplyShaderUniforms()
+        public bool HasProperty(string name)
+        {
+            foreach (string n in floatNames)   if (n == name) return true;
+            foreach (string n in vectorNames2) if (n == name) return true;
+            foreach (string n in vectorNames3) if (n == name) return true;
+            foreach (string n in vectorNames4) if (n == name) return true;
+            foreach (string n in colorNames)   if (n == name) return true;
+            foreach (string n in matrixNames)  if (n == name) return true;
+            foreach (string n in textureNames) if (n == name) return true;
+
+            return false;
+
+        }
+
+        internal void SetShaderUniforms()
         {
             // Bind textures
             for (int i = 0; i < textures.Length; ++i)
@@ -223,6 +237,29 @@ namespace pxl
                 }
             }
 
+            // float
+            for (int i = 0; i < floats.Length; ++i)
+                Shader.active.SetUniform(floatNames[i], floats[i]);
+
+            // vector2
+            for (int i = 0; i < vectors2.Length; ++i)
+                Shader.active.SetUniform(vectorNames2[i], vectors2[i]);
+
+            // vector3
+            for (int i = 0; i < vectors3.Length; ++i)
+                Shader.active.SetUniform(vectorNames3[i], vectors3[i]);
+
+            // vector4
+            for (int i = 0; i < vectors4.Length; ++i)
+                Shader.active.SetUniform(vectorNames4[i], vectors4[i]);
+
+            // color
+            for (int i = 0; i < colors.Length; ++i)
+                Shader.active.SetUniform(colorNames[i], colors[i]);
+
+            // matrix
+            for (int i = 0; i < matrices.Length; ++i)
+                Shader.active.SetUniform(matrixNames[i], matrices[i]);
         }
 
 	}

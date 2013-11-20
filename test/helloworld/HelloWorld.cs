@@ -27,7 +27,6 @@ class MainClass
     public static Shader GetShader()
     {
         string shaderSource = File.ReadAllText("simple.glsl");
-        Console.WriteLine(shaderSource);
         Shader shader = new GLShader();
         shader.source = shaderSource;
         shader.Apply();
@@ -58,7 +57,8 @@ class MainClass
         {
             if (go.GetComponent<Renderer>() != null)
             {
-                go.AddComponent<Rotator>();
+                if( go.transform.parent != null && go.transform.parent == GameObject.Find("SCScene").transform )
+                    go.AddComponent<Rotator>();
                 Matrix4 m = go.transform.matrix;
             }
         }
