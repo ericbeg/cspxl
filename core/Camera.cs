@@ -79,7 +79,7 @@ namespace pxl
 
 		private void UpdateView()
 		{
-			if (m_updateView || true) 
+			if (m_updateView) 
 			{
 				Transform t    = gameObject.transform;
 				Vector3 eye    = t.position;
@@ -88,13 +88,12 @@ namespace pxl
 
 				m_viewMatrix = Matrix4.ViewLookAt (eye, target, up);
 				m_updateView = false;
-				m_updateViewProjection = true;
 			}
 		}
 
 		private void UpdateProjection()
 		{
-            if (m_updateProjection || true) 
+            if (m_updateProjection) 
 			{
 				if( m_perspective )
 				{
@@ -112,14 +111,13 @@ namespace pxl
 					m_projectionMatrix = Matrix4.OrthographicProjection(l, r, b, t, near, far);
 				}
 				m_updateProjection = false;
-				m_updateViewProjection = true;
 			}
 
 		}
 
 		private void UpdateViewProjection()
 		{
-            if (m_updateViewProjection || true )
+            if (m_updateViewProjection)
 			{
 				m_viewProjectionMatrix = projectionMatrix * viewMatrix;
 				m_updateViewProjection = false;
@@ -142,8 +140,9 @@ namespace pxl
 			set 
 			{
 				m_fovy = value;
-				m_updateProjection = true;
-			}
+                m_updateProjection = true;
+                m_updateViewProjection = true;
+            }
 		}
 		
 		public float aspect
@@ -156,8 +155,9 @@ namespace pxl
 			set
 			{
 				m_aspect = value;
-				m_updateProjection = true;
-			}
+                m_updateProjection = true;
+                m_updateViewProjection = true;
+            }
 		}
 
 		public float near
@@ -169,8 +169,9 @@ namespace pxl
 			set
 			{
 				m_near = value;
-				m_updateProjection = true;
-			}
+                m_updateProjection = true;
+                m_updateViewProjection = true;
+            }
 		}
 
 		public float far
@@ -182,8 +183,9 @@ namespace pxl
 			set
 			{
 				m_far = value;
-				m_updateProjection = true;
-			}
+                m_updateProjection = true;
+                m_updateViewProjection = true;
+            }
 		}
 
 		public float scale
@@ -195,8 +197,9 @@ namespace pxl
 			set
 			{
 				m_scale = value;
-				m_updateProjection = true;
-			}
+                m_updateProjection = true;
+                m_updateViewProjection = true;
+            }
 		}
 
 		public bool perspective
@@ -210,6 +213,7 @@ namespace pxl
 			{
 				m_perspective = value;
 				m_updateProjection = true;
+                m_updateViewProjection = true;
 			}
 		}
 
@@ -217,6 +221,15 @@ namespace pxl
 		public Matrix4 viewMatrix{get{ UpdateView(); return m_viewMatrix;}	}
 		public Matrix4 projectionMatrix{get{ UpdateProjection(); return m_projectionMatrix;}	}
 		public Matrix4 viewProjectionMatrix{get{ UpdateViewProjection(); return m_viewProjectionMatrix;}	}
+
+
+        internal override void InternalUpdate()
+        {
+            base.InternalUpdate();
+            m_updateView = true;
+            m_updateProjection = true;
+            m_updateViewProjection = true;
+        }
 
 		
 	}

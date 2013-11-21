@@ -62,12 +62,13 @@ namespace pxl
             Time._currentFrameDate = DateTime.Now;
             Time._Update();
             Time._previousFrameDate = Time._currentFrameDate;
+            
+            // Update components
 
-            // Update behaviours
-            var behaviours = Behaviour.instances;
-            foreach (var behaviour in behaviours)
+            var components = Component.instances;
+            foreach (var c in components)
             {
-                behaviour.Update();
+                c.InternalUpdate();
             }
 
             if (Keyboard[OpenTK.Input.Key.Escape])

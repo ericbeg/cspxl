@@ -62,6 +62,12 @@ namespace pxl
             m_instances.Remove(this);
         }
 
+        internal override void InternalUpdate()
+        {
+            base.InternalUpdate();
+            Update();
+        }
+
         virtual public void Update()
         {
         

@@ -24,6 +24,15 @@ namespace pxl
             m_isValid = false;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (m_isValid)
+            {
+                GL.DeleteTexture(glname);
+            }
+        }
+
         public override Color4[] GetPixels()
         {
             throw new NotImplementedException();
@@ -89,7 +98,7 @@ namespace pxl
             m_isValid = true;
         }
 
-        public void Bind(int textureUnit)
+        override public void Bind(int textureUnit)
         {
             GL.Enable(EnableCap.Texture2D);
             GLHelper.CheckError();

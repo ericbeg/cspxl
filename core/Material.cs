@@ -228,7 +228,7 @@ namespace pxl
             // Bind textures
             for (int i = 0; i < textures.Length; ++i)
             {
-                GLTexture texture = textures[i] as GLTexture; // TODO: Abstraction leak here. 
+                Texture texture = textures[i];
                 string name = textureNames[i];
                 if (texture != null)
                 {
