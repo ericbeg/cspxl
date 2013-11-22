@@ -40,6 +40,13 @@ class MainClass
 
         BlendFile bf = BlendFile.Open("cube.blend");
         GameObject scene = bf.Load("SCScene") as GameObject;
+
+        if ( false )
+        {
+            File.WriteAllText("dna.txt", bf.DNAString);
+            File.WriteAllText("data.txt", bf.fileBlockString);
+        }
+
         bf.Close(); bf = null;
 
         

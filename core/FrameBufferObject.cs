@@ -11,14 +11,14 @@ namespace pxl
     {
 
         protected List<string> m_textureNames = new List<string>();
-        protected List<Texture> m_textures = new List<Texture>();
+        protected List<Texture2D> m_textures = new List<Texture2D>();
 
         public static FrameBufferObject active;
 
         private int m_width, m_height, m_depthFormat;
-        private Texture.Format m_format;
+        private Texture2D.Format m_format;
 
-        private Texture.Format format { get { return m_format; } set { m_format = value; } }
+        private Texture2D.Format format { get { return m_format; } set { m_format = value; } }
 
         public int width { get { return m_width; } }
         public int height { get { return m_height; } }
@@ -30,11 +30,11 @@ namespace pxl
         }
 
         public FrameBufferObject(int width, int height, int depthFormat)
-            : this(width, height, depthFormat, Texture.Format.RGBA32 )
+            : this(width, height, depthFormat, Texture2D.Format.RGBA32 )
         {
         }
 
-        public FrameBufferObject(int width, int height, int depthFormat, Texture.Format format)
+        public FrameBufferObject(int width, int height, int depthFormat, Texture2D.Format format)
         {
             m_width = width;
             m_height = height;
@@ -47,7 +47,7 @@ namespace pxl
 
         }
 
-        public void AttachColorTexture(string name, Texture texture)
+        public void AttachColorTexture(string name, Texture2D texture)
         {
             if (!m_textureNames.Contains(name))
             {
@@ -86,7 +86,6 @@ namespace pxl
         public abstract bool IsComplete();
         public abstract void Bind();
         public abstract void Unbind();
-
              
 
     }

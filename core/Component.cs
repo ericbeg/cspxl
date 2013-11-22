@@ -17,7 +17,7 @@ namespace pxl
             m_instances.Add(this);
         }
 
-        public void Dispose()
+        virtual public void Dispose()
         {
             m_instances.Remove(this);
         }

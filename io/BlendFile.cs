@@ -19,6 +19,10 @@ namespace pxl
             ;
         }
 
+
+        public string DNAString { get { return GetDNAString(); } }
+        public string fileBlockString { get { return GetFileBlockString(); } }
+
         public static string GetFilepath( string path )
         {
             string abspath = null;
@@ -246,12 +250,6 @@ namespace pxl
             bf.CreateNameIndex();
             bf.SearchObjectChildren();
 
-            if (!true)
-            {
-                File.WriteAllText("dna.txt", bf.GetDNAString());
-                File.WriteAllText("data.txt", bf.GetFileBlockString());
-            }
-            
             return bf;
         }
         /// <summary>

@@ -44,7 +44,7 @@ namespace pxl
     {
         static private List<Behaviour> m_instances = new List<Behaviour>();
 
-        static public List<Behaviour> instances
+        static new public List<Behaviour> instances
         {
             get
             {
@@ -57,7 +57,7 @@ namespace pxl
             m_instances.Add( this );
         }
 
-        public void Dispose()
+        override public void Dispose()
         {
             m_instances.Remove(this);
         }

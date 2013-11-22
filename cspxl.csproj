@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="core\Behaviour.cs" />
+    <Compile Include="core\Texture.cs" />
     <Compile Include="core\FrameBufferObject.cs" />
     <Compile Include="core\Light.cs" />
     <Compile Include="core\ObjectFactory.cs" />
@@ -78,7 +79,7 @@
     <Compile Include="io\EndiannessSaveBinaryReader.cs" />
     <Compile Include="math\cgmath.cs" />
     <Compile Include="opengl\GLFrameBufferObject.cs" />
-    <Compile Include="opengl\GLTexture.cs" />
+    <Compile Include="opengl\GLTexture2D.cs" />
     <Compile Include="pxl.cs" />
     <Compile Include="core\Camera.cs" />
     <Compile Include="core\Component.cs" />
@@ -88,7 +89,7 @@
     <Compile Include="core\Renderer.cs" />
     <Compile Include="core\Shader.cs" />
     <Compile Include="core\Transform.cs" />
-    <Compile Include="core\Texture.cs" />
+    <Compile Include="core\Texture2D.cs" />
     <Compile Include="math\mathutils.cs" />
     <Compile Include="opengl\GLMesh.cs" />
     <Compile Include="opengl\GLHelpers.cs" />

@@ -53,7 +53,7 @@ namespace pxl
             return me;
         }
 
-        public static Mesh BuildMeshCube()
+        static public Mesh BuildMeshCube()
         {
             Mesh me = new GLMesh();
             me.vertcount = 24;
@@ -217,10 +217,35 @@ namespace pxl
             return me;
         }
 
-
-        public GameObject BuildMeshObject()
+        static public GameObject NewMeshCube()
         {
-            return null;
+            GameObject ob = new GameObject();
+            Renderer rdr = ob.AddComponent<Renderer>();
+            rdr.mesh = BuildMeshCube();
+            return ob;
         }
+
+        static public GameObject NewMeshQuad()
+        {
+            GameObject ob = new GameObject();
+            Renderer rdr = ob.AddComponent<Renderer>();
+            rdr.mesh = BuildMeshQuad();
+            return ob;
+        }
+
+        static public GameObject NewCamera()
+        {
+            GameObject ob = new GameObject();
+            ob.AddComponent<Camera>();
+            return ob;
+        }
+
+        static public GameObject NewLight()
+        {
+            GameObject ob = new GameObject();
+            ob.AddComponent<Light>();
+            return ob;
+        }
+        
     }
 }

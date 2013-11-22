@@ -33,7 +33,7 @@ namespace pxl
 
         private static List<Camera> m_instances = new List<Camera>();
 
-        public static Camera[] instances { get { return m_instances.ToArray(); } }
+        new public static Camera[] instances { get { return m_instances.ToArray(); } }
 
         public Camera()
         {
@@ -52,8 +52,9 @@ namespace pxl
             m_updateViewProjection = true;
         }
 
-        public void Dispose()
+        override public void Dispose()
         {
+            base.Dispose();
             m_instances.Remove(this);
         }
 
@@ -93,11 +94,24 @@ namespace pxl
 
 		private void UpdateProjection()
 		{
+            float scrAspect = 1.0f;
+
+            if (FrameBufferObject.active != null)
+            {
+                float w = FrameBufferObject.active.width;
+                float h = FrameBufferObject.active.height;
+                scrAspect = w / h;
+            }
+            else
+            {
+                scrAspect = Graphics.screenApect;
+            }
+
             if (m_updateProjection) 
 			{
 				if( m_perspective )
 				{
-					m_projectionMatrix = Matrix4.Perspective(fovy, aspect*Graphics.screenApect, near, far); 
+                    m_projectionMatrix = Matrix4.Perspective(fovy, aspect*scrAspect, near, far); 
 				}
 				else
 				{

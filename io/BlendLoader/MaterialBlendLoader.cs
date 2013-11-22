@@ -89,7 +89,7 @@ namespace pxl
                 BlendFile.BlendVar[] mtextures = bvar["mtex"];
                 foreach (var mtex in mtextures)
                 {
-                    Texture tex = LoadTexture( mtex );
+                    Texture2D tex = LoadTexture( mtex );
                     if (tex != null)
                     {
                         string samplerName = "undefined";
@@ -109,9 +109,9 @@ namespace pxl
             return mat;
         }
 
-        Texture LoadTexture(BlendFile.BlendVar bvar)
+        Texture2D LoadTexture(BlendFile.BlendVar bvar)
         {
-            Texture texture = null;
+            Texture2D texture = null;
             if ( bvar!= null && bvar.type == "MTex" )
             {
                 BlendFile.BlendVar tex = bvar["tex"];
@@ -125,7 +125,7 @@ namespace pxl
                         Bitmap bitmap = bvar.blendFile.Load(imname) as Bitmap;
                         if (bitmap != null)
                         {
-                            GLTexture gltexture = new GLTexture();
+                            GLTexture2D gltexture = new GLTexture2D();
                             gltexture.Copy(bitmap);
                             texture = gltexture;
                         }

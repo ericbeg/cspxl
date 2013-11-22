@@ -12,16 +12,16 @@ namespace pxl
     {
         private List<Light> m_instances = new List<Light>();
 
-
-        public Light[] instances { get { return m_instances.ToArray(); } }
+        new public Light[] instances { get { return m_instances.ToArray(); } }
 
         public Light()
         {
             m_instances.Add(this);
         }
 
-        public void Dispose()
+        override public void Dispose()
         {
+            base.Dispose();
             m_instances.Remove(this);
         }
 

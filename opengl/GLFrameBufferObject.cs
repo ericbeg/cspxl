@@ -23,11 +23,11 @@ namespace pxl
         }
 
         public GLFrameBufferObject(int width, int height, int depthFormat)
-            : this(width, height, depthFormat, Texture.Format.RGBA32 )
+            : this(width, height, depthFormat, Texture2D.Format.RGBA32 )
         {
         }
 
-        public GLFrameBufferObject(int width, int height, int depthFormat, Texture.Format format)
+        public GLFrameBufferObject(int width, int height, int depthFormat, Texture2D.Format format)
             : base( width, height, depthFormat, format)
         {
             GL.GenFramebuffers(1, out glname);
@@ -72,7 +72,7 @@ namespace pxl
             glname_textures.Clear();
             foreach (var t in m_textures)
             {
-                GLTexture glt = t as GLTexture;
+                GLTexture2D glt = t as GLTexture2D;
                 if (glt != null)
                 {
                     int attachmentIndex = glname_textures.Count;
@@ -108,7 +108,7 @@ namespace pxl
 
         public override void Unbind()
         {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, glname);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             FrameBufferObject.active = null;
         }
 

@@ -13,12 +13,12 @@ using OpenTK.Graphics.OpenGL;
 
 namespace pxl
 {
-    public class GLTexture : Texture
+    public class GLTexture2D : Texture2D
     {
         public int glname;
         private bool m_isValid;
 
-        public GLTexture()
+        public GLTexture2D()
             : base()
         {
             m_isValid = false;
@@ -30,6 +30,7 @@ namespace pxl
             if (m_isValid)
             {
                 GL.DeleteTexture(glname);
+                glname = 0;
             }
         }
 
@@ -45,6 +46,7 @@ namespace pxl
 
         public override void Apply()
         {
+
             if (m_isValid)
             {
                 GL.DeleteTexture(glname);
@@ -53,10 +55,39 @@ namespace pxl
             TextureTarget target = TextureTarget.Texture2D;
             glname = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, glname);
-            //GL.TexParameter(target, TextureParameterName.TextureMagFilter, 
-            //GL.TexParameter(target, TextureParameterName.TextureMinFilter, 
 
-            //GL.TexParameter(target, TextureParameterName.GenerateMipmap, 
+            // Solve texture filtering
+            TextureMinFilter minFilter = TextureMinFilter.LinearMipmapLinear;
+            TextureMagFilter magFilter = TextureMagFilter.Linear;
+            HintMode hintmode = HintMode.DontCare;
+
+            switch (filteringMode)
+            {
+                case FilteringMode.Nearest:
+                    minFilter = TextureMinFilter.Nearest;
+                    magFilter = TextureMagFilter.Nearest;
+                    hintmode = HintMode.Fastest;
+                    break;
+                case FilteringMode.Bilinear:
+                    minFilter = TextureMinFilter.Linear;
+                    magFilter = TextureMagFilter.Linear;
+                    hintmode = HintMode.Fastest;
+                    break;
+                case FilteringMode.Trilinear:
+                    minFilter = TextureMinFilter.LinearMipmapLinear;
+                    magFilter = TextureMagFilter.Linear;
+                    hintmode = HintMode.Fastest;
+                    break;
+            }
+            
+            GL.Hint(HintTarget.PerspectiveCorrectionHint, hintmode);
+            GL.TexParameter(target, TextureParameterName.TextureMagFilter, (int)minFilter );
+            GL.TexParameter(target, TextureParameterName.TextureMinFilter, (int)magFilter);
+
+            /*
+            if( mipmap )
+                GL.TexParameter(target, TextureParameterName.GenerateMipmap, 
+             */
             
 
             int level = 0;
@@ -87,7 +118,22 @@ namespace pxl
             BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0,
+            // resolve texture internal format
+            PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f;
+            switch (format)
+            {
+                case Format.Alpha8: internalFormat = PixelInternalFormat.Alpha; break;
+                case Format.RGB24:  internalFormat = PixelInternalFormat.Rgb; break;
+                case Format.RGBA32: internalFormat = PixelInternalFormat.Rgba; break;
+                /*
+                case Format.Alphaf: internalFormat = PixelInternalFormat.Luminance16; break;
+                case Format.RGBf: internalFormat = PixelInternalFormat.rgba; break;
+                case Format.RGBAf: internalFormat = PixelInternalFormat.Rgba32f; break;
+                 */
+
+            }
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, data.Width, data.Height, 0,
                 OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
 
             bitmap.UnlockBits(data);

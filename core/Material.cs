@@ -16,7 +16,7 @@ namespace pxl
         public Vector4[] vectors4 { get { return m_vectors4.ToArray(); } }
         public Color4[] colors { get { return m_colors.ToArray(); } }
         public Matrix4[] matrices { get { return m_matrices.ToArray(); } }
-        public Texture[] textures { get { return m_textures.ToArray(); } }
+        public Texture2D[] textures { get { return m_textures.ToArray(); } }
 
         public string[] floatNames { get { return m_floatNames.ToArray(); } }
         public string[] vectorNames2 { get { return m_vector2Names.ToArray(); } }
@@ -30,7 +30,7 @@ namespace pxl
 
         public Shader shader;
 
-        private List<Texture> m_textures = new List<Texture>();
+        private List<Texture2D> m_textures = new List<Texture2D>();
 
         private List<float> m_floats = new List<float>();
         
@@ -58,7 +58,7 @@ namespace pxl
 
 
 
-        public void SetTexture(string name, Texture value)
+        public void SetTexture(string name, Texture2D value)
         {
             int i = m_textureNames.IndexOf(name);
             if (i < 0)
@@ -228,7 +228,7 @@ namespace pxl
             // Bind textures
             for (int i = 0; i < textures.Length; ++i)
             {
-                Texture texture = textures[i];
+                Texture2D texture = textures[i];
                 string name = textureNames[i];
                 if (texture != null)
                 {
