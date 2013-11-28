@@ -48,6 +48,7 @@ void main()
 	;
 	//gl_FragColor = col*(1.0-b) + col2*(b);
 	//gl_FragColor = vec4( nor*0.5 + 0.5, 1.0);
+	//gl_FragColor = vec4(1)*( dot( nor, vec3( 0.0, 0.6, 0.6) ) + 0.1);
 	
 }
 #endif

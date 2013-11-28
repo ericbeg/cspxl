@@ -10,7 +10,7 @@ using OpenTK;
 
 namespace pxl
 {
-    class GLFrameBufferObject : FrameBufferObject
+    public class GLFrameBufferObject : FrameBufferObject
     {
 
         private uint glname;
@@ -103,6 +103,10 @@ namespace pxl
         public override void Bind()
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, glname);
+            if (FrameBufferObject.active != this)
+            {
+                AttachColorTextures();
+            }
             FrameBufferObject.active = this;
         }
 

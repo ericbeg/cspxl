@@ -62,10 +62,22 @@ namespace pxl
             m_instances.Remove(this);
         }
 
+        internal override void InternalStart()
+        {
+            base.InternalStart();
+            Start();
+        }
+
         internal override void InternalUpdate()
         {
             base.InternalUpdate();
             Update();
+        }
+
+
+        virtual public void Start()
+        {
+
         }
 
         virtual public void Update()

@@ -242,8 +242,7 @@ namespace pxl
                 bf.m_br = esbr;
             }
 
-
-            Console.Write( string.Format("{0} ptrsize={1} {2} ", id , bf.pointerSize, bf.endianness ) );
+            //Console.Write( string.Format("{0} ptrsize={1} {2} ", id , bf.pointerSize, bf.endianness ) );
 
             bf.ReadFileBlocks();
             bf.ReadDNAStruct();

@@ -18,13 +18,23 @@ namespace pxl
         {
             ClearFrameBuffer();
 
+            // TODO: Create a class that contains rendering state parameters ( Depth Test, Face Culling, Masks, ...)
+            // and apply them here.
             //GL.Disable(EnableCap.DepthTest);
             GL.Enable(EnableCap.DepthTest);
 
             foreach (Camera cam in Camera.instances)
             {
-                if( cam.enable )
+                if (cam.enable)
+                {
+                    FrameBufferObject fbo = cam.fboTarget;
+                    if (fbo != null)
+                    {
+                        fbo.Bind();
+                    }
+
                     cam.Render();
+                }
             }
             GLHelper.CheckError();
         }
@@ -119,8 +129,12 @@ namespace pxl
 
         }
 
+    }
 
-
+    public static class Screen
+    {
+        public static int width;
+        public static int height;
     }
 }
 

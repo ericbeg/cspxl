@@ -9,10 +9,11 @@ namespace pxl
 	{
         private static List<Component> m_instances = new List<Component>();
 
-        public static Component[] instances { get { return m_instances.ToArray(); } }
         internal GameObject m_gameObject = null;
-		
-		public Component()
+        private bool m_hasStarted = false;
+
+        public static Component[] instances { get { return m_instances.ToArray(); } }
+        public Component()
         {
             m_instances.Add(this);
         }
@@ -23,11 +24,21 @@ namespace pxl
         }
 
         public bool enable = true;
-		
+
+
+        internal virtual void InternalStart()
+        {
+
+        }
+
 
         internal virtual void InternalUpdate()
         {
-
+            if (!m_hasStarted)
+            {
+                m_hasStarted = true;
+                InternalStart();
+            }
         }
 
 		public Component(GameObject gameObject)

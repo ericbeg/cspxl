@@ -19,21 +19,34 @@ namespace pxl
 	{
 		// Constructor 
 		public Application() : this( 800, 600 ){ }
-			
-		public Application(int width, int height) : base(width, height, new GraphicsMode(32, 24) )
+
+        public Application(int width, int height)
+            : base(width, height, new GraphicsMode(32, 24))
         {
-            Graphics.screenApect = (float)width/(float)height;
             RegisterBlendLoaders();
+
+            this.Mouse.Move += (object sender, MouseMoveEventArgs args) =>
+            {
+                Input.mouse_x = args.X;
+                Input.mouse_y = args.Y;
+            };
+
+            Graphics.screenApect = (float)width / (float)height;
+            Screen.width = width;
+            Screen.height = height;
         }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-
             GL.Viewport(0, 0, Width, Height);
+            
+            int width = Width;
+            int height = Height;
 
-            Graphics.screenApect = (float)Width / (float)Height;
-
+            Graphics.screenApect = (float)width / (float)height;
+            Screen.width = width;
+            Screen.height = height;
         }
 
         private void RegisterBlendLoaders()
@@ -90,6 +103,7 @@ namespace pxl
             this.SwapBuffers();
         }
 
+        
         public void Loop()
         {
             Loop(70.0f);

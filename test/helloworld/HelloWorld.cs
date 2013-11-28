@@ -5,19 +5,39 @@ using System.Drawing;
 
 //using OpenTK;
 using OpenTK.Graphics;
-
 using pxl;
 
 public class Rotator : Behaviour
 {
+    public bool isRotating = true;
+
+    public override void Start()
+    {
+        Console.WriteLine("Rotator started");
+    }
+
     public override void Update()
     {
-        
-        gameObject.transform.localRotation =
-        Quaternion.FromAngleAxis(Time.t * 0.123f, Vector3.zAxis) *
-        Quaternion.FromAngleAxis(Time.t * 0.423f, Vector3.yAxis) *
-        Quaternion.FromAngleAxis(Time.t * 0.923f, Vector3.xAxis)
-        ;
+        Vector2 pos = Input.GetMousePosition();
+        Console.WriteLine( string.Format("({0},{1})", pos.x, pos.y)  );
+
+       if (Input.IsKeyUp(Key.Space))
+       {
+           isRotating = false;
+       }
+       else
+       {
+           isRotating = true;
+       }
+
+        if (isRotating)
+        {
+            gameObject.transform.localRotation =
+            Quaternion.FromAngleAxis(Time.t * 0.123f, Vector3.zAxis) *
+            Quaternion.FromAngleAxis(Time.t * 0.423f, Vector3.yAxis) *
+            Quaternion.FromAngleAxis(Time.t * 0.923f, Vector3.xAxis)
+            ;
+        }
     }
 }
 
@@ -82,6 +102,13 @@ class MainClass
         Matrix4 m = Matrix4.Translate(new Vector3(1.0f, 0.0f, 0.0f));
         Matrix4 inv = Matrix4.Transpose( Matrix4.Inverse(m) );
 
+        int s = 512;
+        FrameBufferObject fbo = new GLFrameBufferObject(s, s, 24);
+        Texture2D tex = new GLTexture2D(s, s, Texture.Format.RGBA32, false);
+        fbo.AttachColorTexture("Color", tex);
+        fbo.Bind();
+
+        fbo.Unbind();
 
         BuildScene();
 		app.Loop( 60.0f );

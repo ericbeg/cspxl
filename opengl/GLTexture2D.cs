@@ -21,7 +21,25 @@ namespace pxl
         public GLTexture2D()
             : base()
         {
-            m_isValid = false;
+
+        }
+
+        public GLTexture2D(int width, int height)
+            : base(width, height)
+        {
+            Apply();
+        }
+
+        public GLTexture2D(int width, int height, Texture.Format format)
+            : base(width, height, format)
+        {
+            Apply();
+        }
+
+        public GLTexture2D(int width, int height, Texture.Format format, bool mipmap)
+            : base(width, height, format, mipmap)
+        {
+            Apply();
         }
 
         public override void Dispose()

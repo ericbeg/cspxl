@@ -24,6 +24,7 @@ namespace pxl
 
         private Color4 m_backgroundColor;
 
+        public FrameBufferObject fboTarget;
         public enum ClearFlag
         {
 
