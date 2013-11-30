@@ -13,7 +13,6 @@ namespace pxl
         public static Mesh BuildMeshQuad()
         {
             Mesh me = new GLMesh();
-            me.vertcount = 4;
 
             me.positions = new Vector3[]
 		    {
@@ -39,7 +38,6 @@ namespace pxl
 			    new Vector2(0.0f, 1.0f)
 		    };
 
-            me.triscount = 2;
             me.triangles = new uint[]
 		    {
 			    0, 1, 2,
@@ -56,7 +54,6 @@ namespace pxl
         static public Mesh BuildMeshCube()
         {
             Mesh me = new GLMesh();
-            me.vertcount = 24;
             float s = 0.5f;
             me.positions = new Vector3[]
 		    {
@@ -181,7 +178,6 @@ namespace pxl
 		    };
 
 
-            me.triscount = 12;
             me.triangles = new uint[]
 		    {
                 // front

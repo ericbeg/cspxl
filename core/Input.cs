@@ -15,28 +15,126 @@ namespace pxl
         internal static int mouse_x = 0;
         internal static int mouse_y = 0;
 
-        public static bool IsKeyDown( Key key )
+        private static bool[] m_keysDown  = new bool[(int)Key.LastKey];
+        private static bool[] m_keysUp = new bool[(int)Key.LastKey];
+        private static bool[] m_keysPressed = new bool[(int)Key.LastKey];
+
+        private static bool[] m_mouseButtonsDown = new bool[(int)MouseButton.LastButton];
+        private static bool[] m_mouseButtonsUp = new bool[(int)MouseButton.LastButton];
+        private static bool[] m_mouseButtonsPressed = new bool[(int)MouseButton.LastButton];
+
+        private static void ClearUpDown()
+        {
+            for (int i = 0; i < (int)Key.LastKey; ++i)
+            {
+                m_keysDown[i] = m_keysUp[i] = false;
+            }
+
+            for (int i = 0; i < (int)MouseButton.LastButton; ++i)
+            {
+                m_mouseButtonsDown[i] = m_mouseButtonsUp[i] = false;
+            }
+
+        }
+
+        private static void ClearInputState()
+        {
+            for (int i = 0; i < (int)Key.LastKey; ++i)
+            {
+                m_keysDown[i] = m_keysUp[i] = m_keysPressed[i] = false;
+            }
+
+            for (int i = 0; i < (int)MouseButton.LastButton; ++i)
+            {
+                m_mouseButtonsDown[i] = m_mouseButtonsUp[i] = m_mouseButtonsPressed[i] = false;
+            }
+
+        }
+
+        private static void UpdateKeyState(bool isDown, bool isUp,
+            ref bool pressedState, ref bool upState, ref bool downState )
+        {
+                if (isDown)
+                {
+                    if (!pressedState)
+                    {
+                      downState = true;
+                    }
+                    pressedState = true;
+                }
+
+                if (isUp)
+                {
+                    if (pressedState)
+                    {
+                        upState = true;
+                    }
+                    pressedState = false;
+                }
+
+
+        }
+
+        private static void UpdateKeyboard()
         {
             OtkInput.KeyboardState ks = OtkInput.Keyboard.GetState();
-            return ks.IsKeyDown((OtkInput.Key)key); 
+
+            for (int i = 0; i < (int)Key.LastKey; ++i)
+            {
+                OtkInput.Key k = (OtkInput.Key)i;
+                UpdateKeyState(ks.IsKeyDown(k), ks.IsKeyUp(k),
+                    ref m_keysPressed[i], ref m_keysUp[i], ref m_keysDown[i]);
+            }
+
+        }
+
+        private static void UpdateMouse()
+        {
+            OtkInput.MouseState ks = OtkInput.Mouse.GetState();
+            for (int i = 0; i < (int)MouseButton.LastButton; ++i)
+            {
+                OtkInput.MouseButton k = (OtkInput.MouseButton)i;
+                UpdateKeyState(ks.IsButtonDown(k), ks.IsButtonUp(k),
+                    ref m_mouseButtonsPressed[i], ref m_mouseButtonsUp[i], ref m_mouseButtonsDown[i]);
+            }
+        }
+
+        
+        internal static void Update()
+        {
+            ClearUpDown();
+            UpdateKeyboard();
+            UpdateMouse();
+        }
+
+        public static bool IsKeyDown( Key key )
+        {
+            return m_keysDown[(int)key]; 
         }
 
         public static bool IsKeyUp(Key key)
         {
-            OtkInput.KeyboardState ks = OtkInput.Keyboard.GetState();
-            return ks.IsKeyUp((OtkInput.Key)key);
+            return m_keysUp[(int)key];
         }
 
+        public static bool IsKeyPressed(Key key)
+        {
+            return m_keysPressed[(int)key];
+        }
+        
         public static bool IsMouseButtonDown( MouseButton button )
         {
-            OtkInput.MouseState ms = OtkInput.Mouse.GetState();
-            return ms.IsButtonDown((OtkInput.MouseButton)button);
+            return m_mouseButtonsDown[(int)button];
         }
 
         public static bool IsMouseButtonUp(MouseButton button)
         {
-            OtkInput.MouseState ms = OtkInput.Mouse.GetState();
-            return ms.IsButtonUp((OtkInput.MouseButton)button);
+            return m_mouseButtonsUp[(int)button];
+        }
+
+        public static bool IsMouseButtonPressed(MouseButton button)
+        {
+            return m_mouseButtonsPressed[(int)button];
         }
 
         public static Vector2 GetMousePosition()
@@ -49,8 +147,6 @@ namespace pxl
             OtkInput.MouseState ms = OtkInput.Mouse.GetState();
             return ms.WheelPrecise;
         }
-
-
     }
 
     public enum Key
@@ -217,6 +313,4 @@ namespace pxl
         Button9 = 11,
         LastButton = 12,
     }
-
-
 }

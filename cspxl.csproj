@@ -64,6 +64,7 @@
     <Compile Include="core\FrameBufferObject.cs" />
     <Compile Include="core\Light.cs" />
     <Compile Include="core\ObjectFactory.cs" />
+    <Compile Include="core\Time.cs" />
     <Compile Include="graphics\BMesh.cs" />
     <Compile Include="graphics\MeshConvert.cs" />
     <Compile Include="graphics\EarClippingTriangulation.cs" />

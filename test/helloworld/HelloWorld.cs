@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-
+using System.Reflection;
 using System.Drawing;
 
 //using OpenTK;
@@ -19,16 +19,47 @@ public class Rotator : Behaviour
     public override void Update()
     {
         Vector2 pos = Input.GetMousePosition();
-        Console.WriteLine( string.Format("({0},{1})", pos.x, pos.y)  );
+        //Console.WriteLine(string.Format("({0},{1})", pos.x, pos.y));
 
-       if (Input.IsKeyUp(Key.Space))
-       {
-           isRotating = false;
-       }
-       else
-       {
-           isRotating = true;
-       }
+        if (Input.IsKeyDown(Key.A))
+        {
+            Console.WriteLine("A down");
+        }
+
+        if (Input.IsKeyPressed(Key.A))
+        {
+            Console.WriteLine("A pressed");
+        }
+
+        if (Input.IsKeyUp(Key.A))
+        {
+            Console.WriteLine("A up");
+        }
+        
+        if (Input.IsMouseButtonDown(MouseButton.Left))
+        {
+            Console.WriteLine("MLB down");
+        }
+
+        if (Input.IsMouseButtonPressed(MouseButton.Left))
+        {
+            Console.WriteLine("MLB pressed");
+        }
+
+        if (Input.IsMouseButtonUp(MouseButton.Left))
+        {
+            Console.WriteLine("MLB up");
+        }
+         
+
+        if (Input.IsKeyDown(Key.Space))
+        {
+            isRotating = false;
+        }
+        else
+        {
+            isRotating = true;
+        }
 
         if (isRotating)
         {
@@ -61,7 +92,7 @@ class MainClass
         BlendFile bf = BlendFile.Open("cube.blend");
         GameObject scene = bf.Load("SCScene") as GameObject;
 
-        if ( false )
+        if (false)
         {
             File.WriteAllText("dna.txt", bf.DNAString);
             File.WriteAllText("data.txt", bf.fileBlockString);
@@ -69,38 +100,37 @@ class MainClass
 
         bf.Close(); bf = null;
 
-        
+
         GameObject obcam = GameObject.Find("OBCamera");
         Camera cam = obcam.GetComponent<Camera>();
         cam.backgroundColor = Color4.Black;
 
         //GameObject go = GameObject.Find("OBSuzanne");go.AddComponent<Rotator>();
 
-        GameObject[] objects =  GameObject.instances;
+        GameObject[] objects = GameObject.instances;
 
         GameObject[] gos = GameObject.FindObjectsOfType<Transform>();
-        
+
         foreach (var go in gos)
         {
             if (go.GetComponent<Renderer>() != null)
             {
-                if( go.transform.parent != null && go.transform.parent == GameObject.Find("SCScene").transform )
+                if (go.transform.parent != null && go.transform.parent == GameObject.Find("SCScene").transform)
                     go.AddComponent<Rotator>();
                 Matrix4 m = go.transform.matrix;
             }
         }
-        
-        
+
+
 
     }
 
-	public static int Main (string[] args)
-	{
+    public static int Main(string[] args)
+    {
 
-		Application app = new Application( 400, 300);
-        Console.WriteLine( pxl.GLHelper.infoString );
-        Matrix4 m = Matrix4.Translate(new Vector3(1.0f, 0.0f, 0.0f));
-        Matrix4 inv = Matrix4.Transpose( Matrix4.Inverse(m) );
+
+        Application app = new Application(400, 300);
+        Console.WriteLine(pxl.GLHelper.infoString);
 
         int s = 512;
         FrameBufferObject fbo = new GLFrameBufferObject(s, s, 24);
@@ -108,12 +138,13 @@ class MainClass
         fbo.AttachColorTexture("Color", tex);
         fbo.Bind();
 
-        fbo.Unbind();
+        //fbo.Unbind();
 
         BuildScene();
-		app.Loop( 60.0f );
-		app.Quit();
-		return 0;
-	}
+        app.Loop(60.0f);
+        app.Quit();
+
+        return 0;
+    }
 }
 

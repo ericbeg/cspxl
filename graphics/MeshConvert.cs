@@ -50,9 +50,6 @@ namespace pxl
 
             mesh.triangles = new uint[ntris * 3];
 
-            mesh.vertcount = nverts;
-            mesh.triscount = ntris;
-
             // triangulate faces
             int voffset = 0;
             int toffset = 0;

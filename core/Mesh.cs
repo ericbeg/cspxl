@@ -11,8 +11,9 @@ namespace pxl
 	{
         public static Mesh active = null;
 
-		public int vertcount;
-		public int triscount;
+
+		public int vertcount{ get{return positions.Length;} }
+		public int triscount{ get{return triangles.Length/3;} }
 		
 		public Vector3[] positions;
 		public Vector3[] normals;

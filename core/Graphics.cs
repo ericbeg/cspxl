@@ -52,6 +52,7 @@ namespace pxl
                         GL.Clear(ClearBufferMask.ColorBufferBit);
                         GL.Clear(ClearBufferMask.DepthBufferBit);
                         break;
+
                     case Camera.ClearFlag.DepthOnly:
                         GL.Clear(ClearBufferMask.DepthBufferBit);
                         break;
@@ -83,7 +84,6 @@ namespace pxl
                 viewMatrix = cam.viewMatrix;
                 projectionMatrix = cam.projectionMatrix;
                 viewProjectionMatrix = cam.viewProjectionMatrix;
-
             }
 
             foreach (var go in objects)

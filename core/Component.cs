@@ -41,7 +41,13 @@ namespace pxl
             }
         }
 
-		public Component(GameObject gameObject)
+        internal virtual void InternalFixedUpdate()
+        {
+
+        }
+
+        
+        public Component(GameObject gameObject)
 		{
 			m_gameObject  = gameObject;
 		}

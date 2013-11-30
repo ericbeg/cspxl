@@ -32,7 +32,7 @@ namespace pxl
             };
 
             Graphics.screenApect = (float)width / (float)height;
-            Screen.width = width;
+            Screen.width  = width;
             Screen.height = height;
         }
 
@@ -76,6 +76,9 @@ namespace pxl
             Time._Update();
             Time._previousFrameDate = Time._currentFrameDate;
             
+            // Update Input
+            Input.Update();
+
             // Update components
 
             var components = Component.instances;
