@@ -88,7 +88,7 @@ namespace pxl
 
             foreach (var go in objects)
             {
-                var rdr = go.GetComponent<Renderer>();
+                var rdr = go.GetComponent<MeshRenderer>();
                 if (rdr != null)
                 {
                     var me = rdr.mesh;

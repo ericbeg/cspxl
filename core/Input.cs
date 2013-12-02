@@ -15,6 +15,12 @@ namespace pxl
         internal static int mouse_x = 0;
         internal static int mouse_y = 0;
 
+        private static Vector2 m_mousePos;
+        private static Vector2 m_mouseLastPos;
+
+
+        private static bool m_isFirstFrame = true;
+
         private static bool[] m_keysDown  = new bool[(int)Key.LastKey];
         private static bool[] m_keysUp = new bool[(int)Key.LastKey];
         private static bool[] m_keysPressed = new bool[(int)Key.LastKey];
@@ -71,8 +77,6 @@ namespace pxl
                     }
                     pressedState = false;
                 }
-
-
         }
 
         private static void UpdateKeyboard()
@@ -90,6 +94,7 @@ namespace pxl
 
         private static void UpdateMouse()
         {
+            // update mouse button state
             OtkInput.MouseState ks = OtkInput.Mouse.GetState();
             for (int i = 0; i < (int)MouseButton.LastButton; ++i)
             {
@@ -97,6 +102,18 @@ namespace pxl
                 UpdateKeyState(ks.IsButtonDown(k), ks.IsButtonUp(k),
                     ref m_mouseButtonsPressed[i], ref m_mouseButtonsUp[i], ref m_mouseButtonsDown[i]);
             }
+
+            // update mouse postion
+            m_mouseLastPos = m_mousePos;
+            m_mousePos.x = mouse_x;
+            m_mousePos.y = Screen.height - 1 - mouse_y;
+
+            if (m_isFirstFrame)
+            {
+                m_mouseLastPos = m_mousePos;
+                m_isFirstFrame = false;
+            }
+
         }
 
         
@@ -137,15 +154,30 @@ namespace pxl
             return m_mouseButtonsPressed[(int)button];
         }
 
-        public static Vector2 GetMousePosition()
+        public static Vector2 mousePosition
         {
-            return new Vector2(mouse_x, Screen.height -1 - mouse_y);
+            get
+            {
+                return m_mousePos;
+            }
         }
 
-        public static float GetMouseScroll()
+        public static Vector2 mouseDeltaPosition
         {
-            OtkInput.MouseState ms = OtkInput.Mouse.GetState();
-            return ms.WheelPrecise;
+            get
+            {
+                return m_mousePos - m_mouseLastPos;
+            }
+        }
+
+
+        public static float mouseScroll
+        {
+            get
+            {
+                OtkInput.MouseState ms = OtkInput.Mouse.GetState();
+                return ms.WheelPrecise;
+            }
         }
     }
 

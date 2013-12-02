@@ -3,7 +3,7 @@
 using System;
 namespace pxl
 {
-	public class Renderer : Component
+	public class MeshRenderer : Component
 	{
         public Material material = null;
         public Mesh mesh = null;

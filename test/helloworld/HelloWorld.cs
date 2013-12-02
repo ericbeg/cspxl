@@ -18,8 +18,8 @@ public class Rotator : Behaviour
 
     public override void Update()
     {
-        Vector2 pos = Input.GetMousePosition();
-        //Console.WriteLine(string.Format("({0},{1})", pos.x, pos.y));
+        Vector2 pos = Input.mouseDeltaPosition;
+        Console.WriteLine(string.Format("({0},{1})", pos.x, pos.y));
 
         if (Input.IsKeyDown(Key.A))
         {

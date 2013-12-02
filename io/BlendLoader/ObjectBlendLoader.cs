@@ -122,10 +122,10 @@ namespace pxl
             Mesh me = bvar.blendFile.Load(meshName) as Mesh;
             if (me != null)
             {
-                Renderer rdr = go.GetComponent<Renderer>();
+                MeshRenderer rdr = go.GetComponent<MeshRenderer>();
                 if (rdr == null)
                 {
-                    rdr = go.AddComponent<Renderer>();
+                    rdr = go.AddComponent<MeshRenderer>();
                 }
                 rdr.mesh = me;
             }
@@ -161,9 +161,9 @@ namespace pxl
 
                 if (materials.Count > 0)
                 {
-                    Renderer rdr = go.GetComponent<Renderer>();
+                    MeshRenderer rdr = go.GetComponent<MeshRenderer>();
                     if (rdr == null)
-                        rdr = go.AddComponent<Renderer>();
+                        rdr = go.AddComponent<MeshRenderer>();
                     rdr.material = materials[0];
                 }
             } // if mats not null

@@ -216,7 +216,7 @@ namespace pxl
         static public GameObject NewMeshCube()
         {
             GameObject ob = new GameObject();
-            Renderer rdr = ob.AddComponent<Renderer>();
+            MeshRenderer rdr = ob.AddComponent<MeshRenderer>();
             rdr.mesh = BuildMeshCube();
             return ob;
         }
@@ -224,7 +224,7 @@ namespace pxl
         static public GameObject NewMeshQuad()
         {
             GameObject ob = new GameObject();
-            Renderer rdr = ob.AddComponent<Renderer>();
+            MeshRenderer rdr = ob.AddComponent<MeshRenderer>();
             rdr.mesh = BuildMeshQuad();
             return ob;
         }
