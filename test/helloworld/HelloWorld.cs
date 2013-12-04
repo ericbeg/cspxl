@@ -16,6 +16,11 @@ public class Rotator : Behaviour
         Console.WriteLine("Rotator started");
     }
 
+    public override void FixedUpdate()
+    {
+        base.FixedUpdate();
+        Console.WriteLine(".");
+    }
     public override void Update()
     {
         Vector2 pos = Input.mouseDeltaPosition;
@@ -113,7 +118,7 @@ class MainClass
 
         foreach (var go in gos)
         {
-            if (go.GetComponent<Renderer>() != null)
+            if (go.GetComponent<MeshRenderer>() != null)
             {
                 if (go.transform.parent != null && go.transform.parent == GameObject.Find("SCScene").transform)
                     go.AddComponent<Rotator>();
@@ -138,10 +143,10 @@ class MainClass
         fbo.AttachColorTexture("Color", tex);
         fbo.Bind();
 
-        //fbo.Unbind();
+        fbo.Unbind();
 
         BuildScene();
-        app.Loop(60.0f);
+        app.Loop(40.0f);
         app.Quit();
 
         return 0;

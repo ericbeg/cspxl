@@ -88,7 +88,7 @@
     <Compile Include="core\GameObject.cs" />
     <Compile Include="core\Material.cs" />
     <Compile Include="core\Mesh.cs" />
-    <Compile Include="core\Renderer.cs" />
+    <Compile Include="core\MeshRenderer.cs" />
     <Compile Include="core\Shader.cs" />
     <Compile Include="core\Transform.cs" />
     <Compile Include="core\Texture2D.cs" />

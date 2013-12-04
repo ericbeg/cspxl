@@ -120,7 +120,7 @@ namespace pxl
                         shader.SetUniform("normalMatrix", modelViewMatrix.sub3);
                         shader.SetUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
 
-                        Light.SetShaderUniforms();
+                        //Light.SetShaderUniforms();
 
                         me.Draw();
                     }

@@ -25,8 +25,18 @@ namespace pxl
             m_instances.Remove(this);
         }
 
-        internal static void SetShaderUniforms()
+        internal void SetShaderUniforms()
         {
+            Shader sh = Shader.active;
+            if (sh != null)
+            {
+                sh.SetUniform("Lamp.position", gameObject.transform.position );
+                sh.SetUniform("Lamp.color", color);
+                sh.SetUniform("Lamp.attenuation", attenuation);
+                sh.SetUniform("Lamp.cutoff", cutoff);
+                sh.SetUniform("Lamp.exponent", exponent);
+                sh.SetUniform("Lamp.intensity", intensity);
+            }
 
         }
 

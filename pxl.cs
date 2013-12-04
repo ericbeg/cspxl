@@ -60,6 +60,49 @@ namespace pxl
             BlendFile.Register(new SceneBlendLoader(), "SC");
         }
 
+        protected void FixedUpdate()
+        {
+            // TODO: Clean this
+            // Update components
+
+            var components = Component.instances;
+
+            float dt = Time._currentFrameDate.SubstractInSeconds(Time._previousFixedFrameDate);
+            float t0 = Time._previousFixedFrameDate.SubstractInSeconds(Time._startingDate);
+            int steps = (int)(dt / Time._fixedDt);
+            
+            Time._dt = Time._fixedDt;
+            for (int i = 0; i < steps; ++i)
+            {
+                Time._t = t0 + i * Time._dt;
+                foreach (var c in components)
+                {
+                    c.InternalFixedUpdate();
+                }
+            }
+            if( steps > 0)
+                Time._previousFixedFrameDate = Time._currentFrameDate;
+        }
+
+        protected void Update()
+        {
+            // Update time data
+            Time._currentFrameDate = DateTime.Now;
+            Time._Update();
+            Time._previousFrameDate = Time._currentFrameDate;
+
+            // Update Input
+            Input.Update();
+            FixedUpdate();
+
+            // Update components
+
+            var components = Component.instances;
+            foreach (var c in components)
+            {
+                c.InternalUpdate();
+            }
+        }
         /// <summary>
         /// Prepares the next frame for rendering.
         /// </summary>
@@ -71,21 +114,7 @@ namespace pxl
         {
             base.OnUpdateFrame(e);
 
-            // Update time data
-            Time._currentFrameDate = DateTime.Now;
-            Time._Update();
-            Time._previousFrameDate = Time._currentFrameDate;
-            
-            // Update Input
-            Input.Update();
-
-            // Update components
-
-            var components = Component.instances;
-            foreach (var c in components)
-            {
-                c.InternalUpdate();
-            }
+            Update();            
 
             if (Keyboard[OpenTK.Input.Key.Escape])
             {
@@ -114,8 +143,7 @@ namespace pxl
 
         public void Loop(float updateRate)
 		{
-            Time._startingDate = DateTime.Now;
-            Time._previousFrameDate = Time._startingDate;
+            Time._Initialize();            
             using (this)
 			{
                 this.Run(updateRate);

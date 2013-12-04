@@ -48,8 +48,6 @@ namespace pxl
             FixedUpdate();
         }
 
-
-
         virtual public void Start()
         {
 

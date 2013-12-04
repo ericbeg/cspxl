@@ -45,7 +45,6 @@ namespace pxl
         {
 
         }
-
         
         public Component(GameObject gameObject)
 		{

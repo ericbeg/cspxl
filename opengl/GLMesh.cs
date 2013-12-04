@@ -52,7 +52,7 @@ namespace pxl
 				attrFormat.Add ( new GLMeshVertexAttributeFormat( "uv" , VertexAttribPointerType.Float, 2 ));
 
 			if (mesh.hasColors)
-				attrFormat.Add ( new GLMeshVertexAttributeFormat( "color" , VertexAttribPointerType.Float, 4 ));
+				attrFormat.Add ( new GLMeshVertexAttributeFormat( "color" , VertexAttribPointerType.Byte, 4 ));
 
 			vertexAttributeFormat = attrFormat.ToArray ();
 
@@ -91,6 +91,12 @@ namespace pxl
 				for( int v=0; v < mesh.vertcount; ++v)
 				{
 					Vector3 nor = mesh.normals[v];
+                    /*
+                    byte[] no = new byte[3];
+                    no[0] = (byte)(255.0f * nor.x);
+                    no[1] = (byte)(255.0f * nor.y);
+                    no[2] = (byte)(255.0f * nor.z);
+                    */
 					Buffer.BlockCopy(  nor.GetBytes(), 0, attrBuffer, offset + v * strideSize, attributeSize);
 				}
 				++attrIdx;
