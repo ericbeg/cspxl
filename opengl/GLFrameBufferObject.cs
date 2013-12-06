@@ -35,12 +35,27 @@ namespace pxl
             GenDepthBuffer();
         }
 
+        ~GLFrameBufferObject()
+        {
+            Free();
+        }
+
+
+        public void Free()
+        {
+            if(glname > 0)
+                GL.DeleteFramebuffers(1, ref glname);
+
+            if( glname_depth > 0)
+                GL.DeleteRenderbuffers(1, ref glname_depth);
+
+            glname_depth = glname = 0;
+        }
+
         public override void Dispose()
         {
             base.Dispose();
-            GL.DeleteFramebuffers(1, ref glname);
-            GL.DeleteRenderbuffers(1, ref glname_depth);
-            glname = 0;
+            Free();
         }
 
         void GenDepthBuffer()

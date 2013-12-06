@@ -42,14 +42,24 @@ namespace pxl
             Apply();
         }
 
+        ~GLTexture2D()
+        {
+            Free();
+        }
+
+        public void Free()
+        {
+            if ( glname > 0)
+            {
+                GL.DeleteTexture(glname);
+            }
+            glname = 0; m_isValid = false;
+        }
+
         public override void Dispose()
         {
             base.Dispose();
-            if (m_isValid)
-            {
-                GL.DeleteTexture(glname);
-                glname = 0;
-            }
+            Free();
         }
 
         public override Color4[] GetPixels()
@@ -64,12 +74,7 @@ namespace pxl
 
         public override void Apply()
         {
-
-            if (m_isValid)
-            {
-                GL.DeleteTexture(glname);
-            }
-
+            Free();
             TextureTarget target = TextureTarget.Texture2D;
             glname = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, glname);
@@ -123,10 +128,7 @@ namespace pxl
 
         public override void Copy(Bitmap bitmap)
         {
-            if (m_isValid)
-            {
-                GL.DeleteTexture(glname);
-            }
+            Free();
 
             GL.GenTextures(1, out glname);
             GL.BindTexture(TextureTarget.Texture2D, glname);

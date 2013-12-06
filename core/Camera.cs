@@ -27,7 +27,6 @@ namespace pxl
         public FrameBufferObject fboTarget;
         public enum ClearFlag
         {
-
             BackgroundColor,
             DepthOnly
         }
@@ -59,12 +58,25 @@ namespace pxl
             m_instances.Remove(this);
         }
 
+        /// <summary>
+        /// Render the scene from this camera perspective.
+        /// </summary>
         public void Render()
         {
             Camera.active = this;
             Graphics.RenderActiveCamera();
         }
 
+        /// <summary>
+        /// Set how the background is cleared when this camera is rendered.
+        /// Options are:
+        ///     - ClearFlag.BackgroundColor:
+        ///             The background is cleared with the color stored in the color property of the camera.
+        ///             The depth buffer is also cleared.
+        ///     - ClearFlag.DepthOnly:
+        ///             Only the depth buffer is cleared.
+        ///             The color buffer is not changed.
+        /// </summary>
         public ClearFlag clearFlag = ClearFlag.BackgroundColor;
         public Color4 backgroundColor
         {

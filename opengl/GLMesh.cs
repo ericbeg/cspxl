@@ -27,7 +27,25 @@ namespace pxl
             vbo = new uint[1];
             tbo = new uint[1];
         }
-		
+
+        ~GLMesh()
+        {
+            Free();
+        }
+
+        public void Free()
+        {
+            if (vbo != null)
+                GL.DeleteBuffers(1, vbo);
+
+            if (tbo != null)
+                GL.DeleteBuffers(1, tbo);
+
+            tbo = vbo = null;
+            GLHelper.CheckError();
+        }
+
+
 		public override void Apply()
 		{
             Mesh mesh = this;
@@ -156,12 +174,6 @@ namespace pxl
 			}
 		}
 		
-		public void Free()
-		{
-			GL.DeleteBuffers(1,  vbo  );
-			GL.DeleteBuffers(1,  tbo  );
-            GLHelper.CheckError();
-		}
 		
 	    private void BindVertexAttributes()
         {

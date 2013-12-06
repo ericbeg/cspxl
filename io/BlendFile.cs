@@ -19,6 +19,10 @@ namespace pxl
             ;
         }
 
+        ~BlendFile()
+        {
+            Close();
+        }
 
         public string DNAString { get { return GetDNAString(); } }
         public string fileBlockString { get { return GetFileBlockString(); } }
@@ -256,7 +260,9 @@ namespace pxl
         /// </summary>
         public void Close()
         {
-            m_br.Close();
+            if( m_br != null )
+                m_br.Close();
+
             m_br = null;
             m_dna1 = null;
             m_fileBlockByName = null;

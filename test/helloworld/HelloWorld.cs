@@ -7,6 +7,7 @@ using System.Drawing;
 using OpenTK.Graphics;
 using pxl;
 
+
 public class Rotator : Behaviour
 {
     public bool isRotating = true;
@@ -19,12 +20,20 @@ public class Rotator : Behaviour
     public override void FixedUpdate()
     {
         base.FixedUpdate();
-        Console.WriteLine(".");
+        //Console.WriteLine(".");
     }
     public override void Update()
     {
         Vector2 pos = Input.mouseDeltaPosition;
-        Console.WriteLine(string.Format("({0},{1})", pos.x, pos.y));
+        //Console.WriteLine(string.Format("({0},{1})", pos.x, pos.y));
+
+
+        if (Input.IsKeyDown(Key.G))
+        {
+            System.GC.Collect();
+            Console.WriteLine("GC");
+        }
+
 
         if (Input.IsKeyDown(Key.A))
         {
@@ -74,6 +83,8 @@ public class Rotator : Behaviour
             Quaternion.FromAngleAxis(Time.t * 0.923f, Vector3.xAxis)
             ;
         }
+
+
     }
 }
 

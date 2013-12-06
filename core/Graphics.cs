@@ -13,6 +13,29 @@ namespace pxl
     {
         internal static float screenApect = 1.0f;
 
+        /*
+         * Render path overview
+         * -------------------
+         * 
+         * 
+         *** Forward render path:
+         * 
+         * For each Camera c
+         *  For each light l
+         *      for each object o
+         *          render o 
+         *          accumulate result
+         * 
+         *** Deferred render path:
+         * 
+         * For each Camera c
+         *  For each object o
+         *      render o in GBuffer (Depth, normal & and surface property)
+         *  For each light l
+         *      render lit fragments
+         *      accumulate result
+         *      
+         * */
 
         internal static void RenderFrame()
         {
