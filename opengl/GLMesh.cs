@@ -35,12 +35,14 @@ namespace pxl
 
         public void Free()
         {
-            if (vbo != null)
-                GL.DeleteBuffers(1, vbo);
+            if (GLHelper.IsValidContext)
+            {
+                if (vbo != null)
+                    GL.DeleteBuffers(1, vbo);
 
-            if (tbo != null)
-                GL.DeleteBuffers(1, tbo);
-
+                if (tbo != null)
+                    GL.DeleteBuffers(1, tbo);
+            }
             tbo = vbo = null;
             GLHelper.CheckError();
         }

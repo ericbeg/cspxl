@@ -7,7 +7,6 @@ using System.Drawing;
 using OpenTK.Graphics;
 using pxl;
 
-
 public class Rotator : Behaviour
 {
     public bool isRotating = true;
@@ -93,7 +92,8 @@ class MainClass
 
     public static Shader GetShader()
     {
-        string shaderSource = File.ReadAllText("simple.glsl");
+        string shaderSource = System.Text.Encoding.ASCII.GetString(global::cspxl.Properties.Resources.Shader_Diffuse);
+        //string shaderSource = File.ReadAllText("simple.glsl");
         Shader shader = new GLShader();
         shader.source = shaderSource;
         shader.Apply();
@@ -158,7 +158,16 @@ class MainClass
 
         BuildScene();
         app.Loop(40.0f);
+
+        foreach (var o in GameObject.instances)
+            o.Dispose();
+
+        fbo.Dispose();
+
+        fbo = null;
         app.Quit();
+
+        System.GC.Collect();
 
         return 0;
     }

@@ -152,6 +152,11 @@ namespace pxl
 
         }
 
+        public static void Blit(Texture2D texture, FrameBufferObject fbo)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 
     public static class Screen

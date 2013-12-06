@@ -34,6 +34,8 @@ namespace pxl
             Graphics.screenApect = (float)width / (float)height;
             Screen.width  = width;
             Screen.height = height;
+            GLHelper._isValidContext = true;
+                 
         }
 
         protected override void OnResize(EventArgs e)
@@ -62,8 +64,6 @@ namespace pxl
 
         protected void FixedUpdate()
         {
-            // TODO: Clean this
-            // Update components
 
             var components = Component.instances;
 
@@ -152,7 +152,7 @@ namespace pxl
 		
 		public void Quit()
 		{
-			
+            GLHelper._isValidContext = false;
 		}
 
 			

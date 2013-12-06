@@ -29,14 +29,22 @@ namespace pxl
             m_transform = t;
 		}
 
+        ~GameObject()
+        {
+            Dispose();
+        }
+
         public void Dispose()
         {
             Transform tr = GetComponent<Transform>();
-            foreach (var t in tr.children)
+            if (tr != null)
             {
-                t.gameObject.Dispose();
+                foreach (var t in tr.children)
+                {
+                    t.gameObject.Dispose();
+                }
+                tr.parent = null;
             }
-            tr.parent = null;
             m_instances.Remove( this );
         }
 

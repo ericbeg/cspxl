@@ -10,7 +10,12 @@ using OpenTK;
 
 namespace pxl
 {
-    public class GLFrameBufferObject : FrameBufferObject
+    public interface IGLFreeable
+    {
+        void Free();
+    }
+
+    public class GLFrameBufferObject : FrameBufferObject, IGLFreeable
     {
 
         private uint glname;
@@ -43,12 +48,14 @@ namespace pxl
 
         public void Free()
         {
-            if(glname > 0)
-                GL.DeleteFramebuffers(1, ref glname);
+            if (GLHelper.IsValidContext )
+            {
+                if (glname > 0)
+                    GL.DeleteFramebuffers(1, ref glname);
 
-            if( glname_depth > 0)
-                GL.DeleteRenderbuffers(1, ref glname_depth);
-
+                if (glname_depth > 0)
+                    GL.DeleteRenderbuffers(1, ref glname_depth);
+            }
             glname_depth = glname = 0;
         }
 

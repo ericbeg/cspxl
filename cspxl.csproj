@@ -82,6 +82,11 @@
     <Compile Include="math\cgmath.cs" />
     <Compile Include="opengl\GLFrameBufferObject.cs" />
     <Compile Include="opengl\GLTexture2D.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="pxl.cs" />
     <Compile Include="core\Camera.cs" />
     <Compile Include="core\Component.cs" />
@@ -99,5 +104,13 @@
     <Compile Include="opengl\GLShader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\Diffuse.glsl" />
+  </ItemGroup>
 </Project>

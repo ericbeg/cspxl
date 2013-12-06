@@ -35,16 +35,19 @@ namespace pxl
 
         public override void Free()
         {
-            if (m_vertex > 0)
-                GL.DeleteShader(m_vertex);
+            if (GLHelper.IsValidContext)
+            {
 
-            if (m_fragment > 0)
-                GL.DeleteShader(m_fragment);
-            GLHelper.CheckError();
+                if (m_vertex > 0)
+                    GL.DeleteShader(m_vertex);
 
-            if (m_glname > 0)
-                GL.DeleteProgram(m_glname);
+                if (m_fragment > 0)
+                    GL.DeleteShader(m_fragment);
+                GLHelper.CheckError();
 
+                if (m_glname > 0)
+                    GL.DeleteProgram(m_glname);
+            }
             m_vertex = m_fragment = m_glname = 0;
 
         }

@@ -9,14 +9,19 @@ namespace pxl
 {
     public static class GLHelper
     {
+        internal static bool _isValidContext = false;
+
         public static void CheckError()
         {
-           ErrorCode err = GL.GetError();
-            if (err != ErrorCode.NoError)
+            if (GLHelper.IsValidContext)
             {
-                OpenGLErrorException exception = new OpenGLErrorException();
-                exception.errorCode = err;
-                throw exception ;
+                ErrorCode err = GL.GetError();
+                if (err != ErrorCode.NoError)
+                {
+                    OpenGLErrorException exception = new OpenGLErrorException();
+                    exception.errorCode = err;
+                    throw exception;
+                }
             }
         }
 
@@ -38,6 +43,14 @@ namespace pxl
                 GL.GetInteger(GetPName.MaxTextureUnits, out i); info += "MaxTextureUnits=" + i + "\n";
                 
                 return info;
+            }
+        }
+
+        public static bool IsValidContext
+        {
+            get
+            {
+                return _isValidContext;
             }
         }
 

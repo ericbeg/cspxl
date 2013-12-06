@@ -193,7 +193,7 @@ namespace pxl
 			{
 				Transform newParent = value;
 				
-				if ( ! newParent.HasChild( this ) )
+				if ( newParent != null && ! newParent.HasChild( this ) )
 				{
 					newParent.m_children.Add( this );
 				}

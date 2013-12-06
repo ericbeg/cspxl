@@ -49,9 +49,12 @@ namespace pxl
 
         public void Free()
         {
-            if ( glname > 0)
+            if (GLHelper.IsValidContext)
             {
-                GL.DeleteTexture(glname);
+                if (glname > 0)
+                {
+                    GL.DeleteTexture(glname);
+                }
             }
             glname = 0; m_isValid = false;
         }
