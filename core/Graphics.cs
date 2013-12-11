@@ -37,6 +37,13 @@ namespace pxl
          *      
          * */
 
+        static private Matrix4 viewMatrix = Matrix4.Identity;
+        static private Matrix4 projectionMatrix = Matrix4.Identity;
+        static private Matrix4 viewProjectionMatrix = Matrix4.Identity;
+        static private Matrix4 modelMatrix = Matrix4.Identity;
+        static private Matrix4 modelViewMatrix = Matrix4.Identity;
+        static private Matrix4 modelViewProjectionMatrix = Matrix4.Identity;
+
         internal static void RenderFrame()
         {
             ClearFrameBuffer();
@@ -89,17 +96,16 @@ namespace pxl
         }
 
 
-        internal static void RenderActiveCamera()
+        private static void ApplyCamera()
         {
             Camera cam = Camera.active;
 
-            GameObject[] objects              = GameObject.instances;
-            Matrix4 viewMatrix                = Matrix4.Identity;
-            Matrix4 projectionMatrix          = Matrix4.Identity;
-            Matrix4 viewProjectionMatrix      = Matrix4.Identity;
-            Matrix4 modelMatrix               = Matrix4.Identity;
-            Matrix4 modelViewMatrix           = Matrix4.Identity;
-            Matrix4 modelViewProjectionMatrix = Matrix4.Identity;
+            viewMatrix = Matrix4.Identity;
+            projectionMatrix = Matrix4.Identity;
+            viewProjectionMatrix = Matrix4.Identity;
+            modelMatrix = Matrix4.Identity;
+            modelViewMatrix = Matrix4.Identity;
+            modelViewProjectionMatrix = Matrix4.Identity;
 
 
             if (cam != null)
@@ -109,6 +115,12 @@ namespace pxl
                 viewProjectionMatrix = cam.viewProjectionMatrix;
             }
 
+        }
+
+        internal static void RenderActiveCameraForward()
+        {
+            ApplyCamera();
+            GameObject[] objects = GameObject.instances;
             foreach (var go in objects)
             {
                 var rdr = go.GetComponent<MeshRenderer>();
@@ -121,35 +133,76 @@ namespace pxl
 
                     if ( me != null && shader != null )
                     {
-
                         Shader.active = shader;
                         shader.Link();
                         shader.Use();
 
+                        SetObjectMatrices(go);
+                        SetShaderUniforms();
                         rdr.material.SetShaderUniforms();
 
-                        modelMatrix = go.transform.matrix;
+                        foreach (var light in Light.instances)
+                        {
+                            light.SetShaderUniforms();
+                            me.Draw();
+                        }
+                    } 
+                }// if ( rdr != null )
+            }//foreach (var go in objects)
+        }
 
-                        modelViewMatrix = viewMatrix * modelMatrix;
-                        modelViewProjectionMatrix = projectionMatrix * modelViewMatrix;
+        private static void SetObjectMatrices(GameObject go)
+        {
+            modelMatrix = go.transform.matrix;
+            modelViewMatrix = viewMatrix * modelMatrix;
+            modelViewProjectionMatrix = projectionMatrix * modelViewMatrix;
+        }
 
-                        shader.SetUniform("_Time", Time.t);
+        private static void SetShaderUniforms()
+        {
+            Shader shader = Shader.active;
+            shader.SetUniform("_Time", Time.t);
+            shader.SetUniform("viewMatrix", viewMatrix);
+            shader.SetUniform("projectionMatrix", projectionMatrix);
+            shader.SetUniform("viewProjectionMatrix", viewProjectionMatrix);
+            shader.SetUniform("modelMatrix", modelMatrix);
+            shader.SetUniform("modelViewMatrix", modelViewMatrix);
+            shader.SetUniform("normalMatrix", modelViewMatrix.sub3);
+            shader.SetUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+        }
 
-                        shader.SetUniform("viewMatrix", viewMatrix);
-                        shader.SetUniform("projectionMatrix", projectionMatrix);
-                        shader.SetUniform("viewProjectionMatrix", viewProjectionMatrix);
-                        shader.SetUniform("modelMatrix", modelMatrix);
-                        shader.SetUniform("modelViewMatrix", modelViewMatrix);
-                        shader.SetUniform("normalMatrix", modelViewMatrix.sub3);
-                        shader.SetUniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+        internal static void RenderActiveCameraDeferred()
+        {
+            ApplyCamera();
+            GameObject[] objects = GameObject.instances;
+            foreach (var go in objects)
+            {
+                var rdr = go.GetComponent<MeshRenderer>();
+                if (rdr != null)
+                {
+                    var me = rdr.mesh;
+                    var shader = rdr.material.shader;
+                    if (shader == null)
+                        shader = Shader.fallback;
 
-                        //Light.SetShaderUniforms();
+                    if (me != null && shader != null)
+                    {
+                        Shader.active = shader;
+                        shader.Link();
+                        shader.Use();
 
-                        me.Draw();
+                        SetObjectMatrices(go);
+                        SetShaderUniforms();
+                        rdr.material.SetShaderUniforms();
+
+                        foreach (var light in Light.instances)
+                        {
+                            light.SetShaderUniforms();
+                            me.Draw();
+                        }
                     }
-                }
-            }
-
+                }// if ( rdr != null )
+            }//foreach (var go in objects)
         }
 
         public static void Blit(Texture2D texture, FrameBufferObject fbo)
@@ -164,5 +217,11 @@ namespace pxl
         public static int width;
         public static int height;
     }
+
+    public enum RenderpathType
+    {
+        Forward,
+        Deferred
+    };
 }
 

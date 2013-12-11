@@ -45,7 +45,9 @@ namespace pxl
                 return info;
             }
         }
-
+        /// <summary>
+        /// Returns whether the curremt OpenGL context is valid.
+        /// </summary>
         public static bool IsValidContext
         {
             get

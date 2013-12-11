@@ -23,7 +23,7 @@ namespace pxl
 		private bool m_updateViewProjection;
 
         private Color4 m_backgroundColor;
-
+        public RenderpathType renderpath = RenderpathType.Forward;
         public FrameBufferObject fboTarget;
         public enum ClearFlag
         {
@@ -64,7 +64,15 @@ namespace pxl
         public void Render()
         {
             Camera.active = this;
-            Graphics.RenderActiveCamera();
+            switch (Camera.active.renderpath)
+            {
+                case RenderpathType.Forward:
+                    Graphics.RenderActiveCameraForward();
+                    break;
+                case RenderpathType.Deferred:
+                    Graphics.RenderActiveCameraDeferred();
+                    break;
+            }
         }
 
         /// <summary>

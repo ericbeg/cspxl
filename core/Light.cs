@@ -10,9 +10,9 @@ namespace pxl
 {
     public class Light : Component, IDisposable
     {
-        private List<Light> m_instances = new List<Light>();
+        static private List<Light> m_instances = new List<Light>();
 
-        new public Light[] instances { get { return m_instances.ToArray(); } }
+        new static public Light[] instances { get { return m_instances.ToArray(); } }
 
         public Light()
         {
