@@ -63,16 +63,16 @@ namespace pxl
 
 			// process mesh format
 			List<GLMeshVertexAttributeFormat> attrFormat = new List<GLMeshVertexAttributeFormat> ();
-			attrFormat.Add ( new GLMeshVertexAttributeFormat("position", VertexAttribPointerType.Float, 3 ));
+			attrFormat.Add ( new GLMeshVertexAttributeFormat("vert_position", VertexAttribPointerType.Float, 3 ));
 
 			if (mesh.hasNormals)
-				attrFormat.Add ( new GLMeshVertexAttributeFormat( "normal" , VertexAttribPointerType.Float, 3 ));			
+                attrFormat.Add(new GLMeshVertexAttributeFormat("vert_normal", VertexAttribPointerType.Float, 3));			
 
 			if (mesh.hasUvs)
-				attrFormat.Add ( new GLMeshVertexAttributeFormat( "uv" , VertexAttribPointerType.Float, 2 ));
+                attrFormat.Add(new GLMeshVertexAttributeFormat("vert_uv", VertexAttribPointerType.Float, 2));
 
 			if (mesh.hasColors)
-				attrFormat.Add ( new GLMeshVertexAttributeFormat( "color" , VertexAttribPointerType.Byte, 4 ));
+                attrFormat.Add(new GLMeshVertexAttributeFormat("vert_color", VertexAttribPointerType.Byte, 4));
 
 			vertexAttributeFormat = attrFormat.ToArray ();
 

@@ -80,8 +80,29 @@ namespace pxl
             m_fragment = GL.CreateShader( ShaderType.FragmentShader );
             GLHelper.CheckError();
             string glslVersion = "#version 120\n";
-            string[] vertexSources = new string[3] { glslVersion, "#define VERTEX_SHADER\n", source };
-            string[] fragmentSources = new string[3] { glslVersion, "#define FRAGMENT_SHADER\n", source }; 
+
+            List<string> vertexSourceList = new List<string>();
+            List<string> fragmentSourceList = new List<string>();
+
+            string pxlInc = global::cspxl.Properties.Resources.ShaderInclude_Pxl;
+
+            vertexSourceList.Add( glslVersion );
+            vertexSourceList.Add("#define VERTEX_SHADER\n");
+            vertexSourceList.Add(pxlInc);
+            foreach (string inc in includes)
+                vertexSourceList.Add(inc);
+            vertexSourceList.Add(source);
+
+            fragmentSourceList.Add(glslVersion);
+            fragmentSourceList.Add("#define FRAGMENT_SHADER\n");
+            fragmentSourceList.Add(pxlInc);
+            foreach (string inc in includes)
+                vertexSourceList.Add(inc);
+            fragmentSourceList.Add(source);
+
+
+            string[] vertexSources   = vertexSourceList.ToArray();
+            string[] fragmentSources = fragmentSourceList.ToArray(); 
 
             int[] vertexSourceLengths   = new int[vertexSources.Length];
             int[] fragmentSourceLengths = new int[fragmentSources.Length];
@@ -285,7 +306,6 @@ namespace pxl
         {
             int location = GL.GetUniformLocation(glname, name);
             GLHelper.CheckError();
-
             if (location >= 0)
             {
                 OpenTK.Matrix4 om = new OpenTK.Matrix4(
@@ -304,30 +324,36 @@ namespace pxl
         public override void SetUniform(string name, Vector2 v)
         {
             int location = GL.GetUniformLocation(glname, name);
+            GLHelper.CheckError();
             if (location >= 0)
             {
                 OpenTK.Vector2 ov = new OpenTK.Vector2(v.x, v.y);
                 GL.Uniform2(location, ref ov);
+                GLHelper.CheckError();
             }
         }
 
         public override void SetUniform(string name, Vector3 v)
         {
             int location = GL.GetUniformLocation(glname, name);
+            GLHelper.CheckError();
             if (location >= 0)
             {
                 OpenTK.Vector3 ov = new OpenTK.Vector3(v.x, v.y, v.z);
-                GL.Uniform3(location, ref ov);
+                GL.Uniform3( location,  ov);
+                GLHelper.CheckError();
             }
         }
 
         public override void SetUniform(string name, Vector4 v)
         {
             int location = GL.GetUniformLocation(glname, name);
+            GLHelper.CheckError();
             if (location >= 0)
             {
                 OpenTK.Vector4 ov = new OpenTK.Vector4(v.x, v.y, v.z, v.w);
                 GL.Uniform4(location, ref ov);
+                GLHelper.CheckError();
             }
         }
 

@@ -83,6 +83,12 @@ namespace pxl
                 );
         }
 
+        public static Vector2 Lerp(Vector2 a, Vector2 b, float t)
+        {
+            Vector2 r = (1.0f - t) * a + t * b;
+            return r;
+        }
+
         public static Vector2 operator -(Vector2 left, Vector2 right)
         {
             return new Vector2(
@@ -96,6 +102,22 @@ namespace pxl
             return new Vector2(
                 left.x * right.x,
                 left.y * right.y
+                );
+        }
+
+        public static Vector2 operator *(Vector2 left, float right)
+        {
+            return new Vector2(
+                left.x * right,
+                left.y * right
+                );
+        }
+
+        public static Vector2 operator *(float left, Vector2 right)
+        {
+            return new Vector2(
+                left * right.x,
+                left * right.y
                 );
         }
 
@@ -191,6 +213,12 @@ namespace pxl
 
         }
 
+        public static Vector3 Lerp( Vector3 a, Vector3 b, float t)
+        {
+            Vector3 r = (1.0f-t)*a + t*b;
+            return r;
+        }
+
         public static float Angle(Vector3 a, Vector3 b)
         {
             float div = Vector3.Norm(a) * Vector3.Norm(b);
@@ -254,6 +282,16 @@ namespace pxl
                 );
         }
 
+        public static Vector3 operator +(float left, Vector3 right)
+        {
+            return new Vector3(
+                right.x + left,
+                right.y + left,
+                right.z + left
+                );
+        }
+
+
         public static Vector3 operator -(Vector3 left, float right)
         {
             return new Vector3(
@@ -263,12 +301,21 @@ namespace pxl
                 );
         }
 
-        public static Vector3 operator *(Vector3 left, float right)
+        public static Vector3 operator *(Vector3 r, float left)
         {
             return new Vector3(
-                left.x * right,
-                left.y * right,
-                left.z * right
+                r.x * left,
+                r.y * left,
+                r.z * left
+                );
+        }
+
+        public static Vector3 operator *(float left, Vector3 right)
+        {
+            return new Vector3(
+                right.x * left,
+                right.y * left,
+                right.z * left
                 );
         }
 
@@ -953,6 +1000,7 @@ namespace pxl
             );
         }
 
+
         public static float Norm2(Quaternion quat)
         {
             return
@@ -1062,6 +1110,15 @@ namespace pxl
 
         }
 
+        static Quaternion Lerp(Quaternion start, Quaternion end, float t)
+        {
+            Quaternion r = new Quaternion();
+            r.x = (1.0f - t) * start.x - t * end.x;
+            r.y = (1.0f - t) * start.y - t * end.y;
+            r.z = (1.0f - t) * start.z - t * end.z;
+            r.w = (1.0f - t) * start.w - t * end.w;
+            return r;
+        }
     }
 
 

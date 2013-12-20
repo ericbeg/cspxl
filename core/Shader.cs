@@ -10,6 +10,7 @@ namespace pxl
         protected bool m_isCompiled = false;
         protected bool m_hasAttemptedCompilation = false;
         private string m_source;
+        private string[] m_includes;
         
         public string source
         {
@@ -25,6 +26,28 @@ namespace pxl
                 m_hasAttemptedCompilation = false;
             }
         }
+
+        public string[] includes
+        {
+            get
+            {
+                if (m_includes != null)
+                {
+                    return m_includes;
+                }
+                else
+                {
+                    return new string[0];
+                }
+            }
+
+            set
+            {
+                m_includes = value;
+            }
+        }
+
+
 
         public static Shader active = null;
         public static Shader fallback = null;

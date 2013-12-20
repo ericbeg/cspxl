@@ -113,4 +113,7 @@
   <ItemGroup>
     <None Include="resources\Diffuse.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="resources\pxl.inc" />
+  </ItemGroup>
 </Project>

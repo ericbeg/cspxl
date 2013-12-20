@@ -30,12 +30,17 @@ namespace pxl
             Shader sh = Shader.active;
             if (sh != null)
             {
-                sh.SetUniform("Lamp.position", gameObject.transform.position );
-                sh.SetUniform("Lamp.color", color);
-                sh.SetUniform("Lamp.attenuation", attenuation);
-                sh.SetUniform("Lamp.cutoff", cutoff);
-                sh.SetUniform("Lamp.exponent", exponent);
-                sh.SetUniform("Lamp.intensity", intensity);
+                Vector4 position = new Vector4();
+                
+                position.xyz = gameObject.transform.position;
+                position.w = (this.type == Type.Sun) ? 0.0f : 1.0f;
+                
+                sh.SetUniform("Light.position", position );
+                sh.SetUniform("Light.color", color);
+                sh.SetUniform("Light.attenuation", attenuation);
+                sh.SetUniform("Light.cutoff", cutoff);
+                sh.SetUniform("Light.exponent", exponent);
+                sh.SetUniform("Light.intensity", intensity);
             }
 
         }

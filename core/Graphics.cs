@@ -136,12 +136,12 @@ namespace pxl
                         Shader.active = shader;
                         shader.Link();
                         shader.Use();
-
+                        
                         SetObjectMatrices(go);
                         SetShaderUniforms();
                         rdr.material.SetShaderUniforms();
 
-                        foreach (var light in Light.instances)
+                        foreach (Light light in Light.instances)
                         {
                             light.SetShaderUniforms();
                             me.Draw();

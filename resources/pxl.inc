@@ -15,6 +15,46 @@ uniform sampler2D mainTex;
 uniform sampler2D normalTex;
 
 
+
+// Lighting
+uniform struct
+{
+  vec4 position;
+  vec3 direction;
+
+  vec4 color;
+
+  float blend;
+  float cutoffCos;
+  float exponent;
+  float shadowBufferBias;
+
+  float energy;
+  vec4 attenuation;
+
+  mat4 viewInvLampViewProjectionMatrix;
+  bool isShadowBufferEnable;
+} Light;
+
+vec4 LightColor( vec4 position, vec3 normal, vec3 lightDir, vec3 viewDir )
+{
+      vec4 light;
+      float d = length( position - Light.position);
+      
+      float att = 1.0 /
+               (
+                  Light.attenuation[0]
+               
+               +  Light.attenuation[1]*d
+               +  Light.attenuation[2]*d*d
+               +  Light.attenuation[3]*d*d*d
+              );
+
+      light = Light.color*att;
+      return light;
+}
+
+
 // Vertex attributes
 #ifdef VERTEX_SHADER
 attribute vec4 vert_position;
