@@ -210,6 +210,43 @@ namespace pxl
             throw new NotImplementedException();
         }
 
+        
+        internal static GameObject _quad = null;
+        public static void Draw( Texture2D texture, Material material )
+        {
+            if (_quad == null)
+            {
+                _quad = ObjectFactory.NewMeshQuad();
+            }
+
+            Camera cam = Camera.active;
+            Camera.active = null;
+
+            ApplyCamera();
+
+            var rdr = _quad.GetComponent<MeshRenderer>();
+            var me = rdr.mesh;
+            rdr.material = material;
+            var shader = rdr.material.shader;
+
+            if (shader == null)
+                shader = Shader.fallback;
+
+            if (me != null && shader != null)
+            {
+                Shader.active = shader;
+                shader.Link();
+                shader.Use();
+
+                SetObjectMatrices(_quad);
+                SetShaderUniforms();
+                rdr.material.SetShaderUniforms();
+
+                me.Draw();
+            } 
+
+            Camera.active = cam;
+        }
     }
 
     public static class Screen

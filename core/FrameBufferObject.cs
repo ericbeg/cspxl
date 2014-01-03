@@ -36,10 +36,10 @@ namespace pxl
 
         public FrameBufferObject(int width, int height, int depthFormat, Texture2D.Format format)
         {
-            m_width = width;
-            m_height = height;
-            m_depthFormat = depthFormat;
-            m_format = format;
+            m_width         = width;
+            m_height        = height;
+            m_depthFormat   = depthFormat;
+            m_format        = format;
         }
 
         public virtual void Dispose()

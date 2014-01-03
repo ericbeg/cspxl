@@ -15,7 +15,8 @@ uniform sampler2D mainTex;
 uniform sampler2D normalTex;
 
 
-
+// Compute light parameters ( viewDir, lightDir, ... )
+// in tangent space, and pass them as varying to fragment shader
 // Lighting
 uniform struct
 {

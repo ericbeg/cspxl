@@ -16,8 +16,12 @@ namespace pxl
 		public int triscount{ get{return triangles.Length/3;} }
 		
 		public Vector3[] positions;
-		public Vector3[] normals;
-		public Vector2[] uvs;
+		
+        public Vector3[] normals;
+        public Vector3[] tangents;
+        public Vector3[] binormals;
+		
+        public Vector2[] uvs;
 		public Color4[] colors;
 		
 		public uint[] triangles;
