@@ -70,7 +70,9 @@ namespace pxl
             float dt = Time._currentFrameDate.SubstractInSeconds(Time._previousFixedFrameDate);
             float t0 = Time._previousFixedFrameDate.SubstractInSeconds(Time._startingDate);
             int steps = (int)(dt / Time._fixedDt);
-            
+
+            float memDt = Time._dt;
+            float memT = Time._t;
             Time._dt = Time._fixedDt;
             for (int i = 0; i < steps; ++i)
             {
@@ -80,16 +82,20 @@ namespace pxl
                     c.InternalFixedUpdate();
                 }
             }
+
             if( steps > 0)
                 Time._previousFixedFrameDate = Time._currentFrameDate;
+
+            Time._dt = memDt;
+            Time._t = memT;
         }
 
         protected void Update()
         {
             // Update time data
             Time._currentFrameDate = DateTime.Now;
-            Time._Update();
             Time._previousFrameDate = Time._currentFrameDate;
+            Time._Update();
 
             // Update Input
             Input.Update();
