@@ -44,9 +44,7 @@ namespace pxl
 			    0, 2, 3
 		    };
 
-
-            GLMesh glme = me as GLMesh;
-            glme.Apply();
+            me.Apply();
 
             return me;
         }

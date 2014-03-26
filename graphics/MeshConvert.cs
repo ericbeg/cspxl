@@ -145,7 +145,8 @@ namespace pxl
         {
             /**
              * This is a non-optimal method to convert a BMesh to a Mesh,
-             * since there are no vertices shadered among the faces.
+             * since shared vertices are duplicated.
+             * 
              * But this implementation can be used as a reference
              * whem implementing other converter.
              */
@@ -178,13 +179,13 @@ namespace pxl
             // triangulate faces
             int voffset = 0;
             int toffset = 0;
-            foreach (var f in bmesh.faces)
+            foreach (var fa in bmesh.faces)
             {
-                Vector3[] poly = new Vector3[f.count];
+                Vector3[] poly = new Vector3[fa.count];
                 Vector3 faceNormal = new Vector3();
-                for (int l = 0; l < f.count; ++l)
+                for (int l = 0; l < fa.count; ++l)
                 {
-                    int vi = bmesh.loops[f.loop + l].v;
+                    int vi = bmesh.loops[fa.loop + l].v;
                     poly[l] = bmesh.verts[vi].ve;
                     faceNormal += bmesh.verts[vi].no;
                 }
@@ -201,11 +202,11 @@ namespace pxl
 
                 if (mesh.hasNormals)
                 {
-                    if (f.smooth)
+                    if (fa.smooth)
                     {
                         for (int i = 0; i < poly.Length; ++i)
                         {
-                            int vi = bmesh.loops[f.loop + i].v;
+                            int vi = bmesh.loops[fa.loop + i].v;
 
                             mesh.normals[voffset + i] = bmesh.verts[vi].no;
                         }
@@ -214,7 +215,7 @@ namespace pxl
                     {
                         for (int i = 0; i < poly.Length; ++i)
                         {
-                            int vi = bmesh.loops[f.loop + i].v;
+                            int vi = bmesh.loops[fa.loop + i].v;
 
                             mesh.normals[voffset + i] = faceNormal;
                         }
@@ -225,13 +226,13 @@ namespace pxl
                 if (mesh.hasUvs)
                     for (int i = 0; i < poly.Length; ++i)
                     {
-                        mesh.uvs[voffset + i] = bmesh.uvs[f.loop + i].uv;
+                        mesh.uvs[voffset + i] = bmesh.uvs[fa.loop + i].uv;
                     }
 
                 if (mesh.hasColors)
                     for (int i = 0; i < poly.Length; ++i)
                     {
-                        mesh.colors[voffset + i] = bmesh.colors[f.loop + i].color;
+                        mesh.colors[voffset + i] = bmesh.colors[fa.loop + i].color;
                     }
 
                 // Copy triangles

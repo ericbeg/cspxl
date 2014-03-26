@@ -117,6 +117,7 @@ namespace pxl
                      BMesh.BMLoop l;
                      l.v = reader.ReadInt32();
                      l.e = reader.ReadInt32();
+                     //l.f = 0;
                      bm.loops.Add( l );
                   }
                }
@@ -197,16 +198,16 @@ namespace pxl
                if (fbMpolys != null && fbMpolys.count > 0)
                {
                    bm.faces.Capacity = fbMpolys.count;
-                   for (int i = 0; i < fbMpolys.count; ++i)
+                   for (int f = 0; f < fbMpolys.count; ++f)
                    {
-                       fbMpolys.Seek(i);
-                       BMesh.BMFace f = new BMesh.BMFace();
-                       f.loop  = reader.ReadInt32();
-                       f.count = reader.ReadInt32();
-                       f.matidx = reader.ReadInt16();
+                       fbMpolys.Seek(f);
+                       BMesh.BMFace fa = new BMesh.BMFace();
+                       fa.loop  = reader.ReadInt32();
+                       fa.count = reader.ReadInt32();
+                       fa.matidx = reader.ReadInt16();
                        byte flag = reader.ReadByte();
-                       f.smooth = (flag & ME_SMOOTH) == ME_SMOOTH;
-                       bm.faces.Add(f);
+                       fa.smooth = (flag & ME_SMOOTH) == ME_SMOOTH;
+                       bm.faces.Add(fa);
                    }
                }
 

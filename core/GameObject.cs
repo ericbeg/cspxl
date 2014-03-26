@@ -62,7 +62,7 @@ namespace pxl
         /// </summary>
         /// <param name="gameObject"></param>
         /// <param name="component"></param>
-        static public void AddComponent(GameObject gameObject, Component component)
+        internal static void AddComponent(GameObject gameObject, Component component)
         {
             if (component != null && !gameObject.m_components.Contains(component))
             {
