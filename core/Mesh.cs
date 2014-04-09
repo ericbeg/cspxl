@@ -20,18 +20,21 @@ namespace pxl
         public Vector3[] normals;
         public Vector3[] tangents;
         public Vector3[] binormals;
-		
+
         public Vector2[] uvs;
 		public Color4[] colors;
+
+        public const int BONE_PER_VERTEX = 4;
+        public byte[] boneIndices;
+        public byte[] boneWeights;
 		
-		public uint[] triangles;
-		
+        public uint[] triangles;
 		
 		public bool hasPositions 	{ get{return positions 	!= null; } }
 		public bool hasNormals 		{ get{return normals 	!= null; } }
 		public bool hasUvs 			{ get{return uvs 		!= null; } }
 		public bool hasColors 		{ get{return colors 	!= null; } }
-		
+        public bool isSkinned       { get{return boneIndices != null && boneWeights != null; } }
 		
 		public void SanityCheck()
 		{
@@ -55,6 +58,17 @@ namespace pxl
 			{
 				throw  new MeshInvalidTriangleIndexesException();
 			}
+
+            if (boneIndices != null && boneIndices.Length != vertcount * BONE_PER_VERTEX)
+            {
+                throw new MeshInvalidSkinningException();
+            }
+
+            if (boneWeights != null && boneWeights.Length != vertcount * BONE_PER_VERTEX)
+            {
+                throw new MeshInvalidSkinningException();
+            }
+
 		}
 
 
@@ -64,6 +78,7 @@ namespace pxl
 		
 		class MeshNoPositionsException : Exception{}
 		class MeshInvalidTriangleIndexesException : Exception{}
+        class MeshInvalidSkinningException : Exception { }
 
 	}
 }

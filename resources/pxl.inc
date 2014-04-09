@@ -62,3 +62,9 @@ attribute vec4 vert_position;
 attribute vec3 vert_normal;
 attribute vec2 vert_uv;
 #endif
+
+
+#ifdef SKINNED_MESH
+attribute vec4 vert_boneIndices;
+attribute vec4 vert_boneWeights;
+#endif

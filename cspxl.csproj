@@ -60,6 +60,8 @@
   <ItemGroup>
     <Compile Include="core\Behaviour.cs" />
     <Compile Include="core\Input.cs" />
+    <Compile Include="core\SkeletalAnimation\Armature.cs" />
+    <Compile Include="core\SkeletalAnimation\Bone.cs" />
     <Compile Include="core\Texture.cs" />
     <Compile Include="core\FrameBufferObject.cs" />
     <Compile Include="core\Light.cs" />
