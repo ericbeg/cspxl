@@ -74,6 +74,12 @@ namespace pxl
 			if (mesh.hasColors)
                 attrFormat.Add(new GLMeshVertexAttributeFormat("vert_color", VertexAttribPointerType.Byte, 4));
 
+            if (mesh.isSkinned)
+            {
+                attrFormat.Add(new GLMeshVertexAttributeFormat("vert_boneIndices", VertexAttribPointerType.Byte, 4));
+                attrFormat.Add(new GLMeshVertexAttributeFormat("vert_boneWeights", VertexAttribPointerType.Byte, 4));
+            }
+
 			vertexAttributeFormat = attrFormat.ToArray ();
 
 			// compute vertex atribute buffer size
@@ -148,6 +154,37 @@ namespace pxl
 				++attrIdx;
 				offset += attributeSize;
 			}
+
+            // SKINNING
+            if (mesh.isSkinned)
+            {
+
+                // BONE INDICES
+                {
+                    Byte[] indices = new Byte[4];
+                    int attributeSize = vertexAttributeFormat[attrIdx].count * SizeOf(vertexAttributeFormat[attrIdx].type);
+                    for (int v = 0; v < mesh.vertcount; ++v)
+                    {
+                        Buffer.BlockCopy(indices, 0, attrBuffer, offset + v * strideSize, attributeSize);
+                    }
+                    ++attrIdx;
+                    offset += attributeSize;
+                }
+
+
+                // BONE Weights
+                {
+                    Byte[] weights = new Byte[4];
+                    int attributeSize = vertexAttributeFormat[attrIdx].count * SizeOf(vertexAttributeFormat[attrIdx].type);
+                    for (int v = 0; v < mesh.vertcount; ++v)
+                    {
+                        Buffer.BlockCopy(weights, 0, attrBuffer, offset + v * strideSize, attributeSize);
+                    }
+                    ++attrIdx;
+                    offset += attributeSize;
+                }
+            }
+
 
 
 			// Triangles indices transfert

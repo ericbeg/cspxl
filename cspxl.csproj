@@ -104,6 +104,7 @@
     <Compile Include="opengl\GLHelpers.cs" />
     <Compile Include="core\Graphics.cs" />
     <Compile Include="opengl\GLShader.cs" />
+    <Compile Include="utils\StateMachine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

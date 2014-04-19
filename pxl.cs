@@ -93,8 +93,8 @@ namespace pxl
         protected void Update()
         {
             // Update time data
-            Time._currentFrameDate = DateTime.Now;
             Time._previousFrameDate = Time._currentFrameDate;
+            Time._currentFrameDate = DateTime.Now;
             Time._Update();
 
             // Update Input

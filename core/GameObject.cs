@@ -10,6 +10,16 @@ namespace pxl
         private List<Component> m_components;
         private Transform m_transform;
 
+        public static void ClearAll()
+        {
+            GameObject[] obs = instances;
+            foreach (GameObject ob in obs)
+            {
+                ob.Dispose();
+            }
+            m_instances.Clear();
+        }
+
         public string name = "GameObject";
 
         public static GameObject[] instances
@@ -36,15 +46,20 @@ namespace pxl
 
         public void Dispose()
         {
-            Transform tr = GetComponent<Transform>();
-            if (tr != null)
+            Console.WriteLine(string.Format("Dispose {0}", this.name));
+            if (transform != null)
             {
-                foreach (var t in tr.children)
+                foreach (var t in transform.children)
                 {
                     t.gameObject.Dispose();
                 }
-                tr.parent = null;
+                transform.parent = null;
             }
+
+            Component[] comps = components;
+            foreach (Component co in comps)
+                co.Dispose();
+
             m_instances.Remove( this );
         }
 
@@ -55,25 +70,6 @@ namespace pxl
 				return m_components.ToArray();
 			}
 		}
-
-        /// <summary>
-        /// Do not use this function unless you know what your are doing.
-        /// You are advised to use the non-static AddComponent method.
-        /// </summary>
-        /// <param name="gameObject"></param>
-        /// <param name="component"></param>
-        internal static void AddComponent(GameObject gameObject, Component component)
-        {
-            if (component != null && !gameObject.m_components.Contains(component))
-            {
-                component.m_gameObject = gameObject;
-                gameObject.m_components.Add(component);
-            }
-            else
-            {
-                component.m_gameObject = null;
-            }
-        }
 
 		public T AddComponent<T>()
 			where T:  new( )
@@ -155,6 +151,18 @@ namespace pxl
             return gos.ToArray();
         }
 
+        public static GameObject[] FindRoots()
+        {
+            List<GameObject> gos = new List<GameObject>(); 
+            foreach (var g in m_instances)
+            {
+                if (g.transform.parent == null)
+                {
+                    gos.Add(g);
+                }
+            }
+            return gos.ToArray();
+        }
 
         public static GameObject FindObjectOfType<T>()
             where T : Component
@@ -191,6 +199,20 @@ namespace pxl
         {
             return string.Format( "{0} \"{1}\"", base.ToString(), name );
         }
+
+        internal static void AddComponent(GameObject gameObject, Component component)
+        {
+            if (component != null && !gameObject.m_components.Contains(component))
+            {
+                component.m_gameObject = gameObject;
+                gameObject.m_components.Add(component);
+            }
+            else
+            {
+                component.m_gameObject = null;
+            }
+        }
+
 
     }
 }

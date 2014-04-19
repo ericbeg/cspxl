@@ -7,6 +7,8 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 
+using OpenTK.Graphics;
+
 namespace pxl
 {
     /// <summary>
@@ -14,6 +16,8 @@ namespace pxl
     /// </summary>
     public class BlendFile
     {
+        public static Color4 worldAmbientColor = Color4.Black;
+
         private BlendFile()
         {
             ;

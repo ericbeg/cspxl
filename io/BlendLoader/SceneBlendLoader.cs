@@ -24,9 +24,9 @@ namespace pxl
 
                 if (world != null)
                 {
-                    //_worldAmbienColor.r = world["ambr"];
-                    //_worldAmbienColor.g = world["ambg"];
-                    //_worldAmbienColor.b = world["ambb"];
+                    BlendFile.worldAmbientColor.R = world["ambr"];
+                    BlendFile.worldAmbientColor.G = world["ambg"];
+                    BlendFile.worldAmbientColor.B = world["ambb"];
                 }
 
                 BlendFile.BlendVar[] objects = bvar["base"];
@@ -34,7 +34,7 @@ namespace pxl
                 {
                     BlendFile.BlendVar vob = vbase["object"];
                     BlendFile.BlendVar parent = vob["parent"];
-                    bool isRoot = parent == null;
+                    bool isRoot = (parent == null);
 
                     if (isRoot)
                     {

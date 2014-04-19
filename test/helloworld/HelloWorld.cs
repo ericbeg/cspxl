@@ -108,6 +108,7 @@ class MainClass
         BlendFile bf = BlendFile.Open("cube.blend");
         GameObject scene = bf.Load("SCScene") as GameObject;
 
+        
         if (false)
         {
             File.WriteAllText("dna.txt", bf.DNAString);
@@ -148,26 +149,13 @@ class MainClass
         Application app = new Application(400, 300);
         Console.WriteLine(pxl.GLHelper.infoString);
 
-        int s = 512;
-        FrameBufferObject fbo = new GLFrameBufferObject(s, s, 24);
-        Texture2D tex = new GLTexture2D(s, s, Texture.Format.RGBA32, false);
-        fbo.AttachColorTexture("Color", tex);
-        fbo.Bind();
-
-        fbo.Unbind();
-
         BuildScene();
-        app.Loop(40.0f);
+        app.Loop(70.0f);
 
         foreach (var o in GameObject.instances)
             o.Dispose();
 
-        fbo.Dispose();
-
-        fbo = null;
         app.Quit();
-
-        System.GC.Collect();
 
         return 0;
     }

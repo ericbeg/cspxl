@@ -27,6 +27,7 @@ namespace pxl
 
         override public void Dispose()
         {
+            base.Dispose();
             m_instances.Remove(this);
         }
 

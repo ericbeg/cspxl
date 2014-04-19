@@ -22,6 +22,7 @@ namespace pxl
         internal static void _Initialize()
         {
             Time._startingDate = DateTime.Now;
+            Time._currentFrameDate = Time._startingDate;
             Time._previousFrameDate = Time._startingDate;
             Time._previousFixedFrameDate = Time._startingDate;
         }
