@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Diagnostics;
+
+
 namespace pxl
 {
 
@@ -13,24 +16,25 @@ namespace pxl
         internal static float _dt = 0.0f;
         internal static float _t = 0.0f;
         internal static float _fixedDt = 0.05f;
-        internal static DateTime _startingDate;
-        internal static DateTime _previousFrameDate;
-        internal static DateTime _currentFrameDate;
 
-        internal static DateTime _previousFixedFrameDate;
+        internal static float _previousFrameDate;
+        internal static float _currentFrameDate;
+
+        internal static float _previousFixedFrameDate;
+        internal static Stopwatch _stopWatch = new Stopwatch();
 
         internal static void _Initialize()
         {
-            Time._startingDate = DateTime.Now;
-            Time._currentFrameDate = Time._startingDate;
-            Time._previousFrameDate = Time._startingDate;
-            Time._previousFixedFrameDate = Time._startingDate;
+            _stopWatch.Start();
+            Time._currentFrameDate = 0.0f;
+            Time._previousFrameDate = 0.0f;
+            Time._previousFixedFrameDate = 0.0f;
         }
 
         internal static void _Update()
         {
-            _t  = _currentFrameDate.SubstractInSeconds(_startingDate); // now - t0
-            _dt = _currentFrameDate.SubstractInSeconds(_previousFrameDate); // now - t[n-1]
+            _t  = _currentFrameDate; // now - t0
+            _dt = _currentFrameDate - _previousFrameDate; // now - t[n-1]
         }
 
         public static float dt
@@ -68,7 +72,7 @@ namespace pxl
     {
         public static float SubstractInSeconds(this DateTime dateTime, DateTime other)
         {
-            return (float)(dateTime.Subtract(other).TotalMilliseconds * 0.001); 
+            return (float)(dateTime.Subtract(other).TotalSeconds); 
         }
     }
 }

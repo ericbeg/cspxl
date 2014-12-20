@@ -25,7 +25,7 @@ namespace pxl
         {
             RegisterBlendLoaders();
 
-            this.Mouse.Move += (object sender, MouseMoveEventArgs args) =>
+            this.MouseMove += (object sender, MouseMoveEventArgs args) =>
             {
                 Input.mouse_x = args.X;
                 Input.mouse_y = args.Y;
@@ -35,6 +35,7 @@ namespace pxl
             Screen.width  = width;
             Screen.height = height;
             GLHelper._isValidContext = true;
+            this.Context.VSync = true;
                  
         }
 
@@ -67,8 +68,8 @@ namespace pxl
 
             var components = Component.instances;
 
-            float dt = Time._currentFrameDate.SubstractInSeconds(Time._previousFixedFrameDate);
-            float t0 = Time._previousFixedFrameDate.SubstractInSeconds(Time._startingDate);
+            float dt = Time._currentFrameDate-Time._previousFixedFrameDate;
+            float t0 = Time._previousFixedFrameDate;
             int steps = (int)(dt / Time._fixedDt);
 
             float memDt = Time._dt;
@@ -94,11 +95,12 @@ namespace pxl
         {
             // Update time data
             Time._previousFrameDate = Time._currentFrameDate;
-            Time._currentFrameDate = DateTime.Now;
+            Time._currentFrameDate = Time._stopWatch.ElapsedMilliseconds*0.001f;
             Time._Update();
 
             // Update Input
             Input.Update();
+
             FixedUpdate();
 
             // Update components
