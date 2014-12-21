@@ -7,8 +7,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-using System.Drawing.Imaging;
-using System.Drawing;
+
 
 using OpenTK.Graphics;
 
@@ -122,12 +121,11 @@ namespace pxl
                     {
                         string imname = ima["id"]["name"];
 
-                        Bitmap bitmap = bvar.blendFile.Load(imname) as Bitmap;
-                        if (bitmap != null)
+                        Stream stream = bvar.blendFile.Load(imname) as Stream;
+                        if (stream != null)
                         {
-                            GLTexture2D gltexture = new GLTexture2D();
-                            gltexture.Copy(bitmap);
-                            texture = gltexture;
+                            texture = TextureLoader.Load(stream);
+                            stream.Close();
                         }
                     }
                 }

@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 
-using System.Drawing;
-
 using OpenTK.Graphics;
 
 namespace pxl
@@ -35,7 +33,6 @@ namespace pxl
         abstract public Color4[] GetPixels();
         abstract public void SetPixels( Color4[] pixels );
         abstract public void Apply();
-        abstract public void Copy(Bitmap bitmap);
         abstract public void Bind(int textureUnitIndex);
     }
 }
