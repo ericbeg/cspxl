@@ -138,15 +138,12 @@ namespace pxl
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-            BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
             // resolve texture internal format
             PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f;
             switch (format)
             {
                 case Format.Alpha8: internalFormat = PixelInternalFormat.Alpha; break;
-                case Format.RGB24:  internalFormat = PixelInternalFormat.Rgb; break;
+                case Format.RGB24: internalFormat = PixelInternalFormat.Rgb; break;
                 case Format.RGBA32: internalFormat = PixelInternalFormat.Rgba; break;
                 /*
                 case Format.Alphaf: internalFormat = PixelInternalFormat.Luminance16; break;
@@ -155,6 +152,10 @@ namespace pxl
                  */
 
             }
+
+            BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
 
             GL.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, data.Width, data.Height, 0,
                 OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
