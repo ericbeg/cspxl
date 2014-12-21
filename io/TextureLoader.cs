@@ -36,9 +36,6 @@ namespace pxl
 
             GL.GenTextures(1, out tex.glname);
             GL.BindTexture(TextureTarget.Texture2D, tex.glname);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
 
             // resolve texture internal format
             PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f;
@@ -55,7 +52,7 @@ namespace pxl
 
             }
 
-
+            // Load pixel data from bitmap
             BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
                 ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
@@ -64,9 +61,9 @@ namespace pxl
 
             bitmap.UnlockBits(data);
 
+
             tex.width = bitmap.Width;
             tex.height = bitmap.Height;
-
             tex.m_isValid = true;
         }
 

@@ -78,8 +78,29 @@ namespace pxl
         public override void Apply()
         {
             Free();
-            TextureTarget target = TextureTarget.Texture2D;
+            
             glname = GL.GenTexture();
+
+            GL.BindTexture(TextureTarget.Texture2D, glname);
+
+            SetFilters();
+
+            TextureTarget target = TextureTarget.Texture2D;
+            int level = 0;
+            PixelInternalFormat internalFormat = PixelInternalFormat.Rgba;
+            int width = 256;
+            int height = 256;
+            int border = 0;
+            OpenTK.Graphics.OpenGL.PixelFormat pixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
+            PixelType pixelType = PixelType.Byte;
+
+            byte[] pixels = null;
+           
+            GL.TexImage2D<byte>(target, level, internalFormat, width, height, border, pixelFormat, pixelType, pixels);
+        }
+
+        private void SetFilters()
+        {
             GL.BindTexture(TextureTarget.Texture2D, glname);
 
             // Solve texture filtering
@@ -105,28 +126,17 @@ namespace pxl
                     hintmode = HintMode.Fastest;
                     break;
             }
-            
+
+            TextureTarget target = TextureTarget.Texture2D;
             GL.Hint(HintTarget.PerspectiveCorrectionHint, hintmode);
-            GL.TexParameter(target, TextureParameterName.TextureMagFilter, (int)minFilter );
+            GL.TexParameter(target, TextureParameterName.TextureMagFilter, (int)minFilter);
             GL.TexParameter(target, TextureParameterName.TextureMinFilter, (int)magFilter);
 
-            /*
+             /*
             if( mipmap )
                 GL.TexParameter(target, TextureParameterName.GenerateMipmap, 
-             */
-            
+            */
 
-            int level = 0;
-            PixelInternalFormat internalFormat = PixelInternalFormat.Rgba;
-            int width = 256;
-            int height = 256;
-            int border = 0;
-            OpenTK.Graphics.OpenGL.PixelFormat pixelFormat = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
-            PixelType pixelType = PixelType.Byte;
-
-            byte[] pixels = null;
-           
-            GL.TexImage2D<byte>(target, level, internalFormat, width, height, border, pixelFormat, pixelType, pixels);
         }
 
         override public void Bind(int textureUnit)
@@ -137,7 +147,7 @@ namespace pxl
             GLHelper.CheckError();
             GL.BindTexture(TextureTarget.Texture2D, this.glname);
             GLHelper.CheckError();
-
+            SetFilters();
         }
 
     }
