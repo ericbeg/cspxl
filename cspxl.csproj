@@ -9,53 +9,44 @@
     <OutputType>Library</OutputType>
     <RootNamespace>cspxl</RootNamespace>
     <AssemblyName>cspxl</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DocumentationFile>bin\Debug\cspxl.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ConsolePause>False</ConsolePause>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="OpenTK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\usr\share\opentk\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenTK.GLControl, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\usr\share\opentk\Binaries\OpenTK\Release\OpenTK.GLControl.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Core" />
     <Reference Include="OpenTK">
-      <HintPath>..\env\lib\opentk\1.0\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
+      <HintPath>OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.GLControl">
-      <HintPath>..\env\lib\opentk\1.0\Binaries\OpenTK\Release\OpenTK.GLControl.dll</HintPath>
+      <HintPath>OpenTK.GLControl.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="core\Behaviour.cs" />
@@ -81,6 +72,7 @@
     <Compile Include="io\BlendLoader\ObjectBlendLoader.cs" />
     <Compile Include="io\BlendLoader\SceneBlendLoader.cs" />
     <Compile Include="io\EndiannessSaveBinaryReader.cs" />
+    <Compile Include="io\TextureLoader.cs" />
     <Compile Include="math\cgmath.cs" />
     <Compile Include="opengl\GLFrameBufferObject.cs" />
     <Compile Include="opengl\GLTexture2D.cs" />

@@ -2,9 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-
 using System.Threading;
-using System.Drawing;
 
 using OpenTK;
 using OpenTK.Graphics;

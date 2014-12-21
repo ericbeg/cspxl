@@ -14,7 +14,6 @@ namespace pxl
     {
         public Object Load(BlendFile.BlendVar bvar)
         {
-            Bitmap img = null;
             string impath = bvar["name"];
             Stream stream = null;
             BlendFile.BlendVar packedFile = bvar["packedfile"];
@@ -34,14 +33,7 @@ namespace pxl
                 stream = new FileStream(cleanpath, System.IO.FileMode.Open);
             }
 
-            if (stream != null)
-            {
-                img = new Bitmap(stream);
-                stream.Close();
-            }
-
-
-            return img;
+            return stream;
         }
     }
 }

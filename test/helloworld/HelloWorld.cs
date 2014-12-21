@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Reflection;
 
-
 //using OpenTK;
 using OpenTK.Graphics;
 using pxl;
@@ -150,6 +149,7 @@ class MainClass
         Console.WriteLine(pxl.GLHelper.infoString);
 
         BuildScene();
+
         app.Loop(70.0f);
 
         foreach (var o in GameObject.instances)

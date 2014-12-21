@@ -16,7 +16,7 @@ namespace pxl
     public class GLTexture2D : Texture2D
     {
         public int glname;
-        private bool m_isValid;
+        internal bool m_isValid;
 
         public GLTexture2D()
             : base()
@@ -127,45 +127,6 @@ namespace pxl
             byte[] pixels = null;
            
             GL.TexImage2D<byte>(target, level, internalFormat, width, height, border, pixelFormat, pixelType, pixels);
-        }
-
-        public override void Copy(Bitmap bitmap)
-        {
-            Free();
-
-            GL.GenTextures(1, out glname);
-            GL.BindTexture(TextureTarget.Texture2D, glname);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-            // resolve texture internal format
-            PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f;
-            switch (format)
-            {
-                case Format.Alpha8: internalFormat = PixelInternalFormat.Alpha; break;
-                case Format.RGB24: internalFormat = PixelInternalFormat.Rgb; break;
-                case Format.RGBA32: internalFormat = PixelInternalFormat.Rgba; break;
-                /*
-                case Format.Alphaf: internalFormat = PixelInternalFormat.Luminance16; break;
-                case Format.RGBf: internalFormat = PixelInternalFormat.rgba; break;
-                case Format.RGBAf: internalFormat = PixelInternalFormat.Rgba32f; break;
-                 */
-
-            }
-
-            BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-
-            GL.TexImage2D(TextureTarget.Texture2D, 0, internalFormat, data.Width, data.Height, 0,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-
-            bitmap.UnlockBits(data);
-            
-            width  = bitmap.Width;
-            height = bitmap.Height;
-
-            m_isValid = true;
         }
 
         override public void Bind(int textureUnit)
