@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Drawing;
+
 
 //using OpenTK;
 using OpenTK.Graphics;
