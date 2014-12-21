@@ -36,6 +36,9 @@ namespace pxl
 
             GL.GenTextures(1, out tex.glname);
             GL.BindTexture(TextureTarget.Texture2D, tex.glname);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
 
             // resolve texture internal format
             PixelInternalFormat internalFormat = PixelInternalFormat.Rgba32f;
