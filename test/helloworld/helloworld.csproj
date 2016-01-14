@@ -58,7 +58,7 @@
       <HintPath>..\..\OpenTK.GLControl.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="cspxl, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="cspxl">
       <HintPath>..\..\bin\Debug\cspxl.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -91,7 +91,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="cube.blend">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
