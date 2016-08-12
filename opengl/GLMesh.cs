@@ -240,7 +240,7 @@ namespace pxl
 				GLShader shader = Shader.active as GLShader;
 				
 				
-				int attribLocation = GL.GetAttribLocation(shader.glname, format.name);
+				int attribLocation = shader.GetAttribLocation(format.name);
 				if( attribLocation >= 0 )
 				{
                     GL.EnableVertexAttribArray(attribLocation);

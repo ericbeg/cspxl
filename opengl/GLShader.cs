@@ -19,6 +19,9 @@ namespace pxl
         private bool m_isValidVertex   = false;
         private bool m_isValidProgram  = false;
 
+        private Dictionary<string, int> m_uniformLocations = new Dictionary<string, int>();
+        private Dictionary<string, int> m_attribLocations = new Dictionary<string, int>();
+
         public int glname
         {
             get
@@ -206,6 +209,7 @@ namespace pxl
         public override void Apply()
         {
             Compile();
+            Link();
             GLHelper.CheckError();
         }
 
@@ -240,8 +244,12 @@ namespace pxl
 
         public override void Use()
         {
-            if ( !m_hasAttemptedCompilation )
+            if (!m_hasAttemptedCompilation)
+            {
                 Compile();
+                if (m_isCompiled)
+                    Link();
+            }
 
             if ( m_isValidProgram )
             {
@@ -252,7 +260,7 @@ namespace pxl
 
         override public void SetUniform(string name, int uniform)
         {
-            int location = GL.GetUniformLocation(glname, name);
+            int location = GetUniformLocation(name);
             GLHelper.CheckError();
 
             if (location >= 0)
@@ -265,7 +273,7 @@ namespace pxl
 
         public override void SetUniform(string name, float uniform)
         {
-            int location = GL.GetUniformLocation(glname, name);
+            int location = GetUniformLocation(name);
             GLHelper.CheckError();
 
             if (location >= 0)
@@ -278,7 +286,7 @@ namespace pxl
 
         public override void SetUniform(string name, Matrix3 m)
         {
-            int location = GL.GetUniformLocation(glname, name);
+            int location = GetUniformLocation(name);
             GLHelper.CheckError();
 
             if (location >= 0)
@@ -304,7 +312,7 @@ namespace pxl
 
         public override void SetUniform(string name, Matrix4 m)
         {
-            int location = GL.GetUniformLocation(glname, name);
+            int location = GetUniformLocation(name);
             GLHelper.CheckError();
             if (location >= 0)
             {
@@ -323,7 +331,7 @@ namespace pxl
 
         public override void SetUniform(string name, Vector2 v)
         {
-            int location = GL.GetUniformLocation(glname, name);
+            int location = GetUniformLocation(name);
             GLHelper.CheckError();
             if (location >= 0)
             {
@@ -335,7 +343,7 @@ namespace pxl
 
         public override void SetUniform(string name, Vector3 v)
         {
-            int location = GL.GetUniformLocation(glname, name);
+            int location = GetUniformLocation(name);
             GLHelper.CheckError();
             if (location >= 0)
             {
@@ -347,7 +355,7 @@ namespace pxl
 
         public override void SetUniform(string name, Vector4 v)
         {
-            int location = GL.GetUniformLocation(glname, name);
+            int location = GetUniformLocation(name);
             GLHelper.CheckError();
             if (location >= 0)
             {
@@ -362,8 +370,29 @@ namespace pxl
             SetUniform(name, new Vector4(v.R, v.G, v.B, v.A));
         }
 
+        int GetUniformLocation(string name)
+        {
+            int location = -1;
 
+            if( m_uniformLocations.ContainsKey(name) )
+                location = m_uniformLocations[name];
+            else
+                m_uniformLocations[name] = location = GL.GetUniformLocation(glname, name);
 
+            return location;
+        }
+
+        public int GetAttribLocation(string name)
+        {
+            int location = -1;
+
+            if (m_attribLocations.ContainsKey(name))
+                location = m_attribLocations[name];
+            else
+                m_attribLocations[name] = location = GL.GetAttribLocation(glname, name);
+
+            return location;
+        }
     }
 }
 

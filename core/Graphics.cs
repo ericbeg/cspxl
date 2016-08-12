@@ -134,7 +134,6 @@ namespace pxl
                     if ( me != null && shader != null )
                     {
                         Shader.active = shader;
-                        shader.Link();
                         shader.Use();
                         
                         SetObjectMatrices(go);
@@ -188,7 +187,6 @@ namespace pxl
                     if (me != null && shader != null)
                     {
                         Shader.active = shader;
-                        shader.Link();
                         shader.Use();
 
                         SetObjectMatrices(go);
@@ -235,7 +233,6 @@ namespace pxl
             if (me != null && shader != null)
             {
                 Shader.active = shader;
-                shader.Link();
                 shader.Use();
 
                 SetObjectMatrices(_quad);
